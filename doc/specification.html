@@ -1,0 +1,432 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Java Blend - Blender File Import for Java</title>
+</head>
+<body>
+<h1 style="text-align: center">Java Blend</h1>
+<p style="text-align: center">A Generic Blender File Import/Export Toolset for Java</p>
+<p style="text-align: center">-- first tech. demo --</p>
+<p style="text-align: center">-- <b>not intended for public audience</b> --</p>
+<p style="text-align: center">27th of Nov. 2015</p>
+<p style="text-align: center">Holger Machens</p>
+
+<h1>Introduction</h1>
+<p>
+Blender is written in the programming language C and blender files 
+are dumps of native memory content (C-structs and scalar types) 
+to disk. The file is organised in blocks of arbitrary length and 
+the type of data in it, is described in one single special block, which 
+contains type information (meta data) for all native and 
+structured types which can exist in a <code>.blend</code> file.
+</p>
+<p>
+Based on the very detailed type information, it is possible to 
+automatically generate code for any target language to interpret 
+the data in any blender file of the same version. The only challenge 
+thereby is to find a suitable mapping from C to whatever target 
+language was chosen.
+</p>
+<p>
+This project is an attempt to find a suitable type mapping and 
+develop a toolkit for generic any-version blender file import/export 
+in Java. The toolkit consists of two tools:
+</p>
+<ul>
+<li><b>Model Generator:</b> Based on the type information of any 
+reference blender file, the model generator generates a data model in 
+terms of facets which provide type-safe access to raw blender data. 
+The generated data model is suitable to access data 
+of any blender file of the same version (although the blender file
+format is said to be pretty stable across versions).</li>
+<li><b>Data I/O:</b> The I/O tool is then simply necessary to load a 
+blender file in memory and point the facets of the formerly 
+generated data model to their respective content in memory. Respectively, 
+it takes the data from memory and writes it to disk, if that is required.
+</li>
+</ul>
+<p>
+To be more precise, the data of the blender file is not actually 
+converted to Java, as long as the program does not ask for it. Data 
+stays in its format in memory (native) and the facets are responsible to 
+find the correct memory location and convert the data on demand.
+</p>
+<p>
+This approach has of course advantages and disadvantages. 
+</p>
+<ul>
+<li><b>Stable Concept:</b> The biggest advantage is for me, that changes to the model 
+generator will be extremely rare. Even if changes in blender file 
+format occur, such as elements get added/removed or types or names 
+of any struct members change, it will not affect the model
+generator, since all changes will be reflected in the meta-data, too.
+</li>
+<li><b>Data Export:</b> Another advantage is, that it allows even exports to blender file 
+format. As I will explain further down, this is not as natural as you 
+would expect, mainly because C pointers and memory addresses are a 
+very common thing in blender files. And thinking of a Java mapping, C pointers can mean 
+different things: Either references to objects or scalars (int, float etc.) 
+or it could be actually an array (not to mention null terminated stings 
+and void pointers and arbitrary type casts and all the good stuff ;)). 
+Of course it is possible to convert data to either type suitable, but
+it is not possible to just determine the use case of a pointer based 
+on the given type information. Thus, such a data model has to be specific 
+for those pointer types if it tries to map them to Java types - and that can't be generic. 
+But the developer can always determine what the correct use of a pointer is, the data model just needs to 
+provide him suitable methods to do such things. That's what this concept is about.
+</li>
+<li><b>Runtime Performance:</b> A disadvantage of this concept is loss in 
+application response time. Each access to data costs extra effort to adjust 
+a pointer to the associated data block and convert it to the requested type 
+in Java (byte ordering included). In case of pointers and arrays, it requires 
+additional effort to first determine the type of data required before actually 
+doing something. Compared to a concept which converts the data once when loading, 
+you loose a few extra instructions to address translation and conversion, but it 
+generally depends on the amount of data in the file you actually access in your 
+application. And those operations are mainly performed on stack, which means low cache 
+contention, which in turn means, that the actual performance loss (in response time) 
+is very low. I haven't measured it yet, but due to my experience, I expect 
+it to be insignificant compared to other issues of Java :D. 
+</li>
+</ul>
+<p>
+The following sections are supposed to be a not yet finished system 
+specification. It starts with an explanation of the blender file format 
+followed by the most important parts of the type mapping between C and Java.
+</p>
+
+
+
+<h2>Blender File Format</h2>
+On the lowest level a blender file consists of a header followed 
+by a list of blocks of memory. One of the blocks contains the type
+information required to interpret the body of a block.
+<h3>File Header</h3>
+The file header (first 12 bytes of every blender file) contains 
+low-level information about the file:
+<table border="1">
+<tr>
+  <th>name</th><th>type</th><th>description</th>
+<tr>
+<tr>
+  <td>MAGIC</td><td>7 byte ASCII</td><td>Content: "BLENDER". Used to identify blender files</td>
+<tr>
+<tr>
+  <td>pointerSize</td><td>1 byte ASCII</td><td>Indicates the size of a pointer type. '_' means 4 bytes and '-' means 
+	 8 bytes.</td>
+<tr>
+<tr>
+  <td>byteorder</td><td>1 byte ASCII</td><td>Byte ordering used in the file. 'v' means little endian and 'V' means big endian.</td>
+<tr>
+<tr>
+  <td>version</td><td>3 byte ASCII</td><td>Blender version the file originated from. "234" means version 2.34 .</td>
+<tr>
+</table>
+<h3>Block Level</h3>
+<p>
+Blocks consist of a header, which describes what kind of data is in the
+body and a body with the actual data. The block header always starts at a file 
+position which is 4 byte aligned. The body always contains data of 
+one specific type, which is usually a struct but in some cases even an
+array of a scalar type.
+</p>
+<table border="1">
+<tr>
+  <th>name</th><th>type</th><th>description</th>
+<tr>
+<tr>
+  <td>code</td><td>4 byte ASCII</td><td>The gives a rough indication which purpose the data has. 
+  The most important code is "DNA1" which contains the type information required to interpret 
+  any data in all the remaining blocks. </td>
+<tr>
+<tr>
+  <td>size</td><td>int32</td><td>Length of the body in bytes.</td>
+<tr>
+<tr>
+  <td>address</td><td><em>&lt;pointerSize&gt;</em></td><td><em>&lt;pointerSize&gt;</em> refers to the pointer size given in the file header. 
+  This is the address the data was found in memory when it was stored to disk. This is required to resolve pointers from one data block to another data block later on.</td>
+<tr>
+<tr>
+  <td>sdnaIndex</td><td>int32</td><td>This is an index into the 'struct' array in 
+  the type information. It defines the type of struct to be found in the body. Please note that sdnaIndex==0 is ambiguous. It can either indicate a structured type (e.g. struct LinkBase) or data of scalar type (e.g. an array of int).</td>
+<tr>
+<tr>
+  <td>count</td><td>int32</td><td>This the number of instances of the type given by 'sdnaIndex' stored in this block.</td>
+<tr>
+</table>
+<p>
+Since each block has its original memory address stored, it is possible 
+to resolve pointers to data in blocks. But there are cases, where the 
+pointer addresses memory which is not in the file.
+</p>
+
+<h3>Type Information</h3>
+All type information is stored in the block with the code "DNA1". 
+Block DNA1 can be at any position in the file (doesn't have to be at the beginning). 
+DNA1 contains a C structure
+called StructDNA or Structure DNA. This structure contains the
+type information.
+
+<table border="1">
+<tr>
+  <th>name</th><th>type</th><th>description</th>
+<tr>
+<tr>
+  <td>SDNA</td><td>4 byte ASCII</td><td>Content: "SDNA". Indicates start of the StructDNA struct.</td>
+<tr>
+<tr>
+  <td>NAME</td><td>4 byte ASCII</td><td>Content: "NAME". Indicates start of the field name list section (see below).</td>
+<tr>
+<tr>
+  <td>names_len</td><td>int32</td><td>Array length of the following field 'names'.</td>
+<tr>
+<tr>
+  <td>names</td><td>Array of null terminated ASCII strings</td><td>This array contains the names of the fields of all structs. A name contains the actual name of the field and type specifications such as if it is a pointer or an array (e.g. "*points[10]").</td>
+<tr>
+<tr>
+  <td>TYPE</td><td>4 byte ASCII</td><td>Content: "TYPE". Indicates start of the field type list section (see below).</td>
+<tr>
+<tr>
+  <td>types_len</td><td>int32</td><td>Array length of the following field 'types'.</td>
+<tr>
+<tr>
+  <td>types</td><td>Array of null terminated ASCII strings</td><td>This array contains the names of all types (scalar and structured) possibly used in any blender file of that version. A type name contains the basic type only, such as <code>int</code>, <code>char</code> or <code>LinkBase</code>, <code>Object</code>, etc.</td>
+<tr>
+<tr>
+  <td>TLEN</td><td>4 byte ASCII</td><td>Content: "TLEN". Indicates start of the type length section (see below).</td>
+<tr>
+<tr>
+  <td>type_lengths</td><td>int16[&lt;types_len&gt;]</td><td>An array, which contains for each type listed in 'types' above, the length of the type in bytes (e.g. 4 for 'int' or 32 for 'LinkBase').</td>
+<tr>
+<tr>
+  <td>STRC</td><td>4 byte ASCII</td><td>Content: "STRC". Indicates start of the struct type information section (see below).</td>
+<tr>
+<tr>
+  <td>structs_len</td><td>int32</td><td>Length of the following array field 'structs'</td>
+<tr>
+<tr>
+  <td>structs</td><td>Array of Struct instances</td><td>This is the array which contains the type information for any struct possibly used in a blender file of the given version. Each element of the array contains an instances of a struct with the type information for a given struct. For each struct:
+  <table border="1">
+	<tr>
+	  <th>name</th><th>type</th><th>description</th>
+	<tr>
+	<tr>
+	  <td>type</td><td>int16</td><td>Index in field 'types', giving the name of the struct.</td>
+	<tr>
+	<tr>
+	  <td>fields_len</td><td>int16</td><td>Length of the following array field 'fields'.</td>
+	<tr>
+	<tr>
+	  <td>fields</td><td>Field[]</td><td>Array of instances of type Field containing descriptions for each member field of the struct. For each field:
+	  <table border="1">
+		<tr>
+		  <th>name</th><th>type</th><th>description</th>
+		<tr>
+		<tr>
+		  <td>type</td><td>int16</td><td>Index in field 'types' to receive the type of the field.</td>
+		<tr>
+		<tr>
+		  <td>name</td><td>int16</td><td>Index in field 'names' to receive the name of the field.</td>
+		<tr>
+	  </table>
+	  </td>
+	<tr>
+  </table>
+  </td>
+<tr>
+</table>
+
+
+<h2>Type Mapping</h2>
+<h3>Scalar Types</h3>
+
+The following table contains mappings of all scalar types 
+in blender files (C) to Java. 
+
+<table border="1">
+<tr>
+  <th>C</th><th>native size [bytes]</th><th>Java</th>
+</tr>
+<tr>
+  <td>char</td><td>1</td><td>byte</td>
+</tr>
+<tr>
+  <td>short</td><td>2</td><td>short</td>
+</tr>
+<tr>
+  <td>ushort</td><td>2</td><td>short</td>
+</tr>
+<tr>
+  <td>int</td><td>4</td><td>int</td>
+</tr>
+<tr>
+  <td>unsigned int</td><td>4</td><td>int</td>
+</tr>
+<tr>
+  <td>float</td><td>4</td><td>float</td>
+</tr>
+<tr>
+  <td>double</td><td>8</td><td>float</td>
+</tr>
+<tr>
+  <td>long</td><td>4/8</td><td>long</td>
+</tr>
+<tr>
+  <td>ulong</td><td>4/8</td><td>long</td>
+</tr>
+<tr>
+  <td>int64_t</td><td>8</td><td>long</td>
+</tr>
+<tr>
+  <td>uint64_t</td><td>8</td><td>long</td>
+</tr>
+<tr>
+  <td><em>pointers</em></td><td>4/8</td><td>long</td>
+</tr>
+</table>
+
+<h4>Signed and Unsigned Integer Types</h4>
+Java does not support unsigned scalar types. To safe memory,
+every unsigned type is mapped to its signed counter part. This 
+has to be considered in case of overflows. 
+
+<h4>32 and 64 bit Systems</h4>
+In the C language, the size of pointers and the scalar types 
+long and unsigned long depend on the system architecture: 
+8 byte on 64 bit systems and 4 byte on 32 bit systems. 
+Both are mapped to 64 bit in Java.
+
+<h3>Structured Types</h3>
+<p>
+Based on the given type information from StructDNA, the model 
+generator maps all structured types to classes, generating a 
+class for each type with all the fields given from the fields 
+section in the type information. 
+</p>
+
+<h4>Embedded Structs</h4>
+If a field of a struct is of a structured type (and not a pointer)
+than it is embedded in the struct in C. Since this is not possible 
+in Java, those fields are turned into reference on objects of the 
+class generated from the type information about this fields type.
+
+<h3>Pointers</h3>
+<p>
+Pointers are slightly more difficult to map in a generic way than 
+first anticipated by me. Pointers in C can refer to two different 
+kinds of data that will be discussed here first before the final 
+design decision is explained.
+</p>
+<h4>Pointers on Scalar Types</h4>
+<p>There are two ways to map a pointer on a scalar to Java:</p> 
+<ul> 
+<li>Mapping to its corresponding scalar type: The data referenced by 
+the pointer is read and stored in the scalar field. Hence, there 
+are two copies of the same data when read in Java.</li>
+<li>Mapping to an array with one element: Even though it looks dirty,
+this is the most generic approach.</li>
+</ul>
+<p>Neither of those two approaches supports the actual function of a 
+pointer, to be a reference, but we don't need this function anyway, 
+since we just want to read data.
+</p>
+<h4>Pointers on Structs</h4>
+<p>
+Since structs are mapped to classes, pointers on Objects could be 
+easily mapped to references on objects in Java.
+</p>
+<h4>Pointers on Single Elements or Arrays of Elements</h4>
+<p>
+Pointers in C can either reference a single element or an array of 
+elements. This functionality is not supported by built-in types of 
+Java, since in Java a reference on an object and a reference on an array 
+are not interchangeable. Unfortunately, when generating the data model, 
+it is impossible to know, to what kind of data the pointer actually
+refers to because it is not part of the type information.
+Thus, there is a generic mechanism needed to serve for both cases.
+</p>
+<h4>Pointer Type Casts</h4>
+<p>
+In C it is possible to cast memory to any type. Unfortunately, due to
+historical reasons, some pointers in the data that imply a cast to a 
+pointer of a structure of entirely different kind then the actual 
+struct at the referenced address. Java supports casts as long as
+the target object contains the class of the reference somewhere in the
+inheritance hierarchy and the reference points to the base of the 
+object (not somewhere inside). But in some of those cases in blender files, the
+members (fields) of the struct which is referenced by a pointer of different 
+type are also different. This results in the fact, that we can't just 
+map those pointers to base classes or interfaces of the target class. 
+Instead we have to reinterpret (re-read) the data and store a copy in an 
+object of a suitable class for the reference.
+</p>
+<p>Another argument against inheritance is that C allows casts to be 
+applied to any address, not just the base address of an object.</p>
+
+<h4>Design Decision</h4>
+<p>
+To have an entirely generic mechanism to serve for all the different 
+functionalities of a pointer in C we introduce a Pointer template class.
+</p>
+
+<b>Target</b>
+<ul>
+<li><code>field</code>: p &ge; block.address && p == &field && type(*p) &ne; type(block.sdnaIndex)</li>
+<li><code>block</code>: p == block.address && (type(*p) == type(block.sdnaIndex) || block.sdnaIndex == 0</li>
+<li>Targets original type is <em>pointer</em></li>
+<li>Target type is different then reference type</li>
+<li>Target is data of entire block body (scalar or struct, and both can be single element or array)</li>
+</ul>
+
+
+<table border="1">
+<tr>
+  <th>C</th><th>Java</th><th>target</th><th>description</th>
+</tr>
+<tr><td>scalar*</td><td>scalar[1]</td><td>scalar field</td>
+	<td>If the pointer references a single scalar field of a struct, 
+    the array is of size one and the element receives a copy of the fields value.</td>
+</tr>
+<tr><td>struct*</td><td>struct[1]</td><td>struct field</td>
+	<td>If the pointer references a field of a struct which is a single instance 
+    of a structured type (i.e. target != block.address and there exists a field at 
+    this location of structured type which is embedded in the struct), 
+    then the array is of length 1 and receives the reference on this field.</td>
+</tr>
+<tr><td>any*</td><td>any[n]</td><td>any[n] field</td>
+	<td>If the pointer references a field which is declared in the type 
+    information as an array, which is embedded in a struct, then the 
+    (former pointer) field gets initialised with the reference on this array.</td>
+</tr>
+<tr><td>scalar&lt;T&gt;*</td><td>scalar&lt;T&gt;[1]</td><td>scalar&lt;U&gt; field</td>
+	<td>Pointer references a single scalar field of different type. Data of the field 
+	gets reinterpreted, array receives reinterpreted data. </td>
+</tr>
+
+<tr><td>scalar*</td><td>scalar[n]</td><td><code>block</code></td>
+	<td>If the pointer references unstructured data of a block 
+	(i.e. pointer refers to block start (block.address), sdnaIndex 
+	equals zero and basic type of the pointer is scalar), 
+	then the array gets the size required to receive all elements stored 
+	in the block body.</td>
+</tr>
+<tr><td>struct*</td><td>struct[n]</td><td><code>block</code></td>
+	<td>If the pointer references structured data of a block (i.e. basic field type is a struct and target == block.address), 
+then the array gets the size equal to the number of instances stored in the block (i.e. block.count).</td>
+</tr>
+</table>
+
+
+
+
+
+<p>
+This works for scalars and structs and
+pointers that are supposed to be references on arrays.
+</p>
+<h3>Arrays</h3>
+<h3>Type Casts</h3>
+
+</body>
+</html>
