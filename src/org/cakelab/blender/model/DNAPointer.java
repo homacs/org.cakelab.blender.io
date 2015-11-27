@@ -30,6 +30,7 @@ public class DNAPointer<T> extends DNAFacet {
 	}
 	
 	public T __get(long address) throws IOException {
+		if (targetSize == 0) throw new IOException("Target type is unspecified (i.e. void*). Use cast() to specify its type first.");
 		if (isPrimitive(targetTypes[0])) {
 			return getScalar(address);
 		} else if (targetTypes[0].isArray()){

@@ -47,6 +47,12 @@ public class DNAFacet {
 			return 4;
 		} else if (targetType.equals(double.class) || targetType.equals(Double.class)) {
 			return 8;
+		} else if (targetType.equals(Object.class)) {
+			/* 
+			 * special case: this type of pointer cannot support pointer 
+			 * arithmetics, same way as in C.
+			 */
+			return 0;
 		} else {
 			throw new IllegalArgumentException("missing size information for type '" + targetType.getSimpleName() + "'");
 		}
