@@ -2,114 +2,132 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Java Blend - Blender File Import for Java</title>
+		<title>${project.title}</title>
+		<!-- standard meta data -->
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="author" content="Holger Machens">
+		<meta name="date" content="${system.datetime}">
+		<!-- meta data for search engines -->
+		<meta name="description" content="${project.description}">
+		<meta name="keywords" lang="en" content="${project.keywords}">
+		<!-- meta name="robots" content="noindex,nofollow"-->
 </head>
 <body>
 <h1 style="text-align: center">Java Blend</h1>
-<p style="text-align: center">A Generic Blender File Import/Export Toolset for Java</p>
-<p style="text-align: center">-- first tech. demo --</p>
-<p style="text-align: center">-- <b>not intended for public audience</b> --</p>
-<p style="text-align: center">27th of Nov. 2015</p>
+<p style="text-align: center"><em>A Generic Blender File Import/Export for Java</em></p>
+<p style="text-align: center">-- 1st tech. demo --</p>
+<p style="text-align: center">(no decision on type of open source license yet)</p>
+<p style="text-align: center">${system.date}</p>
 <p style="text-align: center">Holger Machens</p>
 
-<h1>Introduction</h1>
+<h2>Introduction</h2>
 <p>
-Blender is written in the programming language C and blender files 
-are dumps of native memory content (C-structs and scalar types) 
-to disk. The file is organised in blocks of arbitrary length and 
-the type of data in it, is described in one single special block, which 
-contains type information (meta data) for all native and 
+The Blender core is developed in C and blender files 
+are basically dumps of the native memory content (C-structs and scalar types) 
+from heap to disk. The file is organised in blocks of arbitrary length, and 
+the type of data in it is described in a special block, which 
+contains type information (meta data) for all C native and 
 structured types which can exist in a <code>.blend</code> file.
 </p>
 <p>
-Based on the very detailed type information, it is possible to 
-automatically generate code for any target language to interpret 
-the data in any blender file of the same version. The only challenge 
-thereby is to find a suitable mapping from C to whatever target 
-language was chosen.
+Based on the meta data of any blender file, it is possible to 
+generate code for a different language, which is capable to read/write 
+the data in any blender file of the same version. Java Blend 
+is a combination of a code generator and a runtime Blender data access module 
+which provides generation of Java classes at development time and 
+random access to Blender data at runtime. Together, it provides a generic 
+any-version blender file import/export in Java. 
 </p>
+<h2>Concept</h2>
+This section gives a brief overview of the general concept behind Java Blend. 
+For further details refer to the <a href="spec.html">system specification</a> (not finished yet).
+<h3>Modules</h3>
 <p align="center"><img src="images/model-generator.png"/></p>
 <p>
-This project is an attempt to find a suitable type mapping and 
-develop a toolkit for generic any-version blender file import/export 
-in Java. The toolkit consists of two tools:
+Java Blend basically consists of two modules:
 </p>
-<ul>
-<li><b>Model Generator:</b> Based on the type information of any 
-reference blender file, the model generator generates a data model in 
-terms of facets which provide type-safe access to raw blender data. 
-The generated data model is suitable to access data 
-of any blender file of the same version (although the blender file
-format is said to be pretty stable across versions).</li>
-<li><b>Data I/O:</b> The I/O tool is then simply necessary to load a 
-blender file in memory and point the facets of the formerly 
-generated data model to their respective content in memory. Respectively, 
-it takes the data from memory and writes it to disk, if that is required.
-</li>
-</ul>
+<dl>
+<dt>Model Generator</dt> 
+<dd>The model generator (see image above) is a code generator, 
+which generates Java code according to the meta data found in a 
+reference Blender file. The generated code comprises a data model 
+which reflects the data model used in Blender core. This generated 
+data model consists of facets with methods to access native data 
+in heap memory at runtime.
+</dd>
+<dt>Runtime Data I/O</dt> 
+<dd>Random access to native data of a 
+Blender file is provided by the data I/O sub-module (see image below) which is 
+working behind the scenes at runtime. It is responsible to transfer data between file and heap memory and
+supports facets of the data model in address translation, type 
+conversion and data access in general. 
+</dd>
+</dl>
+
+
 <p align="center"><img src="images/facet.png"/></p>
+
+To summarise: Based on the type information of any reference blender 
+file, the model generator generates a data model in 
+terms of facets which provide type-safe access to native Blender data. 
+The generated data model in combination with the runtime data I/O module 
+is used at runtime to access data of any Blender file of the same version.
+Native Blender data is kept in its format in heap memory and accessed through 
+the facets getter and setter methods. Life cycle of native data is implicitly 
+covered by the Java VMs garbage collection. 
+
+<h3>Method</h3>
 <p>
-To be more precise, the data of the blender file is not actually 
-converted to Java, as long as the program does not access one of 
-the facets methods. Data stays in its format in memory (native) 
-and the facets are responsible to find the correct memory location 
-and convert the data on demand.
+At development time, the model generator is used to generate a 
+data model for a particular Blender version, based on any 
+<code>.blend</code> file created by Blender. The Java classes
+of the data model can be generated into a
+source folder of a specific project or compiled and archived in 
+a separate Java library (<code>.jar</code>), to be used in 
+multiple projects.
+</p>
+
+<p>
+<b>Example</b>
+</p>
+<pre>
+	java -jar javablend.jar "../myproject/src" "my.package.blender.data" "cube.blend"
+</pre>
+<p>
+Once the data model is available, it can be used in combination with the 
+runtime data I/O module to access any <code>.blend</code> file of the
+same Blender version. The application opens a Blender file and retrieves
+a <code>Main</code> library. In Blender terminology a 'Library' 
+represents a file (even external non-blender files). A main library 
+provides access to all persistent data in a Blender instance that will be 
+stored in a .blend file (all 3D elements, UI and rendering configurations
+etc.). The example below shows a use case, where an application opens a 
+blender file and retrieves the polygons of a mesh.
 </p>
 <p>
-This approach has of course advantages and disadvantages. 
+<b>Example</b>
 </p>
-<ul>
-<li><b>Stable Concept:</b> The biggest advantage is for me, that changes to the model 
-generator will be extremely rare. Even if changes in blender file 
-format occur, such as elements get added/removed or types or names 
-of any struct members change, it will not affect the model
-generator, since all changes will be reflected in the metadata, 
-too - the model generator will just do its job based on the rules 
-it already knows and thereby generate a new model compatible 
-to the new format. Also, when mapping C to Java, pointers are a significant issue, 
-because of its ambiguity: They can be references to objects, scalar types, arrays 
-or other pointers. Of course it is possible to convert data to either type suitable, but
-it is not possible to just determine the use case of a pointer based 
-on the given type information without semantic background. Thus, you can of course design a 
-data model which maps those pointer types to certain case specific 
-Java types, but that's not generic and requires to study all the 
-types possible in a blender file and identify the use case of each 
-pointer in it  (not to mention cases like null terminated stings, 
-void pointers, arbitrary type casts and such things). And every format change coming in the future needs 
-to be considered, which means a constant maintenance effort.
-But the developer can always easily determine what the correct use 
-of a pointer is, the data model just needs to provide him suitable 
-methods to do such things. That's what this concept is about: 
-Keep things simple but provide maximum flexibility.
-</li>
-<li><b>Import and Export:</b> Another advantage is, that it allows even 
-exports to blender file format without almost no additional effort. 
-This is not as natural as you would expect, mainly because pointers 
-and memory addresses are a very common thing in blender files. When you 
-convert data from one domain to the other you loose all 
-this information and have to maintain/create fake or real memory addresses 
-and link things together in terms of pointers before exporting. And then type casts
-and multiple levels of indirection kick in and things 
-get even more complex and error prone. Instead using the facet 
-approach the export is as easy as the import, since data never left
-the format it had. New instances just get assigned to a certain 
-memory region and the address of that region is provided to the facet.
-Pointers referring to the new object can receive its address and data 
-can be dumped to disk without further effort.
-</li>
-<li><b>Runtime Performance:</b> A disadvantage of this concept is loss in 
-application response time. Each access to data costs extra effort to adjust 
-a pointer to the associated data block and convert it to the requested type 
-in Java (byte ordering included). In case of pointers and arrays, it requires 
-additional effort to first determine the type of data required before actually 
-doing something. Compared to a concept which converts the data once when loading, 
-you loose a few extra instructions to address translation and conversion, but it 
-generally depends on the amount of data in the file you actually access in your 
-application. And at last, those extra operations are mainly performed on stack, 
-which means low additional cache contention, which in turn means, that the 
-actual performance loss (in response time) is expected to be low. 
-</li>
-</ul>
+<pre>
+	//
+	// Open file and retrieve main lib
+	//
+	BlendFile f = new BlendFile("cube.blend");
+	Main main = new Main(f);
+	f.close();
+	
+	//
+	// retrieve the first mesh's polygons
+	//
+	Mesh mesh = lib.getMesh();
+	MPoly[] polygons = mesh.getMpoly().toArray(mesh.getTotpoly());
+</pre>
+<p>
+<em>A full example which demonstrates retrieval of the data for a 
+textured cube can be found in the download section below.</em>
+</p>
+
+<h2>Download</h2>
 <p>
 Current state of the project is, that the concept is ready and a first tech.
 demo is available which demonstrates the data read part based on a generated 
@@ -120,21 +138,24 @@ data model. It consists of
 <li>a use case <b><a href="downloads/JavaBlendDemo-src-0.0.1.zip">example with generated data model</a></b> for blender v2.69 
 demonstrating how to read and display a textured cube modelled in blender, and</li>
 <li>a <b><a href="downloads/JavaBlendDemo-0.0.1.zip">binary of 
-the example</a></b> to show that textured cube in action.
+the example</a></b> to show that (horribly) textured cube in action. It uses <a href="https://www.lwjgl.org/">LWJGL</a> and requires
+a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
 </li>
 </ul>
-<p>Please note, that the demo is currently not leveraging the full potential 
-of the tool chain and the data provided by blender, simply because I haven't
-done it yet - but it's all there.
+<p><em>Please note: The <a href="spec.html">documentation</a> is not finished (see roadmap).</em>
 </p>
 <h1>Roadmap</h1>
 <ul>
-<li>Testing import feature (currently in progress)</li>
-<li>Library support (files external to blender files)</li>
+<li>Testing and improving import feature (in progress)</li>
 <li>CustomData: Not sure what it exactly is, but I have the objects .</li>
-<li>Export: allocate memory(block), assign to facet, link to libraries, output to file</li>
-<li>Compression (5 min. work, thanks to new concept)</li>
-<li>Testing, optimisation, polishing ...</li>
+<li>Libraries: Support for multiple files and external files.
+<li>Instantiation: allocate memory, append to or create block, assign to facet, link to libraries</li>
+<li>Export: dump memory to file</li>
+<li>File compression/decompression</li>
+<li>Documentation</li>
+<li>Testing, improving, optimising, polishing</li>
+<li>Release (end of 2015)</li>
 </ul>
+
 </body>
 </html>
