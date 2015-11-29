@@ -164,7 +164,8 @@ public class DNAPointer<T> extends DNAFacet {
 	}
 	
 	/**
-	 * Type cast for pointers with multiple levels of indirection.
+	 * Type cast for pointers with multiple levels of indirection 
+	 * (pointer on pointer). 
 	 * Casts the pointer to a different targetType.
 	 * <pre>
 	 * DNAPointer&lt;DNAPointer&lt;ListBase&gt;&gt; p; 
@@ -175,7 +176,6 @@ public class DNAPointer<T> extends DNAFacet {
 	 * <h4>Attention!</h4>
 	 * This is an even more dangerous and error prone method than 
 	 * {@link DNAPointer#cast(Class)} since you can do even more nasty stuff.
-	 * I'd recommend to stick at least to one level of indirection.
 	 * 
 	 * @param type
 	 * @return

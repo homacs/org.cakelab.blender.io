@@ -355,8 +355,8 @@ facets of type <code>DNAArray&lt;T&gt;</code> class templates where the template
 <code>T</code> specifies the type of its components. Multi-dimensional arrays 
 simply have a component type which is an array 
 (e.g. <code>DNAArray&lt;DNAArray&lt;T&gt;&gt;</code>). <code>DNAArray&lt;T&gt;</code> 
-is derived from <code>DNAPointer&lt;T&gt;</code> and inherits all his functionalities. 
-Thus, arrays are actually pointers, as in C.
+is derived from <code>DNAPointer&lt;T&gt;</code> and inherits all its functionalities. 
+Thus, arrays are pointers too, as in C.
 </p>
 <p>
 The following list gives an overview of its functionalities:
@@ -365,8 +365,9 @@ The following list gives an overview of its functionalities:
 <li>Get or set elements of the array</li>
 <li>Get or set its address</li>
 <li>Iterate over referenced elements</li>
+<li>Pointer arithmetics</li>
 <li>Convert to array of fixed length</li>
-<li>Convert to String of given length</li>
+<li>Convert to String</li>
 <li>Type cast to a pointer of a different type</li>
 </ul>
 

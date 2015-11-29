@@ -59,7 +59,8 @@ public class DNAArray<T> extends DNAPointer<T> {
 					__dna__blockMap);
 		} else if (componentType.equals(DNAPointer.class)) {
 			// array of pointers
-			return (T) new DNAPointer(address, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __dna__blockMap);
+			long pointerAddress = __dna__block.readLong(address);
+			return (T) new DNAPointer(pointerAddress, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __dna__blockMap);
 		} else if (isPrimitive(componentType)) {
 			return getScalar(address);
 		} else {
@@ -78,7 +79,10 @@ public class DNAArray<T> extends DNAPointer<T> {
 	
 	public String asString() throws IOException {
 		if ((componentType.equals(byte.class) || componentType.equals(Byte.class)) && dimensions.length == 1) {
-			return new String(toByteArray());
+			byte[] bytes = toByteArray();
+			int len = 0;
+			for (; len < bytes.length && bytes[len] != 0; len++);
+			return new String(bytes, 0, len);
 		} else {
 			throw new IllegalArgumentException("component type of array has to be byte to allow conversion in string");
 		}
