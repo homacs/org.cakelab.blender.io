@@ -89,14 +89,31 @@ public class DNAArray<T> extends DNAPointer<T> {
 	}
 	
 	public byte[] toByteArray() throws IOException {
-		byte[] bytes = new byte[(int) sizeof()];
-		this.__dna__block.readFully(__dna__address, bytes);
-		return bytes;
+		return super.toByteArray(length());
 	}
 	
+	public short[] toShortArray() throws IOException {
+		return super.toShortArray(length());
+	}
 	
-	private long getAddress(int index) {
-		return __dna__address + (index * elementSize);
+	public int[] toIntArray() throws IOException {
+		return super.toIntArray(length());
+	}
+	
+	public long[] toLongArray() throws IOException {
+		return super.toLongArray(length());
+	}
+	
+	public long[] toInt64Array() throws IOException {
+		return super.toInt64Array(length());
+	}
+	
+	public float[] toFloatArray() throws IOException {
+		return super.toFloatArray(length());
+	}
+	
+	public double[] toDoubleArray() throws IOException {
+		return super.toDoubleArray(length());
 	}
 	
 	
@@ -107,4 +124,9 @@ public class DNAArray<T> extends DNAPointer<T> {
 	public long sizeof() {
 		return length() * elementSize;
 	}
+
+	private long getAddress(int index) {
+		return __dna__address + (index * elementSize);
+	}
+	
 }

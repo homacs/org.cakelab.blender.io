@@ -89,5 +89,35 @@ public class Block implements Comparable<Long> {
 	public boolean contains(long address) {
 		return address >= this.header.address && address < this.header.address + this.header.size;
 	}
+
+	public void readFully(long address, short[] b, int off, int len) throws IOException {
+		address(address);
+		data.readFully(b, off, len);
+	}
+
+	public void readFully(long address, int[] b, int off, int len) throws IOException {
+		address(address);
+		data.readFully(b, off, len);
+	}
+
+	public void readFully(long address, long[] b, int off, int len) throws IOException {
+		address(address);
+		data.readFully(b, off, len);
+	}
+
+	public void readFullyInt64(long address, long[] b, int off, int len) throws IOException {
+		address(address);
+		data.readFullyInt64(b, off, len);
+	}
+
+	public void readFully(long address, float[] b, int off, int len) throws IOException {
+		address(address);
+		data.readFully(b, off, len);
+	}
+
+	public void readFully(long address, double[] b, int off, int len) throws IOException {
+		address(address);
+		data.readFully(b, off, len);
+	}
 	
 }

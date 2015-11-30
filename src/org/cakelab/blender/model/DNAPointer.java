@@ -6,7 +6,110 @@ import java.util.Arrays;
 
 import org.cakelab.blender.file.block.BlockMap;
 
-
+/**
+ * This class covers the functionality of a pointer in C:
+ * <ul>
+ * <li>pointer arithmetics</li>
+ * <li>type casting</li>
+ * </ul>
+ * <h3>Pointer Type</h3>
+ * A pointer in C is defined by its target type and the level
+ * of indirection. For example <code>int** pint</code> is
+ * said to be a pointer on a pointer of type <code>int</code>. 
+ * Thus, the target type is <code>int</code> and the level of 
+ * indirection is <code>2</code>.<br/>
+ * In Java Blend a pointer is mapped to this template class where
+ * the target type is provided through the template parameter <code>T</code>.
+ * Thus an object of <code>DNAPointer&lt;DNAPointer&lt;Integer&gt;&gt;</code>
+ * is the equivalent representation of <code>int**</code>.<br/>
+ * 
+ * 
+ * <h3>Pointer Arithmetics</h3>
+ * A pointer supports referencing (see {@link #get()}) and basic algebra
+ * (see {@link #add(int)}). 
+ * <h4>Referencing</h4>
+ * Referencing the target <em>object</em> through
+ * {@link #get()} returns that objects (Java) value. 
+ * <ul>
+ * <li>
+ * If the target object
+ * is of complex type (class), the value returned is a reference on an 
+ * instance of a class derived from {@link DNAFacet}. That means, you get
+ * access by reference: all modifications to the objects data will be 
+ * reflected in the memory backing the object. This applies also to 
+ * {@link DNAArray} objects but it applies not to instances of 
+ * {@link DNAPointer} itself (see below).
+ * </li>
+ * <li>
+ * If the target object is a scalar, then the value is the value read from 
+ * the target address. That means, modifications to that value will not 
+ * be reflected in the memory location of its origination.
+ * </li>
+ * </ul>
+ * An object of type {@link DNAPointer} is a reference but treated as a scalar.
+ * That means, if you receive a pointer from a method (e.g. from a facet, array 
+ * or another pointer) than it is disconnected from its own memory location. Any
+ * modifications to the pointer are not reflected in its original memory location.
+ * To assign a new address to its original memory location, you have to use the 
+ * set method of the object, which provided you the pointer.<br/>
+ * <h4>Example</h4>
+ * <pre>
+ * DNAPointer<Link> next = link.getNext(); // retrieve address
+ * Link anotherLink = .. ;                 // link we received elsewhere
+ * next.set(anotherLink);                  // alter pointer
+ * link.setNext(next);                     // assign new address to link.next
+ * </pre>
+ * 
+ * <h4>Basic Algebra</h4>
+ * Typical pointer arithmetics are incrementing and decrementing the address
+ * by the size of the target type. This actually reflects the same 
+ * functionality provided by array types. This functionality is provided
+ * through the {@link #add(int)} and {@link #next()} method. {@link #add(int)} 
+ * increments the pointers address by the size of its target type and 
+ * {@link #next()} is just a convenient replacement for <code>add(+1)</code>.
+ * <h5>Example</h5>
+ * <pre>
+ * // iterating over a null terminated list of materials
+ * for (DNAPointer<Material> pmat = .. ; 
+ *      !pmat.isNull();                 // null check
+ *      pmat.add(+1))                   // inc address by sizeof(Material)
+ * {
+ *   Material mat = pmat.get();
+ * }
+ * </pre>
+ * This functionality of course requires that the pointer is of the correct
+ * type (same as in C). Pointer arithmetics to a <code>void*</code> 
+ * (which is mapped to <code>DNAPointer&lt;Object&gt;</code> is permitted.
+ * Thus, you have to cast the pointer to the correct target type first 
+ * (see section below).
+ * 
+ * 
+ * <h3>Type Casts</h3>
+ * Type casts are supported through the methods {@link #cast(Class)} and  
+ * {@link #cast(Class[])}. Both take a parameter which describes the new
+ * target type, the pointer will be casted to. Since template parameters
+ * are not available at runtime, type casts of pointers with multiple
+ * indirections and pointers on arrays require you to provide even the 
+ * types of the targeted types. For example, if you have a pointer
+ * on a pointer of type Link, than the first pointer is of type pointer
+ * on pointer and the second pointer is of type pointer on Link.
+ * <h4>Example</h4>
+ * <pre>
+ * DNAPointer<DNAPointer<Link> pplink = .. ;
+ * DNAPointer<DNAPointer<Scene> ppscene;
+ * ppscene = pplink.cast(new Class[]{Pointer.class, Scene.class};
+ * DNAPointer<Scene> pscene = ppscene.get();
+ * Scene scene = pscene.get();
+ * </pre>
+ * 
+ * <h3>Array Conversion</h3>
+ * The method {@link #toArray(int)} returns an array with copies
+ * of the values received from the address the pointer points to.
+ * 
+ * @author homac
+ *
+ * @param <T>
+ */
 public class DNAPointer<T> extends DNAFacet {
 	private Class<?>[] targetTypes;
 	private long targetAddress;
@@ -108,16 +211,22 @@ public class DNAPointer<T> extends DNAFacet {
 		return targetAddress;
 	}
 	
+	/**
+	 * Checks whether the address of the pointer equals null.
+	 * @return
+	 */
 	public boolean isNull() {
 		return targetAddress == 0;
 	}
 
 	/**
 	 * Tells whether the pointer points to actual data or in 
-	 * a region of memory, which was not saved in the file.
+	 * a region of memory, which does not exist.
+	 * Thus, it is a bit more than a null pointer check ({@link #isNull()} 
+	 * and it is more expensive performance wise.<br/>
 	 * 
-	 * Thus, it is a bit more than a null pointer check and it 
-	 * is more expensive performance wise.
+	 * This method is mainly intended for debugging purposes.
+	 * 
 	 * @return true, if you can access the memory
 	 */
 	public boolean isValid() {
@@ -136,12 +245,25 @@ public class DNAPointer<T> extends DNAFacet {
 	}
 
 	/**
-	 * resets the pointer to its original address.
+	 * C pointer arithmetics. </br>
+	 * 
+	 * This method increments the address by one 
+	 * element of the target type (meaning, the address
+	 * is incremented by <code>increment*targetSize</code>).
+	 * Increment can be negative (i.e. decrement).
+	 * <br/>
+	 * <pre>
+	 * int* p;
+	 * p += increment; // equivalent to p.add(increment);
+	 * </pre>
+	 * Please note, that there is no boundary checking
+	 * so you might
+	 * @param increment 
 	 */
-	public void reset() {
-		targetAddress = __dna__address;
+	public void add(int increment) {
+		targetAddress += increment*targetSize;
 	}
-	
+
 	/**
 	 * Type cast for pointers with just one indirection.
 	 * 
@@ -201,6 +323,91 @@ public class DNAPointer<T> extends DNAFacet {
 			address += targetSize;
 		}
 		return arr;
+	}
+	
+
+	public byte[] toArray(byte[] b, int off, int len)
+			throws IOException {
+		if (!targetTypes[0].equals(Byte.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(targetAddress, b, off, len);
+		return b;
+	}
+
+	public byte[] toByteArray(int len)
+			throws IOException {
+		return toArray(new byte[len], 0, len);
+	}
+
+
+	public short[] toArray(short[] b, int off, int len) throws IOException {
+		if (!targetTypes[0].equals(Short.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(targetAddress, b, off, len);
+		return b;
+	}
+
+	public short[] toShortArray(int len)
+			throws IOException {
+		return toArray(new short[len], 0, len);
+	}
+
+
+	public int[] toArray(int[] b, int off, int len) throws IOException {
+		if (!targetTypes[0].equals(Integer.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(targetAddress, b, off, len);
+		return b;
+	}
+
+	public int[] toIntArray(int len)
+			throws IOException {
+		return toArray(new int[len], 0, len);
+	}
+
+
+	public long[] toArray(long[] b, int off, int len) throws IOException {
+		if (!targetTypes[0].equals(Long.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(targetAddress, b, off, len);
+		return b;
+	}
+
+	public long[] toLongArray(int len)
+			throws IOException {
+		return toArray(new long[len], 0, len);
+	}
+
+
+	public long[] toArrayInt64(long[] b, int off, int len) throws IOException {
+		if (!targetTypes[0].equals(int64.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFullyInt64(targetAddress, b, off, len);
+		return b;
+	}
+
+	public long[] toInt64Array(int len)
+			throws IOException {
+		return toArray(new long[len], 0, len);
+	}
+
+
+	public float[] toArray(float[] b, int off, int len) throws IOException {
+		if (!targetTypes[0].equals(Float.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(targetAddress, b, off, len);
+		return b;
+	}
+
+	public float[] toFloatArray(int len)
+			throws IOException {
+		return toArray(new float[len], 0, len);
+	}
+
+
+	public double[] toArray(double[] b, int off, int len) throws IOException {
+		if (!targetTypes[0].equals(Double.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(targetAddress, b, off, len);
+		return b;
+	}
+	
+	public double[] toDoubleArray(int len)
+			throws IOException {
+		return toArray(new double[len], 0, len);
 	}
 
 }

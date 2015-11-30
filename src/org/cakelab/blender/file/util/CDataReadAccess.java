@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import org.cakelab.blender.file.FileHeader.PointerSize;
+import org.cakelab.blender.model.int64;
 
 
 public abstract class CDataReadAccess implements Closeable {
@@ -75,11 +76,55 @@ public abstract class CDataReadAccess implements Closeable {
 	}
 
 	public void readFully(byte[] b, int off, int len) throws IOException {
-		for (int i = 0; i < len; i++) {
+		len += off;
+		for (int i = off; i < len; i++) {
 			b[i] = (byte) readByte();
 		}
 	}
 
+	public void readFully(short[] b, int off, int len) throws IOException {
+		len += off;
+		for (int i = off; i < len; i++) {
+			b[i] = readShort();
+		}
+	}
+	
+	public void readFully(int[] b, int off, int len) throws IOException {
+		len += off;
+		for (int i = off; i < len; i++) {
+			b[i] = readInt();
+		}
+	}
+	
+	public void readFully(long[] b, int off, int len) throws IOException {
+		len += off;
+		for (int i = off; i < len; i++) {
+			b[i] = readLong();
+		}
+	}
+	
+	public void readFullyInt64(long[] b, int off, int len) throws IOException {
+		len += off;
+		for (int i = off; i < len; i++) {
+			b[i] = readInt64();
+		}
+	}
+	
+	public void readFully(float[] b, int off, int len) throws IOException {
+		len += off;
+		for (int i = off; i < len; i++) {
+			b[i] = readFloat();
+		}
+	}
+	
+	public void readFully(double[] b, int off, int len) throws IOException {
+		len += off;
+		for (int i = off; i < len; i++) {
+			b[i] = readDouble();
+		}
+	}
+	
+	
 	public abstract void padding(int alignment) throws IOException;
 
 	public abstract long skip(long n) throws IOException;
@@ -90,6 +135,6 @@ public abstract class CDataReadAccess implements Closeable {
 
 	public abstract long offset() throws IOException;
 
-
+	
 
 }

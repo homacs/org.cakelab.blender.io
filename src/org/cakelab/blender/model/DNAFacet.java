@@ -78,7 +78,7 @@ public class DNAFacet {
 		return (DNAFacet) constructor.newInstance(address, blockMap);
 	}
 
-	/** Generates a JSON representation of the given DNAFacet considering all getter methods. 
+	/** Generates a JSON like representation of the given DNAFacet considering all getter methods. 
 	 * Mainly for debugging purposes. */
 	public String __dna__toString() {
 		StringBuffer result = new StringBuffer();
@@ -99,4 +99,8 @@ public class DNAFacet {
 		}
 		return result.toString();
 	}
+
+
+	
+	
 }

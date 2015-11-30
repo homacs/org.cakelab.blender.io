@@ -80,4 +80,11 @@ public class CBufferInputStream extends CDataReadAccess {
 		return rawData.get();
 	}
 
+	@Override
+	public void readFully(byte[] b, int off, int len) throws IOException {
+		rawData.get(b, off, len);
+	}
+
+	
+	
 }
