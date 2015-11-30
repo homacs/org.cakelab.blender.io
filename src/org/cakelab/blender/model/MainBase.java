@@ -12,7 +12,7 @@ import org.cakelab.blender.file.block.BlockMap;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.blender.file.util.Identifier;
-import org.cakelab.blender.model.gen.type.Renaming;
+import org.cakelab.blender.generator.type.Renaming;
 
 /**
  * Blender organises data in so-called libraries. A main library contains

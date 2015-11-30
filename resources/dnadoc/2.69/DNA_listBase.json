@@ -1,0 +1,34 @@
+{
+	"system" : "Blender",
+	"module" : "DNA",
+	"version" : "2.69",
+	"authors" : [
+		"Holger Machens"
+	],
+	"structs" : {
+		"Link" : {
+			"doc" : "generic - all structs which are put into linked lists begin with this",
+			"fields" : {
+				"next" : "reference on the next element in linked list",
+				"prev" : "reference on previous element in linked list"
+			}
+		},
+		"LinkData" : {
+			"doc" : "simple subclass of Link--use this when it is not worth defining a custom one...",
+			"inherits" : ["Link"],
+			"fields" : {
+				"data" : "byte stream of arbitrary data."
+			}
+		},
+
+		"ListBase" : {
+			"doc" : "This is the entry point to work with linked lists. It is for 
+			example used in libraries {@link Library}, to provide a reference 
+			to the first and the last element of a linked list of library objects.",
+			"fields" : {
+				"first" : "first element in the list",
+				"last" : "last element in the list"
+			}
+		}
+	}
+}

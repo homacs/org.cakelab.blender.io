@@ -1,0 +1,69 @@
+{
+	"system" : "Blender",
+	"module" : "DNA",
+	"version" : "2.69",
+	"authors" : [
+		"Holger Machens"
+	],
+	"inherits" : "../dna-0.json",
+	"includes" : [ "DNA_listBase.json" ],
+	"structs" : {
+		"ID" : {
+			"inherits" : [ 
+				"Link" 
+			],
+			"doc" : "Represents the ID of any named object in DNA which 
+					 is stored in a library (see {@link Library}). Those 
+					 objects are instances of structs which contain an 
+					 embedded member of type ID as their first element.",
+			"fields" : {
+				"newid" : "",
+				"lib" : "reference on the library this object belongs to.",
+				"name" : "The name of the object.",
+				"pad" : "padding for alignment",
+				"us" : "",
+				"flag" : "LIB_... flags report on status of the datablock this ID belongs
+						  to.",
+				"icon_id" : "",
+				"properties" : "list of associated properties."
+			}
+		},
+		"IDProperty" : {
+			"doc" : "ID properties are a generic method to store a linked 
+					list of additional information at IDs (see {@link ID}.",
+			"inherits" : [ 
+				"Link" 
+			],
+			"fields" : {
+				"type" : "Type of the property data. One of
+						<pre>
+								IDP_STRING		0
+								IDP_INT			1
+								IDP_FLOAT		2
+								IDP_ARRAY		5
+								IDP_GROUP		6
+								IDP_ID			7
+								IDP_DOUBLE		8
+								IDP_IDPARRAY	9
+								IDP_NUMTYPES	10
+						</pre>",
+				"subtype" : "Subtype of the property data. One of
+						<pre>
+							IDP_STRING_SUB_UTF8  0 /* default */
+							IDP_STRING_SUB_BYTE  1 /* arbitrary byte array, _not_ null terminated */
+						</pre>",
+				"name" : "propertie's name",
+				"saved" : "saved is used to indicate if this struct has been saved yet.",
+				"data" : "propertie's data. note, alignment for 64 bits",
+				"len" : "array length, also (this is important!) string length + 1.
+	          			the idea is to be able to reuse array realloc functions on strings.",
+	          	"totallen" : "totallen is total length of allocated array/string, including a buffer.
+	 							Note that the buffering is mild; the code comes from python's list 
+	 							implementation. Strings and arrays are both buffered, though the buffer
+								isn't saved."
+			}
+		}
+			         
+	}
+		
+}

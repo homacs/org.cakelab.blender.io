@@ -1,14 +1,16 @@
-package org.cakelab.blender.model.gen;
+package org.cakelab.blender.generator;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.file.BlenderFile;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.blender.file.dna.BlendType;
-import org.cakelab.blender.model.gen.code.GPackage;
+import org.cakelab.blender.generator.code.GPackage;
+import org.cakelab.json.JSONException;
 
 public class ModelGenerator {
 	
@@ -17,6 +19,7 @@ public class ModelGenerator {
 	private BlendModel model;
 	private HashMap<BlendType, BlendStruct> classes = new HashMap<BlendType, BlendStruct>();
 	int pointerSize;
+	private Documentation docs;
 
 
 	public ModelGenerator(BlendModel model, int pointerSize) {
@@ -25,13 +28,14 @@ public class ModelGenerator {
 	}
 
 
-	private void generate(File destinationDir, String packageName) throws IOException {
+	private void generate(File destinationDir, String packageName, Documentation docs) throws IOException {
+		this.docs = docs;
 		if(!destinationDir.exists()) throw new IOException("Directory " + destinationDir + "does not exist");
 		GPackage dnaPackage = new GPackage(destinationDir, packageName + ".dna");
 		GPackage loaderPackage = new GPackage(destinationDir, packageName + ".lib");
 		
-		DNAFacetClassGenerator classgen = new DNAFacetClassGenerator(this, dnaPackage);
-		MainLibClassGenerator libgen = new MainLibClassGenerator(this, loaderPackage, dnaPackage);
+		DNAFacetClassGenerator classgen = new DNAFacetClassGenerator(this, dnaPackage, docs);
+		MainLibClassGenerator libgen = new MainLibClassGenerator(this, loaderPackage, dnaPackage, docs);
 
 		for (BlendStruct struct : model.getStructs()) {
 			if (!classes.containsKey(struct.getType())) {
@@ -45,12 +49,11 @@ public class ModelGenerator {
 	}
 
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, JSONException {
 		BlenderFile blend = new BlenderFile(new File("cube.blend"));
 		ModelGenerator generator = new ModelGenerator(blend.readBlenderModel(), blend.getPointerSize());
 		blend.close();
-		
-		generator.generate(new File("../BlendGenResult/gen"), "org.blender");
-		
+		Documentation docs = new Documentation(new File("resources/dnadoc/2.69/DNA_documentation.json"));
+		generator.generate(new File("../JavaBlendDemo/gen"), "org.blender", docs);
 	}
 }

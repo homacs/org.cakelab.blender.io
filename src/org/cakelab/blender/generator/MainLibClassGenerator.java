@@ -1,4 +1,4 @@
-package org.cakelab.blender.model.gen;
+package org.cakelab.blender.generator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,15 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.file.BlenderFile;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.BlendStruct;
+import org.cakelab.blender.generator.code.ClassGenerator;
+import org.cakelab.blender.generator.code.GComment;
+import org.cakelab.blender.generator.code.GField;
+import org.cakelab.blender.generator.code.GPackage;
+import org.cakelab.blender.generator.type.Renaming;
 import org.cakelab.blender.model.MainBase;
-import org.cakelab.blender.model.gen.code.ClassGenerator;
-import org.cakelab.blender.model.gen.code.GComment;
-import org.cakelab.blender.model.gen.code.GField;
-import org.cakelab.blender.model.gen.code.GPackage;
-import org.cakelab.blender.model.gen.type.Renaming;
 
 public class MainLibClassGenerator extends ClassGenerator {
 
@@ -23,8 +24,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 	private GPackage dnaPackage;
 
 
-	public MainLibClassGenerator(ModelGenerator modelgen, GPackage gpackage, GPackage dnaPackage) {
-		super(modelgen, gpackage);
+	public MainLibClassGenerator(ModelGenerator modelgen, GPackage gpackage, GPackage dnaPackage, Documentation docs) {
+		super(modelgen, gpackage, docs);
 		this.dnaPackage = dnaPackage;
 		classname = "Main";
 		

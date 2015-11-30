@@ -1,4 +1,4 @@
-package org.cakelab.blender.model.gen.code;
+package org.cakelab.blender.generator.code;
 
 public abstract class CodeGenerator {
 	protected static final String NL = "\n";
@@ -11,7 +11,7 @@ public abstract class CodeGenerator {
 		indent(initialIndent);
 	}
 	
-	protected void indent(int n) {
+	public void indent(int n) {
 		if (n > 0) {
 			for (int i = 0; i < n; i++) indent += TAB; 
 		} else {

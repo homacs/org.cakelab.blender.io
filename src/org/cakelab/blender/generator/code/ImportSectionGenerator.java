@@ -1,4 +1,4 @@
-package org.cakelab.blender.model.gen.code;
+package org.cakelab.blender.generator.code;
 
 import java.util.HashSet;
 

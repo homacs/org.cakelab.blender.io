@@ -1,30 +1,40 @@
-package org.cakelab.blender.model.gen;
+package org.cakelab.blender.generator;
 
 import java.io.IOException;
 
+import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.file.dna.BlendField;
+import org.cakelab.blender.file.dna.BlendStruct;
+import org.cakelab.blender.generator.code.CodeSection;
+import org.cakelab.blender.generator.code.GComment;
+import org.cakelab.blender.generator.code.MethodGenerator;
+import org.cakelab.blender.generator.type.CType;
+import org.cakelab.blender.generator.type.JavaType;
+import org.cakelab.blender.generator.type.CType.CTypeType;
+import org.cakelab.blender.generator.type.JavaType.JTypeType;
 import org.cakelab.blender.model.DNAArray;
 import org.cakelab.blender.model.DNAPointer;
 import org.cakelab.blender.model.int64;
-import org.cakelab.blender.model.gen.code.MethodGenerator;
-import org.cakelab.blender.model.gen.type.CType;
-import org.cakelab.blender.model.gen.type.JavaType;
-import org.cakelab.blender.model.gen.type.CType.CTypeType;
-import org.cakelab.blender.model.gen.type.JavaType.JTypeType;
 
 
 
 public class DNAFacetGetMethodGenerator extends MethodGenerator {
 
+	private Documentation docs;
+	private long pointersize;
+	private String fielddoc;
+
 	public DNAFacetGetMethodGenerator(DNAFacetClassGenerator classGenerator) 
 	{
 		super(classGenerator);
+		docs = classGenerator.getDocs();
+		pointersize = classGenerator.getPointerSize();
 	}
 
 	
-	public void visitField(long offset, BlendField field, CType ctype, JavaType jtype) throws IOException {
+	public void visitField(long offset, BlendStruct struct, BlendField field, CType ctype, JavaType jtype) throws IOException {
 		reset();
-		
+		fielddoc = docs.getFieldDoc(struct, field);
 		switch(ctype.getTypetype()) {
 		case TYPE_ARRAY:
 			visitArray(offset, field, ctype, jtype);
@@ -45,7 +55,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		default:
 			break;
 		}
-		if (content.length()>0)	classgen.addMethod(content.toString());
+		if (content.lines()>0)	classgen.addMethod(content.toString(1));
 	}
 
 
@@ -54,7 +64,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		classgen.addImport(DNAArray.class);
 		appendMethodSignature(field, ctype, jtype);
 		appendln("{");
-		indent(+1);
+		content.indent(+1);
 		String parameterizedArrayType = DNAArray.class.getSimpleName() + getTemplateParameter(ctype.getReferencedType(), jtype.getReferencedType());
 		
 		String targetTypeListVar = "targetTypes";
@@ -62,7 +72,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		
 		String dimensionsVar = "dimensions";
 		appendln("int[] " + dimensionsVar + " = new int[]{");
-		indent(+1);
+		content.indent(+1);
 		content.append(indent).append(ctype.getArrayLength());
 		CType tarr = ctype.getReferencedType();
 		while(tarr.getTypetype() == CTypeType.TYPE_ARRAY) {
@@ -71,12 +81,12 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 			tarr = tarr.getReferencedType();
 		}
 		appendln("");
-		indent(-1);
+		content.indent(-1);
 		appendln("};");
 		
 		appendln("return new " + parameterizedArrayType + "(__dna__address + " + offset + ", "+ targetTypeListVar + ", " + dimensionsVar + ", __dna__blockMap);");
 		
-		indent(-1);
+		content.indent(-1);
 		appendln("}");
 	}
 
@@ -84,16 +94,16 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 	private void appendTargetTypeList(String targetTypeListVar, JavaType jtype,
 			CType ctype) throws IOException {
 		appendln("Class<?>[] " + targetTypeListVar + " = new Class[]{");
-		indent(+1);
+		content.indent(+1);
 		JavaType target = jtype.getReferencedType();
-		content.append(indent).append(getClassTypeName(ctype, target)).append(".class");
+		content.append(getClassTypeName(ctype, target)).append(".class");
 		while(target.getReferencedType() != null) {
 			target = target.getReferencedType();
-			content.append(",").append(NL);
-			content.append(indent).append(getClassTypeName(ctype, target)).append(".class");
+			content.appendln(",");
+			content.append(getClassTypeName(ctype, target)).append(".class");
 		}
 		appendln("");
-		indent(-1);
+		content.indent(-1);
 		appendln("};");
 	}
 
@@ -111,7 +121,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		classgen.addImport(DNAPointer.class);
 		appendMethodSignature(field, ctype, jtype);
 		appendln("{");
-		indent(+1);
+		content.indent(+1);
 		String parameterizedPointerType = DNAPointer.class.getSimpleName() + getTemplateParameter(ctype.getReferencedType(), jtype.getReferencedType());
 		String targetAddrVar = "targetAddress"; 
 		appendln("long " + targetAddrVar + " = " + "__dna__block.readLong(__dna__address + " + offset + ");");
@@ -121,7 +131,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		
 		appendln("return new " + parameterizedPointerType + "(" + targetAddrVar +", "+ targetTypeListVar + ", __dna__blockMap);");
 		
-		indent(-1);
+		content.indent(-1);
 		appendln("}");
 	}
 
@@ -185,11 +195,11 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 			JavaType jtype) throws IOException {
 		appendMethodSignature(field, ctype, jtype);
 		appendln("{");
-		indent(+1);
+		content.indent(+1);
 		
 		appendln("return new " + jtype.getName() + "(__dna__address + " + offset + ", __dna__blockMap);");
 		
-		indent(-1);
+		content.indent(-1);
 		appendln("}");
 		
 	}
@@ -198,11 +208,11 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 	private void visitScalar(long offset, BlendField field, CType ctype, JavaType jtype) throws IOException {
 		appendMethodSignature(field, ctype, jtype);
 		appendln("{");
-		indent(+1);
+		content.indent(+1);
 		
 		appendln("return __dna__block." + readMethod(jtype, ctype) + "(__dna__address + " + offset + ");");
 		
-		indent(-1);
+		content.indent(-1);
 		appendln("}");
 	}
 
@@ -221,18 +231,31 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		
 		classgen.addImport(IOException.class);
 		
-		appendln("/**");
-		appendln(" * " + field.getSignature() + ";");
-		appendln(" * size: " + ctype.getSize());
-		appendln(" */");
 		String returnType = jtype.getName();
 		if (ctype.getTypetype() == CTypeType.TYPE_POINTER || ctype.getTypetype() == CTypeType.TYPE_ARRAY) {
 			returnType += getTemplateParameter(ctype.getReferencedType(), jtype.getReferencedType());
 		}
+		
+		
+		GComment javadoc = new GComment(GComment.Type.JavaDoc);
+
+		javadoc.appendln();
+		javadoc.appendln("Get method for struct member '" + field.getName() + "'.");
+		if (fielddoc != null) {
+			javadoc.appendln("<h4>Field Documentation</h4>");
+			javadoc.appendln(fielddoc);
+		}
+		javadoc.appendln("<h4>Metadata</h4>");
+		javadoc.appendln("<ul>");
+		javadoc.appendln("<li>Field: '" + field.getName() + "'</li>");
+		javadoc.appendln("<li>Signature: '" + field.getSignature() + "'</li>");
+		javadoc.appendln("<li>Size (from metadata): " + ctype.getSize() + "</li>");
+		javadoc.appendln("<li>Actual Size: " + ctype.sizeof(pointersize) + "</li>");
+		javadoc.appendln("</ul>");
+		
+		
+		appendln(javadoc.toString(0));
 		appendln("public " + returnType + " get" + toCamelCase(field.getName()) + "() throws " + IOException.class.getSimpleName());
 	}
-
-
-
 
 }

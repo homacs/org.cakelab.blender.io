@@ -1,6 +1,5 @@
-package org.cakelab.blender.model.gen.code;
+package org.cakelab.blender.generator.code;
 
-import org.cakelab.blender.model.gen.CodeSection;
 
 public class GComment extends CodeSection {
 	private Type type;

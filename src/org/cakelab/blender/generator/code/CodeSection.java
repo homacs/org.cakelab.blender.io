@@ -1,15 +1,13 @@
-package org.cakelab.blender.model.gen;
+package org.cakelab.blender.generator.code;
 
 import java.util.ArrayList;
-
-import org.cakelab.blender.model.gen.code.CodeGenerator;
 
 public class CodeSection extends CodeGenerator {
 	ArrayList<String> lines = new ArrayList<String>();
 
 	protected StringBuffer currentLine = new StringBuffer();
 	
-	protected CodeSection(int initialIndent) {
+	public CodeSection(int initialIndent) {
 		super(initialIndent);
 	}
 
@@ -50,9 +48,17 @@ public class CodeSection extends CodeGenerator {
 	}
 
 	public CodeSection appendln() {
-		lines.add(currentLine.toString());
+		lines.add(indent + currentLine.toString());
 		currentLine.setLength(0);
 		return this;
+	}
+
+	public int lines() {
+		return lines.size();
+	}
+
+	public CodeSection append(int i) {
+		return append(Integer.toString(i));
 	}
 
 }

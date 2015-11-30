@@ -1,4 +1,4 @@
-package org.cakelab.blender.model.gen.code;
+package org.cakelab.blender.generator.code;
 public class GField extends CodeGenerator {
 
 	protected String signature;

@@ -1,4 +1,4 @@
-package org.cakelab.blender.model.gen.type;
+package org.cakelab.blender.generator.type;
 
 import org.cakelab.blender.file.dna.BlendField;
 
@@ -132,6 +132,33 @@ public class CType {
 	public int getSize() {
 		return size;
 	}
+
+
+	public long sizeof(long pointersize) {
+		return sizeof(this, pointersize);
+	}
 	
+	private long sizeof(CType ctype, long pointersize) {
+		switch(ctype.getTypetype()) {
+		case TYPE_ARRAY:
+			long totalLength = ctype.getArrayLength();
+			for (ctype = ctype.getReferencedType(); 
+				 ctype.getTypetype() == CType.CTypeType.TYPE_ARRAY; 
+				 ctype = ctype.getReferencedType()) 
+			{
+				totalLength *= ctype.getArrayLength();
+			}
+			return sizeof(ctype, pointersize) * totalLength;
+		case TYPE_FUNCTION_POINTER:
+		case TYPE_POINTER:
+			return pointersize;
+		case TYPE_SCALAR:
+		case TYPE_STRUCT:
+			return ctype.getSize();
+		case TYPE_VOID:
+		default:
+			throw new IllegalArgumentException("sizeof can't determine size of '" + ctype.getName() + "'");
+		}
+	}
 	
 }
