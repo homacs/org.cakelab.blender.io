@@ -106,9 +106,17 @@ import org.cakelab.blender.file.block.BlockMap;
  * The method {@link #toArray(int)} returns an array with copies
  * of the values received from the address the pointer points to.
  * 
+ * Since it is not possible to use scalar types (such as int, double etc.)
+ * as template parameter, there are several different flavours of 
+ * {@link #toArray(byte[], int, int)} and {@link #toByteArray(int)} 
+ * for all scalar types. Please note, that there are two special methods
+ * for int64, since long can refer to integer of 4 or 8 byte depending
+ * on the data received from blender file. Refer to the originating 
+ * facet, you received the pointer from, to determine its actual type.
+ * 
  * @author homac
  *
- * @param <T>
+ * @param <T> Target type of the pointer.
  */
 public class DNAPointer<T> extends DNAFacet {
 	private Class<?>[] targetTypes;
@@ -116,6 +124,20 @@ public class DNAPointer<T> extends DNAFacet {
 	private long targetSize;
 	
 
+	/**
+	 * Copy constructor. It creates another instance of the 
+	 * 'other' pointer.
+	 * 
+	 * @param other Pointer to be copied.
+	 */
+	public DNAPointer(DNAPointer<T> other) {
+		super(other);
+		this.targetAddress = other.targetAddress;
+		this.targetTypes = other.targetTypes;
+		this.targetSize = other.targetSize;
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public DNAPointer(long targetAddress, Class<?>[] targetTypes, BlockMap memory) {
 		super(targetAddress, memory);

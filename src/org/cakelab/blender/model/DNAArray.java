@@ -25,6 +25,15 @@ public class DNAArray<T> extends DNAPointer<T> {
 	 */
 	private long elementSize;
 
+	
+	public DNAArray(DNAArray<T> other) {
+		super(other);
+		this.targetTypeList = other.targetTypeList;
+		this.componentType = other.componentType;
+		this.dimensions = other.dimensions;
+		this.elementSize = other.elementSize;
+	}
+	
 	public DNAArray(long baseAddress, Class<?>[] targetTypeList, int[] dimensions, BlockMap __blockMap) {
 		super(baseAddress, Arrays.copyOfRange(targetTypeList, dimensions.length-1, targetTypeList.length), __blockMap);
 		this.targetTypeList = targetTypeList;

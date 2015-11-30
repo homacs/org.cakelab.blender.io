@@ -14,11 +14,21 @@ import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.blender.file.util.Identifier;
 import org.cakelab.blender.model.gen.type.Renaming;
 
-public class MainBase {
+/**
+ * Blender organises data in so-called libraries. A main library contains
+ * all root elements found in a blender file. This is the base class with
+ * several helper methods for the actual class <code>Main</code>, which will be generated
+ * based on the meta data found in the Blender file. Refer to the generated
+ * Main class for more details.
+ * 
+ * @author homac
+ *
+ */
+public abstract class MainBase {
 	private BlockMap blockMap  = new BlockMap();
 	private String packageName;
 
-	public MainBase(String packageName, BlenderFile blend) throws IOException {
+	protected MainBase(String packageName, BlenderFile blend) throws IOException {
 		this.packageName = packageName;
 		ArrayList<Block> blocks = blend.readBlocks();
 		BlendModel model = blend.readBlenderModel();
