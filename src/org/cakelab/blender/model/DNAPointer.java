@@ -1,6 +1,7 @@
 package org.cakelab.blender.model;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
@@ -25,6 +26,9 @@ import org.cakelab.blender.file.block.BlockMap;
  * 
  * 
  * <h3>Pointer Arithmetics</h3>
+ * 
+ * TODO: document pointer arithmetics
+ * 
  * A pointer supports referencing (see {@link #get()}) and basic algebra
  * (see {@link #add(int)}). 
  * <h4>Referencing</h4>
@@ -119,10 +123,34 @@ import org.cakelab.blender.file.block.BlockMap;
  * @param <T> Target type of the pointer.
  */
 public class DNAPointer<T> extends DNAFacet {
-	private Class<?>[] targetTypes;
-	private long targetAddress;
-	private long targetSize;
+	@SuppressWarnings("rawtypes")
+	public static final Constraint<DNAPointer> CONSTRAINT_POINTER_IS_VALID = new Constraint<DNAPointer>() {
+		@Override
+		public boolean satisfied(DNAPointer obj) {
+			return obj.isValid();
+		}
+	};
+	@SuppressWarnings("rawtypes")
+	public static final Constraint<DNAPointer> CONSTRAINT_POINTER_NOT_NULL = new Constraint<DNAPointer>() {
+		@Override
+		public boolean satisfied(DNAPointer obj) {
+			return !obj.isNull();
+		}
+	};
+	/**
+	 * Type of the target the pointer is able to address.
+	 */
+	protected Class<?>[] targetTypeList;
+	protected long targetSize;
+	private Constructor<T> constructor;
 	
+	
+	DNAPointer(DNAPointer<T> other, long targetAddress) {
+		super(other, targetAddress);
+		this.targetTypeList = other.targetTypeList;
+		this.targetSize = other.targetSize;
+		this.constructor = other.constructor;
+	}
 
 	/**
 	 * Copy constructor. It creates another instance of the 
@@ -131,18 +159,14 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @param other Pointer to be copied.
 	 */
 	public DNAPointer(DNAPointer<T> other) {
-		super(other);
-		this.targetAddress = other.targetAddress;
-		this.targetTypes = other.targetTypes;
-		this.targetSize = other.targetSize;
+		this(other, other.__dna__address);
 	}
 	
 	
 	@SuppressWarnings("unchecked")
 	public DNAPointer(long targetAddress, Class<?>[] targetTypes, BlockMap memory) {
 		super(targetAddress, memory);
-		this.targetAddress = targetAddress;
-		this.targetTypes = (Class<T>[]) targetTypes;
+		this.targetTypeList = (Class<T>[]) targetTypes;
 		this.targetSize = __dna__sizeof(targetTypes[0]);
 	}
 	
@@ -151,16 +175,16 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @throws IOException
 	 */
 	public T get() throws IOException {
-		return __get(targetAddress);
+		return __get(__dna__address);
 	}
 	
 	public T __get(long address) throws IOException {
-		if (targetSize == 0) throw new IOException("Target type is unspecified (i.e. void*). Use cast() to specify its type first.");
-		if (isPrimitive(targetTypes[0])) {
+		if (targetSize == 0) throw new ClassCastException("Target type is unspecified (i.e. void*). Use cast() to specify its type first.");
+		if (isPrimitive(targetTypeList[0])) {
 			return getScalar(address);
-		} else if (targetTypes[0].isArray()){
+		} else if (targetTypeList[0].isArray()){
 			// TODO: array abstraction (not used in dna)
-			throw new IOException("unexpected case where pointer points on array.");
+			throw new ClassCastException("unexpected case where pointer points on array.");
 		} else {
 			return (T) getDNAFacet(address);
 		}
@@ -180,57 +204,14 @@ public class DNAPointer<T> extends DNAFacet {
 	}
 
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected T getDNAFacet(long targetAddress) throws IOException {
-		try {
-			if (targetTypes[0].equals(DNAPointer.class)) {
-				long address = __dna__block.readLong(targetAddress);
-				return (T) new DNAPointer(address, Arrays.copyOfRange(targetTypes, 1, targetTypes.length), __dna__blockMap);
-			} else {
-				return (T) DNAFacet.__dna__newInstance((Class<? extends DNAFacet>) targetTypes[0], targetAddress, __dna__blockMap);
-			}
-		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new IOException(e);
-		}
-	}
-
-
-
-	@SuppressWarnings("unchecked")
-	protected T getScalar(long address) throws IOException {
-		Object result = null;
-		
-		Class<?> type = targetTypes[0];
-		
-		if (type.equals(Byte.class) || type.equals(byte.class)) {
-			result = __dna__block.readByte(address);
-		} else if (type.equals(Short.class) || type.equals(short.class)) {
-			result = __dna__block.readShort(address);
-		} else if (type.equals(Integer.class) || type.equals(int.class)) {
-			result = __dna__block.readInt(address);
-		} else if (type.equals(Long.class) || type.equals(long.class)) {
-			result = __dna__block.readLong(address);
-		} else if (type.equals(int64.class)) {
-			result = __dna__block.readInt64(address);
-		} else if (type.equals(Float.class) || type.equals(float.class)) {
-			result = __dna__block.readFloat(address);
-		} else if (type.equals(Double.class) || type.equals(double.class)) {
-			result = __dna__block.readDouble(address);
-		} else {
-			throw new IOException("unrecognized scalar type: " + type.getName());
-		}
-		return (T)result;
-	}
-
-
 	/**
+	 * This returns the address this pointer points to.
 	 * 
 	 * @return
 	 * @throws IOException address the pointer points to
 	 */
 	public long getAddress() throws IOException {
-		return targetAddress;
+		return __dna__address;
 	}
 	
 	/**
@@ -238,7 +219,7 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @return
 	 */
 	public boolean isNull() {
-		return targetAddress == 0;
+		return __dna__address == 0;
 	}
 
 	/**
@@ -252,40 +233,9 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @return true, if you can access the memory
 	 */
 	public boolean isValid() {
-		return !isNull() && (__dna__block != null && __dna__block.contains(targetAddress)); 
+		return !isNull() && (__dna__block != null && __dna__block.contains(__dna__address)); 
 	}
 	
-	/**
-	 * C pointer arithmetics. 
-	 * <pre>
-	 * int* p;
-	 * p++; // equivalent to p.next();
-	 * </pre>
-	 */
-	public void next() {
-		targetAddress += targetSize;
-	}
-
-	/**
-	 * C pointer arithmetics. </br>
-	 * 
-	 * This method increments the address by one 
-	 * element of the target type (meaning, the address
-	 * is incremented by <code>increment*targetSize</code>).
-	 * Increment can be negative (i.e. decrement).
-	 * <br/>
-	 * <pre>
-	 * int* p;
-	 * p += increment; // equivalent to p.add(increment);
-	 * </pre>
-	 * Please note, that there is no boundary checking
-	 * so you might
-	 * @param increment 
-	 */
-	public void add(int increment) {
-		targetAddress += increment*targetSize;
-	}
-
 	/**
 	 * Type cast for pointers with just one indirection.
 	 * 
@@ -304,7 +254,7 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @return
 	 */
 	public <U> DNAPointer<U> cast(Class<U> type) {
-		return new DNAPointer<U>(targetAddress, new Class<?>[]{type}, __dna__blockMap);
+		return new DNAPointer<U>(__dna__address, new Class<?>[]{type}, __dna__blockMap);
 	}
 	
 	/**
@@ -325,7 +275,33 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @return
 	 */
 	public <U> DNAPointer<U> cast(Class<U>[] types) {
-		return new DNAPointer<U>(targetAddress, types, __dna__blockMap);
+		return new DNAPointer<U>(__dna__address, types, __dna__blockMap);
+	}
+
+	/**
+	 * Type cast for pointers with multiple levels of indirection 
+	 * (pointer on pointer). 
+	 * Casts the pointer to a different targetType.
+	 * <pre>
+	 * DNAPointer&lt;DNAPointer&lt;ListBase&gt;&gt; p; 
+	 * ..
+	 * DNAPointer&lt;DNAPointer&lt;Scene&gt;&gt; pscene = p.cast(Scene.class);
+	 * </pre>
+	 * 
+	 * <h4>Attention!</h4>
+	 * This is an even more dangerous and error prone method than 
+	 * {@link DNAPointer#cast(Class)} since you can do even more nasty stuff.
+	 * 
+	 * @param type
+	 * @return
+	 * @throws IOException 
+	 */
+	public DNAArray<T> cast(DNAArray<T> type) throws IOException {
+		if (this.getClass().equals(type)) {
+			return (DNAArray<T>)this;
+		} else {
+			throw new IOException("not implemented");
+		}
 	}
 
 	/**
@@ -338,8 +314,8 @@ public class DNAPointer<T> extends DNAFacet {
 	 */
 	@SuppressWarnings("unchecked")
 	public T[] toArray(int length) throws IOException {
-		T[] arr = (T[])Array.newInstance(targetTypes[0], length);
-		long address = targetAddress;
+		T[] arr = (T[])Array.newInstance(targetTypeList[0], length);
+		long address = __dna__address;
 		for (int i = 0; i < length; i++) {
 			arr[i] = __get(address);
 			address += targetSize;
@@ -348,10 +324,14 @@ public class DNAPointer<T> extends DNAFacet {
 	}
 	
 
+	public DNAArray<T> toDNAArray(int len) {
+		return new DNAArray<T>(__dna__address, targetTypeList, new int[]{len}, __dna__blockMap);
+	}
+	
 	public byte[] toArray(byte[] b, int off, int len)
 			throws IOException {
-		if (!targetTypes[0].equals(Byte.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(targetAddress, b, off, len);
+		if (!targetTypeList[0].equals(Byte.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, b, off, len);
 		return b;
 	}
 
@@ -362,8 +342,8 @@ public class DNAPointer<T> extends DNAFacet {
 
 
 	public short[] toArray(short[] b, int off, int len) throws IOException {
-		if (!targetTypes[0].equals(Short.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(targetAddress, b, off, len);
+		if (!targetTypeList[0].equals(Short.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, b, off, len);
 		return b;
 	}
 
@@ -374,8 +354,8 @@ public class DNAPointer<T> extends DNAFacet {
 
 
 	public int[] toArray(int[] b, int off, int len) throws IOException {
-		if (!targetTypes[0].equals(Integer.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(targetAddress, b, off, len);
+		if (!targetTypeList[0].equals(Integer.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, b, off, len);
 		return b;
 	}
 
@@ -386,8 +366,8 @@ public class DNAPointer<T> extends DNAFacet {
 
 
 	public long[] toArray(long[] b, int off, int len) throws IOException {
-		if (!targetTypes[0].equals(Long.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(targetAddress, b, off, len);
+		if (!targetTypeList[0].equals(Long.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, b, off, len);
 		return b;
 	}
 
@@ -398,8 +378,8 @@ public class DNAPointer<T> extends DNAFacet {
 
 
 	public long[] toArrayInt64(long[] b, int off, int len) throws IOException {
-		if (!targetTypes[0].equals(int64.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFullyInt64(targetAddress, b, off, len);
+		if (!targetTypeList[0].equals(int64.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFullyInt64(__dna__address, b, off, len);
 		return b;
 	}
 
@@ -410,8 +390,8 @@ public class DNAPointer<T> extends DNAFacet {
 
 
 	public float[] toArray(float[] b, int off, int len) throws IOException {
-		if (!targetTypes[0].equals(Float.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(targetAddress, b, off, len);
+		if (!targetTypeList[0].equals(Float.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, b, off, len);
 		return b;
 	}
 
@@ -422,14 +402,69 @@ public class DNAPointer<T> extends DNAFacet {
 
 
 	public double[] toArray(double[] b, int off, int len) throws IOException {
-		if (!targetTypes[0].equals(Double.class)) throw new ClassCastException("cannot cast " + targetTypes[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(targetAddress, b, off, len);
+		if (!targetTypeList[0].equals(Double.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, b, off, len);
 		return b;
 	}
 	
 	public double[] toDoubleArray(int len)
 			throws IOException {
 		return toArray(new double[len], 0, len);
+	}
+
+	
+	/* ************************************************** */
+	//                    PROTECTED
+	/* ************************************************** */
+
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected T getDNAFacet(long targetAddress) throws IOException {
+		try {
+			if (targetTypeList[0].equals(DNAPointer.class)) {
+				long address = __dna__block.readLong(targetAddress);
+				return (T) new DNAPointer(address, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __dna__blockMap);
+			} else {
+				return (T) DNAFacet.__dna__newInstance((Class<? extends DNAFacet>) targetTypeList[0], targetAddress, __dna__blockMap);
+			}
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new IOException(e);
+		}
+	}
+
+
+
+	@SuppressWarnings("unchecked")
+	protected T getScalar(long address) throws IOException {
+		Object result = null;
+		
+		Class<?> type = targetTypeList[0];
+		
+		if (type.equals(Byte.class) || type.equals(byte.class)) {
+			result = __dna__block.readByte(address);
+		} else if (type.equals(Short.class) || type.equals(short.class)) {
+			result = __dna__block.readShort(address);
+		} else if (type.equals(Integer.class) || type.equals(int.class)) {
+			result = __dna__block.readInt(address);
+		} else if (type.equals(Long.class) || type.equals(long.class)) {
+			result = __dna__block.readLong(address);
+		} else if (type.equals(int64.class)) {
+			result = __dna__block.readInt64(address);
+		} else if (type.equals(Float.class) || type.equals(float.class)) {
+			result = __dna__block.readFloat(address);
+		} else if (type.equals(Double.class) || type.equals(double.class)) {
+			result = __dna__block.readDouble(address);
+		} else {
+			throw new ClassCastException("unrecognized scalar type: " + type.getName());
+		}
+		return (T)result;
+	}
+
+	
+
+	public DNAPointerMutable<T> mutable() {
+		return new DNAPointerMutable<T>(this);
 	}
 
 }

@@ -30,9 +30,8 @@ public abstract class DNAFacet {
 		this.__dna__blockMap = __blockMap;
 	}
 	
-	
-	public DNAFacet(DNAFacet other) {
-		this.__dna__address = other.__dna__address;
+	public DNAFacet(DNAFacet other, long targetAddress) {
+		this.__dna__address = targetAddress;
 		this.__dna__block = other.__dna__block;
 		this.__dna__blockMap = other.__dna__blockMap;
 	}
@@ -89,10 +88,13 @@ public abstract class DNAFacet {
 	/**
 	 * @return pointer size according to the meta data read from blender file.
 	 */
-	private long __dna__pointersize() {
+	long __dna__pointersize() {
 		return __dna__block.data.getPointerSize();
 	}
 
+	public <T extends DNAFacet> DNAPointer<T> __dna__addressof(T object) {
+		return new DNAPointer<T>(object.__dna__address, new Class[]{object.getClass()}, object.__dna__blockMap);
+	}
 
 	/**
 	 * Tests whether the given type is a subclass of superType.
@@ -100,12 +102,25 @@ public abstract class DNAFacet {
 	 * @param superType expected base class of the given type.
 	 * @return true if true.
 	 */
-	private static boolean __dna__subclassof(Class<?> type,
-			Class<DNAFacet> superType) {
+	static boolean __dna__subclassof(Class<?> type,
+			Class<?> superType) {
 		Class<?> superClass = type.getSuperclass();
 		if (superClass == null || superClass.equals(Object.class)) return false;
 		else if (superClass.equals(superType)) return true;
 		else return __dna__subclassof(superClass, superType);
+	}
+
+	/**
+	 * Tests whether the given object is an instance of class clazz
+	 * or some subclass of class clazz.
+	 * @param type type to be tested.
+	 * @param superType expected base class of the given type.
+	 * @return true if true.
+	 */
+	static boolean __dna__instanceof(DNAFacet object, Class<?> clazz) {
+		Class<?> testClass = object.getClass();
+		if (testClass.equals(clazz)) return true;
+		return __dna__subclassof(testClass, clazz);
 	}
 
 	/**
@@ -123,6 +138,7 @@ public abstract class DNAFacet {
 	 */
 	public static DNAFacet __dna__newInstance(Class<? extends DNAFacet> type, long address,
 			BlockMap blockMap) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		// TODO: cache constructors
 		Constructor<?> constructor = type.getDeclaredConstructor(long.class, BlockMap.class);
 		return (DNAFacet) constructor.newInstance(address, blockMap);
 	}

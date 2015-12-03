@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import org.cakelab.blender.file.FileHeader.PointerSize;
-import org.cakelab.blender.model.int64;
 
 
 public abstract class CDataReadAccess implements Closeable {

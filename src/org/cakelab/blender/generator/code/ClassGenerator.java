@@ -2,7 +2,7 @@ package org.cakelab.blender.generator.code;
 
 import java.util.ArrayList;
 
-import org.cakelab.blender.doc.Documentation;
+import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.generator.ModelGenerator;
 
 public class ClassGenerator extends CodeGenerator {
@@ -14,13 +14,13 @@ public class ClassGenerator extends CodeGenerator {
 	protected ImportSectionGenerator imports;
 	protected ArrayList<GField> fields;
 	protected ArrayList<String> methods;
-	protected Documentation docs;
+	protected DocumentationProvider docs;
 	
-	public ClassGenerator(ModelGenerator modelgen, GPackage gpackage, Documentation docs) {
+	public ClassGenerator(ModelGenerator modelgen, GPackage gpackage, DocumentationProvider docs2) {
 		super(0);
 		this.modelgen = modelgen;
 		this.gpackage = gpackage;
-		this.docs = docs;
+		this.docs = docs2;
 		this.imports = new ImportSectionGenerator();
 		this.fields = new ArrayList<GField>();
 		this.methods = new ArrayList<String>();
@@ -59,7 +59,7 @@ public class ClassGenerator extends CodeGenerator {
 	}
 
 
-	public Documentation getDocs() {
+	public DocumentationProvider getDocs() {
 		return docs;
 	}
 

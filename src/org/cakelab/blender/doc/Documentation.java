@@ -2,8 +2,10 @@ package org.cakelab.blender.doc;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 
 import org.cakelab.blender.file.dna.BlendField;
@@ -13,14 +15,32 @@ import org.cakelab.json.JSONException;
 import org.cakelab.json.JSONObject;
 import org.cakelab.json.Parser;
 
-public class Documentation {
-	JSONObject structdocs;
-	private String[] authors;
+/**
+ * <p>
+ * This class is used to manage and retrieve documentation 
+ * for generated classes.
+ * </p><p>
+ * Documentation is mainly received from blender source and
+ * can be manually extended by additional information. Documentation
+ * is stored in external documentation files (see "resources/dnadoc").
+ * </p><p>
+ * This class parses the documentation files and establish lookup 
+ * tables for structs and fields of structs. During the generation
+ * of the data model, the class and method generators use this 
+ * class to lookup available documentation for classes and its members.
+ * </p>
+ * @author homac
+ *
+ */
+public class Documentation implements DocumentationProvider {
+	protected JSONObject structdocs;
+	protected String[] authors;
 
-	private String system;
-	private String module;
-	private String version;
-	private File includePath;
+	protected String system;
+	protected String module;
+	protected String version;
+	protected String source;
+	protected File includePath;
 
 	public Documentation (File docfile) throws IOException, JSONException{
 		JSONObject docjson = new Parser(new FileInputStream(docfile)).parse();
@@ -29,6 +49,7 @@ public class Documentation {
 		system = docjson.getString("system");
 		module = docjson.getString("module");
 		version = docjson.getString("version");
+		source = docjson.getString("source");
 		JSONArray authors = (JSONArray) docjson.get("authors");
 		if (authors != null) {
 			this.authors = authors.toArray(new String[0]);
@@ -73,7 +94,7 @@ public class Documentation {
 			JSONObject structdoc = (JSONObject) structdocs.get(structname);
 			
 			if (structdoc != null) {
-				overrideFields(structdoc, (JSONObject)structdocEntry.getValue());
+				overrideStructDoc(structdoc, (JSONObject)structdocEntry.getValue());
 			} else {
 				structdocs.put(structname, structdocEntry.getValue());
 			}
@@ -81,7 +102,11 @@ public class Documentation {
 		}
 	}
 
-	private void overrideFields(JSONObject structdoc, JSONObject overrides) {
+	private void overrideStructDoc(JSONObject structdoc, JSONObject overrides) {
+		String doc = overrides.getString("doc");
+		if (doc != null) {
+			structdoc.put("doc", doc);
+		}
 		JSONObject fields = (JSONObject) structdoc.get("fields");
 		if (fields == null) {
 			structdoc.put("fields", overrides.get("fields"));
@@ -97,6 +122,8 @@ public class Documentation {
 			String structname = structdoc.getKey();
 			if (structdocs.containsKey(structname)) {
 				System.err.println("Warning: Include '" + source + "' is overriding existing entry for '" + structname + "' found in include.");
+				JSONObject ostructdoc = (JSONObject) structdocs.get(structname);
+				overrideStructDoc(ostructdoc, (JSONObject) structdoc.getValue());
 			} else {
 				structdocs.put(structname, structdoc.getValue());
 			}
@@ -136,7 +163,7 @@ public class Documentation {
 		return getFieldDoc(struct.getType().getName(), field.getName());
 	}
 	
-	private String getStructDoc(String structname) {
+	protected String getStructDoc(String structname) {
 		String result = null;
 		JSONObject structdoc = (JSONObject) structdocs.get(structname);
 		if (structdoc != null) {
@@ -145,7 +172,7 @@ public class Documentation {
 		return result;
 	}
 	
-	private String getFieldDoc(String structname, String fieldname) {
+	protected String getFieldDoc(String structname, String fieldname) {
 		String result = null;
 		if (structdocs == null)  return result;
 		
@@ -203,6 +230,7 @@ public class Documentation {
 			}
 		}
 	}
+	
 	public static void main (String [] args) throws IOException, JSONException {
 		Documentation doc = new Documentation(new File("resources/dnadoc/2.69/DNA_documentation.json"));
 		
@@ -215,6 +243,23 @@ public class Documentation {
 	public String getPath() {
 		return includePath.toString();
 	}
+
+	public void write(File out) throws UnsupportedEncodingException, IOException {
+		JSONObject root = new JSONObject();
+		
+		root.put("system", system);
+		root.put("module", module);
+		root.put("version", version);
+		root.put("source", source);
+		root.put("structs", structdocs);
+		FileOutputStream fout = new FileOutputStream(out);
+		fout.write(root.toString().getBytes("UTF-8"));
+	}
+
+	public String getSource() {
+		return source;
+	}
+
 
 
 }

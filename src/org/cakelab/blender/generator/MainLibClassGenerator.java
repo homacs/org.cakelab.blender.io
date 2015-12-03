@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.cakelab.blender.doc.Documentation;
+import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.BlenderFile;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.BlendStruct;
@@ -24,8 +24,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 	private GPackage dnaPackage;
 
 
-	public MainLibClassGenerator(ModelGenerator modelgen, GPackage gpackage, GPackage dnaPackage, Documentation docs) {
-		super(modelgen, gpackage, docs);
+	public MainLibClassGenerator(ModelGenerator modelgen, GPackage gpackage, GPackage dnaPackage, DocumentationProvider docs2) {
+		super(modelgen, gpackage, docs2);
 		this.dnaPackage = dnaPackage;
 		classname = "Main";
 		

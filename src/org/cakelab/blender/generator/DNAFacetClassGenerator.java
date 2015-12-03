@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.cakelab.blender.doc.Documentation;
+import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.block.BlockMap;
 import org.cakelab.blender.file.dna.BlendField;
 import org.cakelab.blender.file.dna.BlendStruct;
@@ -23,9 +23,9 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 
 	private DNAFacetGetMethodGenerator readgen;
 	
-	public DNAFacetClassGenerator(ModelGenerator modelGenerator, GPackage gpackage, Documentation docs) 
+	public DNAFacetClassGenerator(ModelGenerator modelGenerator, GPackage gpackage, DocumentationProvider docs2) 
 	{
-		super(modelGenerator, gpackage, docs);
+		super(modelGenerator, gpackage, docs2);
 		this.readgen = new DNAFacetGetMethodGenerator(this);
 	}
 
@@ -62,23 +62,6 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 			if (text != null) {
 				classdoc.appendln("<h3>Class Documentation</h3>");
 				classdoc.appendln(text);
-				classdoc.appendln("<h3>Documentation Source:</h3>");
-				classdoc.appendln("<p>"
-						+ "This documentation is automatically retrieved from an externally\n"
-						+ "maintained database by Java Blends model generator. "
-						+ "It is based on information found in Blender source code."
-						+ "</p>");
-				classdoc.appendln();
-				classdoc.appendln("<b>Database:</b>");
-				classdoc.appendln("<ul>");
-				classdoc.appendln("<li>System: " + docs.getSystem() + "</li>");
-				classdoc.appendln("<li>Module: " + docs.getModule() + "</li>");
-				classdoc.appendln("<li>Version: " + docs.getVersion() + "</li>");
-				classdoc.appendln("<li>Path: " + docs.getPath() + "</li>");
-				classdoc.appendln("</ul>");
-				for (String author : docs.getAuthors()) {
-					classdoc.appendln("@author " + author);
-				}
 			} else {
 				classdoc.appendln("<br/><br/>No documentation found.");
 			}

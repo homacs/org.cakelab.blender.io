@@ -9,9 +9,6 @@
 		"DNA_listBase.json",
 		"DNA_ID.json" 
 	],
-	"inherits" : "../dna-0.json",
-	
-	
 	"doc" : "
 			 
 

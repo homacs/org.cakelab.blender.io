@@ -5,8 +5,7 @@
 	"authors" : [
 		"Holger Machens"
 	],
-	"inherits" : "../dna-0.json",
-	"includes" : [ "DNA_listBase.json" ],
+	"includes" : [ "DNA_listBase.json"],
 	"structs" : {
 		"ID" : {
 			"inherits" : [ 
@@ -49,8 +48,8 @@
 						</pre>",
 				"subtype" : "Subtype of the property data. One of
 						<pre>
-							IDP_STRING_SUB_UTF8  0 /* default */
-							IDP_STRING_SUB_BYTE  1 /* arbitrary byte array, _not_ null terminated */
+							IDP_STRING_SUB_UTF8  0 ( default )
+							IDP_STRING_SUB_BYTE  1 ( arbitrary byte array, _not_ null terminated )
 						</pre>",
 				"name" : "propertie's name",
 				"saved" : "saved is used to indicate if this struct has been saved yet.",

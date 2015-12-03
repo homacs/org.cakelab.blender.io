@@ -2,15 +2,14 @@ package org.cakelab.blender.generator;
 
 import java.io.IOException;
 
-import org.cakelab.blender.doc.Documentation;
+import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.dna.BlendField;
 import org.cakelab.blender.file.dna.BlendStruct;
-import org.cakelab.blender.generator.code.CodeSection;
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.MethodGenerator;
 import org.cakelab.blender.generator.type.CType;
-import org.cakelab.blender.generator.type.JavaType;
 import org.cakelab.blender.generator.type.CType.CTypeType;
+import org.cakelab.blender.generator.type.JavaType;
 import org.cakelab.blender.generator.type.JavaType.JTypeType;
 import org.cakelab.blender.model.DNAArray;
 import org.cakelab.blender.model.DNAPointer;
@@ -20,7 +19,7 @@ import org.cakelab.blender.model.int64;
 
 public class DNAFacetGetMethodGenerator extends MethodGenerator {
 
-	private Documentation docs;
+	private DocumentationProvider docs;
 	private long pointersize;
 	private String fielddoc;
 
@@ -242,10 +241,10 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		javadoc.appendln();
 		javadoc.appendln("Get method for struct member '" + field.getName() + "'.");
 		if (fielddoc != null) {
-			javadoc.appendln("<h4>Field Documentation</h4>");
+			javadoc.appendln("<h3>Field Documentation</h3>");
 			javadoc.appendln(fielddoc);
 		}
-		javadoc.appendln("<h4>Metadata</h4>");
+		javadoc.appendln("<h3>Metadata</h3>");
 		javadoc.appendln("<ul>");
 		javadoc.appendln("<li>Field: '" + field.getName() + "'</li>");
 		javadoc.appendln("<li>Signature: '" + field.getSignature() + "'</li>");
