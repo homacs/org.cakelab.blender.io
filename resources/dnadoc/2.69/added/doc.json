@@ -2,6 +2,7 @@
 	"system" : "Blender",
 	"module" : "DNA",
 	"version" : "2.69",
+	"source" : "Java Blend",
 	"authors" : [
 		"Holger Machens"
 	],

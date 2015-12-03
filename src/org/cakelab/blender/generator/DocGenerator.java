@@ -12,11 +12,11 @@ import org.cakelab.json.JSONException;
 public class DocGenerator implements DocumentationProvider {
 	private Documentation[] docs;
 
-	public DocGenerator(File[] docfiles) throws IOException, JSONException {
+	public DocGenerator(File[] docfiles, boolean debug) throws IOException, JSONException {
 		docs = new Documentation[docfiles.length];
 		int i = 0;
 		for (File f : docfiles) {
-			docs[i++] = new Documentation(f);
+			docs[i++] = new Documentation(f, debug);
 		}
 	}
 

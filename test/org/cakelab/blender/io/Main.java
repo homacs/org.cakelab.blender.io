@@ -23,5 +23,6 @@ public class Main {
 				System.out.println(block.header.getCode().toString());
 			}
 		}
+		blender.close();
 	}
 }

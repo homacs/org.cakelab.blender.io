@@ -2,7 +2,6 @@ package org.cakelab.blender.doc;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -41,8 +40,10 @@ public class Documentation implements DocumentationProvider {
 	protected String version;
 	protected String source;
 	protected File includePath;
+	private boolean debug;
 
-	public Documentation (File docfile) throws IOException, JSONException{
+	public Documentation (File docfile, boolean debug) throws IOException, JSONException{
+		this.debug = debug;
 		JSONObject docjson = new Parser(new FileInputStream(docfile)).parse();
 		
 		includePath = docfile.getCanonicalFile().getParentFile();
@@ -59,10 +60,10 @@ public class Documentation implements DocumentationProvider {
 		String filename = docjson.getString("inherits");
 		if (filename != null) {
 			try {
-				structdocs = new Documentation(new File(includePath, filename)).structdocs;
+				structdocs = new Documentation(new File(includePath, filename), debug).structdocs;
 			} catch (IOException | JSONException e) {
-				System.err.println("Warning: couldn't read base documentation'" + filename + "' inherited by '" + docfile.getName() + "'.");
-				System.err.println("reason: " + e.getMessage());
+				warn("couldn't read base documentation'" + filename + "' inherited by '" + docfile.getName() + "'.");
+				warn("reason: " + e.getMessage());
 			}
 		}
 		
@@ -71,11 +72,11 @@ public class Documentation implements DocumentationProvider {
 			for (int i = 0; i < includeFiles.size(); i++) {
 				filename = (String)includeFiles.get(i);
 				try {
-					Documentation include = new Documentation(new File(includePath, filename));
+					Documentation include = new Documentation(new File(includePath, filename), debug);
 					includeStructs(include.structdocs, filename);
 				} catch (IOException | JSONException e) {
-					System.err.println("Warning: couldn't read doc file '" + filename + "' included by '" + docfile.getName() + "'.");
-					System.err.println("reason: " + e.getMessage());
+					warn("couldn't read doc file '" + filename + "' included by '" + docfile.getName() + "'.");
+					warn("reason: " + e.getMessage());
 				}
 			}
 		}
@@ -121,7 +122,7 @@ public class Documentation implements DocumentationProvider {
 		for (Entry<String, Object> structdoc : includes.entrySet()) {
 			String structname = structdoc.getKey();
 			if (structdocs.containsKey(structname)) {
-				System.err.println("Warning: Include '" + source + "' is overriding existing entry for '" + structname + "' found in include.");
+				warn("include '" + source + "' is overriding existing entry for '" + structname + "' found in include.");
 				JSONObject ostructdoc = (JSONObject) structdocs.get(structname);
 				overrideStructDoc(ostructdoc, (JSONObject) structdoc.getValue());
 			} else {
@@ -209,10 +210,16 @@ public class Documentation implements DocumentationProvider {
 				}
 			}
 		} else {
-			System.err.println("could not resolve inheritance of " + structname + ".");
-			System.err.println("reason: " + structname + " is not defined");
+			warn("could not resolve inheritance of " + structname + ".");
+			warn("reason: " + structname + " is not defined");
 		}
 		return structdoc;
+	}
+
+	private void warn(String string) {
+		if (debug) {
+			System.err.println("docgen: warn: " + string);
+		}
 	}
 
 	private void inheritFields(JSONObject structdoc, JSONObject base) {
@@ -231,15 +238,6 @@ public class Documentation implements DocumentationProvider {
 		}
 	}
 	
-	public static void main (String [] args) throws IOException, JSONException {
-		Documentation doc = new Documentation(new File("resources/dnadoc/2.69/DNA_documentation.json"));
-		
-		System.out.println(doc.getStructDoc("ID"));
-		System.out.println(doc.getFieldDoc("ID", "next"));
-		System.out.println(doc.getFieldDoc("ID", "properties"));
-		
-	}
-
 	public String getPath() {
 		return includePath.toString();
 	}
@@ -254,6 +252,7 @@ public class Documentation implements DocumentationProvider {
 		root.put("structs", structdocs);
 		FileOutputStream fout = new FileOutputStream(out);
 		fout.write(root.toString().getBytes("UTF-8"));
+		fout.close();
 	}
 
 	public String getSource() {

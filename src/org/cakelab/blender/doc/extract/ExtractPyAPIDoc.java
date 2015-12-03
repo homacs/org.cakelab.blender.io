@@ -27,7 +27,7 @@ public class ExtractPyAPIDoc extends Documentation {
 		while (null != (line = in.readLine())) {
 			parse(line);
 		}
-		
+		out = new File(out, version + "/pyapi/doc.json");
 		super.write(out);
 		
 	}
@@ -65,7 +65,7 @@ public class ExtractPyAPIDoc extends Documentation {
 		i = value.indexOf(" ");
 		if (i<0) return; // no doc
 		
-		String type = value.substring(0, i);
+		// String type = value.substring(0, i);
 		
 		String documentation = value.substring(i).trim();
 		
@@ -100,11 +100,51 @@ public class ExtractPyAPIDoc extends Documentation {
 
 	public static void main(String[] args) throws IOException {
 
-		String version = "2.69";
-		ExtractPyAPIDoc extractor = new ExtractPyAPIDoc(
-				new File("/tmp/pyapidoc-" + version + ".txt"), 
-				version, 
-				new File("resources/dnadoc/" + version + "/pyapi/doc.json"));
+		String version = null;
+		
+		File input = null;
+		File output = new File("resources/dnadoc");
+		
+		for (int i = 0; i < args.length; i++) {
+			String name = args[i++];
+			String value;
+			if (i == args.length) {
+				System.err.println("missing parameter for argument " + name);
+				System.exit(-1);
+			} else {
+				value = args[i];
+
+				if (name.equals("-v")) {
+					version = value;
+				} else if (name.equals("-in")) {
+					input = new File(value);
+					if (!input.exists() || !input.canRead() || input.isDirectory()) {
+						System.err.println("Can't read: " + value);
+						System.exit(-1);
+					}
+				} else if (name.equals("-out")) {
+					output = new File(value);
+					if (!output.isDirectory() || !output.canWrite()) {
+						System.err.println("Can't write to output folder: " + value);
+						System.exit(-1);
+					}
+				} else {
+					System.err.println("unknown argument " + name);
+					System.exit(-1);
+				}
+			}
+		}
+		
+		// TODO: arguments check
+		if (version == null || input == null) {
+			System.err.println("error: missing arguments.");
+			System.exit(-1);
+		}
+		
+		//
+		// convert to Java Blend documentation system.
+		//
+		new ExtractPyAPIDoc(input, version, output);
 		
 	}
 
