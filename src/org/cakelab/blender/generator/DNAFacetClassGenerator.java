@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.cakelab.blender.doc.DocumentationProvider;
+import org.cakelab.blender.file.Encoding;
 import org.cakelab.blender.file.block.BlockMap;
-import org.cakelab.blender.file.dna.BlendField;
-import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.GComment;
+import org.cakelab.blender.generator.code.GField;
 import org.cakelab.blender.generator.code.GPackage;
+import org.cakelab.blender.generator.type.CField;
+import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.CType;
 import org.cakelab.blender.generator.type.JavaType;
 import org.cakelab.blender.generator.type.Renaming;
@@ -22,30 +24,42 @@ import org.cakelab.blender.model.DNATypeInfo;
 public class DNAFacetClassGenerator extends ClassGenerator {
 
 	private DNAFacetGetMethodGenerator readgen;
+	private DNAFacetSetMethodGenerator writegen;
+	private DNAFacetFieldDescGenerator fieldgen;
+	private String classname;
 	
 	public DNAFacetClassGenerator(ModelGenerator modelGenerator, GPackage gpackage, DocumentationProvider docs2) 
 	{
 		super(modelGenerator, gpackage, docs2);
 		this.readgen = new DNAFacetGetMethodGenerator(this);
+		this.writegen = new DNAFacetSetMethodGenerator(this);
+		this.fieldgen = new DNAFacetFieldDescGenerator(this);
 	}
 
 	
 	
-	public void visit(BlendStruct struct) throws IOException {
+	public void visit(CStruct struct) throws IOException {
 		reset();
+
+		classname = Renaming.mapStruct2Class(struct.getSignature());
+
+		
 		
 		addImport(DNAFacet.class);
 		addImport(DNATypeInfo.class);
 		addImport(BlockMap.class);
-		long offset = 0;
-		for (BlendField field : struct.getFields()) {
-			CType ctype = new CType(field);
+		long offset32 = 0;
+		long offset64 = 0;
+		for (CField field : struct.getFields()) {
+			CType ctype = field.getType();
 			JavaType jtype = new JavaType(ctype);
-			readgen.visitField(offset, struct, field, ctype, jtype);
-			offset += ctype.sizeof(modelgen.pointerSize);
+			fieldgen.visitField(offset32, offset64, struct, field, jtype);
+			readgen.visitField(offset32, offset64, struct, field, jtype);
+			writegen.visitField(offset32, offset64, struct, field, jtype);
+			offset32 += ctype.sizeof(Encoding.ADDR_WIDTH_32BIT);
+			offset64 += ctype.sizeof(Encoding.ADDR_WIDTH_64BIT);
 		}
 		
-		String classname = Renaming.mapStruct2Class(struct.getType().getName());
 		PrintStream out = new PrintStream(new FileOutputStream(new File(gpackage.getDir(), classname + ".java")));
 		try {
 			out.println("package " + gpackage + ";");
@@ -54,11 +68,11 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 			out.println();
 			
 			GComment classdoc = new GComment(GComment.Type.JavaDoc);
-			String structname = struct.getType().getName();
+			String structname = struct.getSignature();
 			classdoc.appendln();
 			classdoc.appendln("Generated facet for DNA struct type '" + structname + "'.");
 			classdoc.appendln();
-			String text = getDocs().getStructDoc(struct);
+			String text = getDocs().getStructDoc(structname);
 			if (text != null) {
 				classdoc.appendln("<h3>Class Documentation</h3>");
 				classdoc.appendln(text);
@@ -67,10 +81,14 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 			}
 			out.println(classdoc.toString(0));
 			
-			out.println("@" + DNATypeInfo.class.getSimpleName() + "(size=" + struct.getType().getSize() + ")");
+			out.println("@" + DNATypeInfo.class.getSimpleName() + "(size32=" + struct.sizeof(Encoding.ADDR_WIDTH_32BIT) + ", size64=" + struct.sizeof(Encoding.ADDR_WIDTH_64BIT) + ")");
 			out.println("public class " + classname + " extends " + DNAFacet.class.getSimpleName() + " {");
 			out.println();
 
+			for (GField constField : constFields) {
+				out.println(constField.toString("\t"));
+			}
+			
 			//
 			// Create constructor
 			//
@@ -95,12 +113,18 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 	public void reset() {
 		super.reset();
 		readgen.reset();
+		writegen.reset();
+		fieldgen.reset();
 	}
 
 
 
-	public long getPointerSize() {
-		return modelgen.pointerSize;
+	@Override
+	public String getClassName() {
+		return classname;
 	}
+
+	
+
 
 }

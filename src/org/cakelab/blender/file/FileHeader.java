@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 
 import org.cakelab.blender.file.util.ASCII;
-import org.cakelab.blender.file.util.CDataReadAccess;
+import org.cakelab.blender.file.util.CDataReadWriteAccess;
 
 /**
  * The first 12 bytes of every blend-file is the file-header. 
@@ -69,7 +69,7 @@ public class FileHeader {
 			return "" + major + '.' + minor;
 		}
 
-		public static Version read(CDataReadAccess in) throws IOException {
+		public static Version read(CDataReadWriteAccess in) throws IOException {
 			byte[] str = new byte[3];
 			in.readFully(str);
 			int v = Integer.valueOf(ASCII.toString(str));
@@ -89,7 +89,7 @@ public class FileHeader {
 	/** Version of Blender the file was created in; "248" means version 2.48 */
 	Version version;
 	
-	public void read(CDataReadAccess in) throws IOException {
+	public void read(CDataReadWriteAccess in) throws IOException {
 		byte[] magic = new byte[BLENDER_MAGIC.length()];
 		in.readFully(magic);
 		

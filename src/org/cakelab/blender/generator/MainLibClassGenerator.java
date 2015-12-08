@@ -5,15 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.BlenderFile;
-import org.cakelab.blender.file.dna.BlendModel;
-import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GField;
 import org.cakelab.blender.generator.code.GPackage;
+import org.cakelab.blender.generator.type.CField;
+import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.Renaming;
 import org.cakelab.blender.model.MainBase;
 
@@ -60,15 +61,15 @@ public class MainLibClassGenerator extends ClassGenerator {
 
 
 
-	public void visit(BlendStruct struct) throws FileNotFoundException {
-		if (BlendModel.isListElement(struct)) {
-			GField gfield = addField("private", Renaming.mapStruct2Class(struct.getType().getName()), toFirstLowerCase(struct.getType().getName()));
+	public void visit(CStruct struct) throws FileNotFoundException {
+		if (MainBase.isLibraryElement(struct)) {
+			GField gfield = addField("private", Renaming.mapStruct2Class(struct.getSignature()), toFirstLowerCase(struct.getSignature()));
 			addSetMethod(gfield);
 		}
 	}
 
 	
-	
+
 	private void addGetMethod(GField field) {
 		StringBuffer method = new StringBuffer();
 		method.append("public " + field.getType() + " get" +  toCamelCase(field.getName()) + "(){ return " + field.getName() + ";}");
@@ -131,9 +132,26 @@ public class MainLibClassGenerator extends ClassGenerator {
 
 	@Override
 	public GField addField(String modifiers, String type, String name,
-			String comment) {
-		GField field = super.addField(modifiers, type, name, comment);
+			GComment gcomment) {
+		GField field = super.addField(modifiers, type, name, gcomment);
 		addGetMethod(field);
 		return field;
 	}
+
+	public GField addField(String modifiers, String type, String name,
+			String comment) {
+		GComment gcomment = new GComment(GComment.Type.JavaDoc);
+		gcomment.appendln(comment);
+		return addField(modifiers, type, name, gcomment);
+	}
+
+
+
+	@Override
+	public String getClassName() {
+		return classname;
+	}
+
+
+
 }

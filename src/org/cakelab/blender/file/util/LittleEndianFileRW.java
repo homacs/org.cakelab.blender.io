@@ -2,11 +2,12 @@ package org.cakelab.blender.file.util;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteOrder;
 
-public class LittleEndianDataInputStream extends CDataFileInputStream {
+public class LittleEndianFileRW extends CDataFileRWAccess {
 
 
-	public LittleEndianDataInputStream(RandomAccessFile in, int pointerSize) {
+	public LittleEndianFileRW(RandomAccessFile in, int pointerSize) {
 		super(in, pointerSize);
 	}
 	
@@ -16,8 +17,18 @@ public class LittleEndianDataInputStream extends CDataFileInputStream {
 	}
 
 	@Override
+	public final void writeShort(short value) throws IOException {
+		in.writeShort(swapShort(value));
+	}
+
+	@Override
 	public final int readInt() throws IOException {
 		return swapInteger(in.readInt());
+	}
+
+	@Override
+	public final void writeInt(int value) throws IOException {
+		in.writeInt(swapInteger(value));
 	}
 
 	@Override
@@ -26,13 +37,28 @@ public class LittleEndianDataInputStream extends CDataFileInputStream {
 	}
 
 	@Override
+	public final void writeInt64(long value) throws IOException {
+		in.writeLong(swapLong(value));
+	}
+
+	@Override
 	public final float readFloat() throws IOException {
 		return swapFloat(in.readFloat());
 	}
 
 	@Override
+	public final void writeFloat(float value) throws IOException {
+		in.writeFloat(swapFloat(value));
+	}
+
+	@Override
 	public final double readDouble() throws IOException {
 		return swapDouble(in.readDouble());
+	}
+
+	@Override
+	public final void writeDouble(double value) throws IOException {
+		in.writeDouble(swapDouble(value));
 	}
 
 
@@ -95,5 +121,10 @@ public class LittleEndianDataInputStream extends CDataFileInputStream {
     public static double swapDouble(double value) {
         return Double.longBitsToDouble( swapLong( Double.doubleToLongBits( value ) ) );
     }
+
+	@Override
+	public ByteOrder getByteOrder() {
+		return ByteOrder.LITTLE_ENDIAN;
+	}
 
 }

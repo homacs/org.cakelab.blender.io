@@ -8,7 +8,7 @@ package org.cakelab.blender.model;
  * TODO: find another solution for int64
  * @author homac
  */
-@DNATypeInfo(size=8)
+@DNATypeInfo(size32=8, size64=8)
 public class int64 {
 	public long v;
 }

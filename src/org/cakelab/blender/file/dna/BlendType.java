@@ -1,5 +1,6 @@
 package org.cakelab.blender.file.dna;
 
+
 public class BlendType {
 
 	String name;
@@ -13,7 +14,7 @@ public class BlendType {
 	public String getName() {
 		return name;
 	}
-
+	
 	public short getSize() {
 		return size;
 	}

@@ -3,6 +3,7 @@ package org.cakelab.blender.generator;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.BlenderFile;
@@ -10,22 +11,21 @@ import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.blender.file.dna.BlendType;
 import org.cakelab.blender.generator.code.GPackage;
+import org.cakelab.blender.generator.type.CStruct;
+import org.cakelab.blender.generator.type.MetaModel;
 import org.cakelab.json.JSONException;
 
 public class ModelGenerator {
 	
 	
 	
-	private BlendModel model;
-	private HashMap<BlendType, BlendStruct> classes = new HashMap<BlendType, BlendStruct>();
-	int pointerSize;
+	private MetaModel model;
+	private HashSet<CStruct> classes = new HashSet<CStruct>();
 
 
-	public ModelGenerator(BlendModel model, int pointerSize) {
-		this.model = model;
-		this.pointerSize = pointerSize;
+	public ModelGenerator(BlendModel model) {
+		this.model = new MetaModel(model);
 	}
-
 
 	private void generate(File destinationDir, String packageName, DocumentationProvider docs, boolean debug) throws IOException {
 		if(!destinationDir.exists()) throw new IOException("Directory " + destinationDir + "does not exist");
@@ -35,8 +35,8 @@ public class ModelGenerator {
 		DNAFacetClassGenerator classgen = new DNAFacetClassGenerator(this, dnaPackage, docs);
 		MainLibClassGenerator libgen = new MainLibClassGenerator(this, loaderPackage, dnaPackage, docs);
 
-		for (BlendStruct struct : model.getStructs()) {
-			if (!classes.containsKey(struct.getType())) {
+		for (CStruct struct : model.getStructs()) {
+			if (!classes.contains(struct)) {
 				classgen.visit(struct);
 				libgen.visit(struct);
 			}
@@ -49,6 +49,7 @@ public class ModelGenerator {
 	
 	public static void main(String[] args) throws IOException, JSONException {
 		// TODO: read version from file
+		// TODO: map file version to blender documentation version 
 		String version = null;
 		File input = null;
 		File output = null;
@@ -78,8 +79,12 @@ public class ModelGenerator {
 					javaPackage = value;
 				} else if (name.equals("-d")) {
 					debug = Boolean.valueOf(value);
+				} else if (name.equals("-h") || name.equals("--help") || name.equals("?")) {
+					synopsis();
+					System.exit(0);
 				} else {
 					System.err.println("unknown argument " + name);
+					synopsis();
 					System.exit(-1);
 				}
 			}
@@ -88,17 +93,13 @@ public class ModelGenerator {
 		if (version == null || input == null || output == null || javaPackage == null) {
 			System.err.println("error: missing arguments.");
 			System.err.println();
-			Class<?> clazz = ModelGenerator.class;
-			System.err.println("synopsis: java " + clazz.getName() + " -in input.blend -out output/src/path -v blenderVersionStr -p target.package.name");
-			System.err.println("example: java " + clazz.getName() + " -in cube.blend -out ../project/gen -v 2.69 -p org.blender");
-			System.err.println("         reads type info from cube.blend which was stored from blender v2.69 and generates class in folder ../project/gen/org/blender");
-			System.err.println("         Use \"-d true\" to get additional debug information during class generation.");
+			synopsis();
 			System.exit(-1);
 		}
 		
 		
 		BlenderFile blend = new BlenderFile(input);
-		ModelGenerator generator = new ModelGenerator(blend.readBlenderModel(), blend.getPointerSize());
+		ModelGenerator generator = new ModelGenerator(blend.readBlenderModel());
 		blend.close();
 		File[] docfiles = {
 				new File("resources/dnadoc/" + version + "/added/doc.json"),
@@ -107,5 +108,14 @@ public class ModelGenerator {
 		};
 		DocumentationProvider docs = new DocGenerator(docfiles, debug);
 		generator.generate(output, javaPackage, docs, debug);
+	}
+
+
+	private static void synopsis() {
+		Class<?> clazz = ModelGenerator.class;
+		System.err.println("Synopsis: java " + clazz.getName() + " -in input.blend -out output/src/path -v blenderVersionStr -p target.package.name");
+		System.err.println("Example: java " + clazz.getName() + " -in cube.blend -out ../project/gen -v 2.69 -p org.blender");
+		System.err.println("         reads type info from cube.blend which was stored from blender v2.69 and generates class in folder ../project/gen/org/blender");
+		System.err.println("         Use \"-d true\" to get additional debug information during class generation.");
 	}
 }

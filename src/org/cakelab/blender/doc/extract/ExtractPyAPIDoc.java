@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.cakelab.blender.doc.Documentation;
+import org.cakelab.blender.generator.ModelGenerator;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONObject;
 
@@ -128,16 +129,23 @@ public class ExtractPyAPIDoc extends Documentation {
 						System.err.println("Can't write to output folder: " + value);
 						System.exit(-1);
 					}
+				} else if (name.equals("-h") || name.equals("--help") || name.equals("?")) {
+					synopsis();
+					System.exit(0);
 				} else {
 					System.err.println("unknown argument " + name);
+					synopsis();
 					System.exit(-1);
 				}
 			}
 		}
-		
-		// TODO: arguments check
+		//
+		// print help if arguments are missing
+		//
 		if (version == null || input == null) {
 			System.err.println("error: missing arguments.");
+			System.err.println();
+			synopsis();
 			System.exit(-1);
 		}
 		
@@ -146,6 +154,15 @@ public class ExtractPyAPIDoc extends Documentation {
 		//
 		new ExtractPyAPIDoc(input, version, output);
 		
+	}
+
+	private static void synopsis() {
+		Class<?> clazz = ModelGenerator.class;
+		System.err.println("Synopsis: java " + clazz.getName() + " -in docTextFile -out outputFolder -v blenderVersionStr");
+		System.err.println("Example: java " + clazz.getName() + " -in pyapi.txt -out ./resources/dnadoc -v 2.69");
+		System.err.println("\t\treads documentation text file pyapi.txt retreived from blender\n"
+						 + "\t\tv2.69 and generates a Java Blend documentation in folder\n"
+						 + "\t\t./resources/dnadoc");
 	}
 
 }

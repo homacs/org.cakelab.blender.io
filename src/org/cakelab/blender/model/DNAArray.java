@@ -70,6 +70,12 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		return dimensions[0];
 	}
 
+	/**
+	 * delivers the actual native size of this array considering
+	 * its architecture specific encoding.
+	 * 
+	 * @return size of this array in bytes
+	 */
 	public long sizeof() {
 		return length() * componentSize;
 	}
@@ -99,6 +105,31 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 			return getDNAFacet(address);
 		}
 	}
+
+	public void set(int index, T elem) throws IOException {
+		long address = getAddress(index);
+		if (isPrimitive(componentType)) {
+			setScalar(address, elem);
+		} else if (componentType.equals(DNAPointer.class)) {
+			DNAPointer<?> p = (DNAPointer<?>) elem;
+			__dna__block.writeLong(address, p.__dna__address);
+		} else {
+			// object or array
+			
+			if (__dna__equals((DNAFacet)elem, address)) {
+				// this is a reference on the object, which is already inside the array
+			} else if (__dna__same__encoding(this, (DNAFacet)elem)) {
+				// we can perform a low level copy
+				__dna__native__copy(__dna__block, address, (DNAFacet)elem);
+			} else {
+				// we have to reinterpret data to convert to different encoding
+				__dna__generic__copy((DNAFacet)get(index));
+			}
+		}
+	}
+
+
+	
 
 	@SuppressWarnings("unchecked")
 	public T[] toArray() throws IOException {
@@ -164,14 +195,35 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		return size;
 	}
 
+	
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This is for arrays only. Behaviour is unspecified 
+	 * if the given parameter source is not an array!
+	 * 
+	 * @param source
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void __dna__generic__copy(DNAFacet sourceArray) throws IOException {
+		assert(sourceArray instanceof DNAArray);
+		DNAArray<T> source = (DNAArray<T>)sourceArray;
+		
+		for (int i = 0; i < source.length(); i++) {
+			this.set(i, source.get(i));
+		}
+	}
+
+	
+	
 	@Override
 	public Iterator<T> iterator() {
 		return new DNAArrayIterator<T>(this);
 	}
 
-	
-	
-	
 	static class DNAArrayIterator<T> extends DNAArray<T> implements Iterator<T> {
 
 		private int current;
@@ -212,4 +264,8 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		}
 
 	}
+
+
+
+
 }

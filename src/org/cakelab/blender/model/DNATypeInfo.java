@@ -20,5 +20,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface DNATypeInfo {
-	long size();
+	long size32();
+	long size64();
 }

@@ -1,6 +1,8 @@
 package org.cakelab.blender.generator.code;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class CodeSection extends CodeGenerator {
 	ArrayList<String> lines = new ArrayList<String>();
@@ -53,12 +55,32 @@ public class CodeSection extends CodeGenerator {
 		return this;
 	}
 
-	public int lines() {
+	public int numLines() {
 		return lines.size();
+	}
+	
+	public ArrayList<String> getLines() {
+		return lines;
 	}
 
 	public CodeSection append(int i) {
 		return append(Integer.toString(i));
+	}
+
+	/**
+	 * Sorts existing lines by alphabetic order. Usefule to sort 
+	 * for example import statements.
+	 */
+	public void sortLines() {
+		Collections.sort(lines);
+	}
+
+	/**
+	 * Sorts existing lines by alphabetic order. Usefule to sort 
+	 * for example import statements.
+	 */
+	public void sortLines(Comparator<String> c) {
+		Collections.sort(lines, c);
 	}
 
 }

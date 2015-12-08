@@ -2,23 +2,28 @@ package org.cakelab.blender.generator.code;
 public class GField extends CodeGenerator {
 
 	protected String signature;
-	protected String comment;
+	protected GComment comment;
 	protected String modifiers;
 	protected String type;
 	protected String name;
+	protected String initialiser;
 
-	public GField(String modifiers, String type, String name, String comment) {
+	public GField(String modifiers, String type, String name, String initialiser, GComment javadoc) {
 		super(1);
 		this.modifiers = modifiers;
 		this.type = type;
 		this.name = name;
+		this.initialiser = initialiser;
 		this.signature = modifiers + " " + type + " " + name;
-		this.comment = comment;
+		if (initialiser != null) {
+			this.signature += " = " + initialiser;
+		}
+		this.comment = javadoc;
 	}
 
 	public String toString(String indent) {
 		String result = "";
-		if (comment != null) result += indent + "/** " + comment + " */" + NL;
+		if (comment != null) result += comment.toString(1);
 		result += indent + signature + ';' + NL;
 		return result;
 	}
@@ -27,7 +32,7 @@ public class GField extends CodeGenerator {
 	public void reset() {
 	}
 
-	public String getComment() {
+	public GComment getComment() {
 		return comment;
 	}
 

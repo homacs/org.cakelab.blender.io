@@ -41,7 +41,7 @@ public class Identifier {
 	 * @param in
 	 * @throws IOException
 	 */
-	public void read(CDataReadAccess in) throws IOException {
+	public void read(CDataReadWriteAccess in) throws IOException {
 		in.readFully(code);
 	}
 
@@ -80,7 +80,7 @@ public class Identifier {
 	 * @param expected
 	 * @throws IOException
 	 */
-	public void consume(CDataReadAccess in, Identifier expected) throws IOException {
+	public void consume(CDataReadWriteAccess in, Identifier expected) throws IOException {
 		Identifier ident = new Identifier();
 		ident.read(in);
 		if (!ident.equals(expected)) throw new IOException("input did not match expected identifier '" + expected + "'");

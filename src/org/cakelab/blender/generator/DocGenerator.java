@@ -21,7 +21,7 @@ public class DocGenerator implements DocumentationProvider {
 	}
 
 	@Override
-	public String getStructDoc(BlendStruct struct) {
+	public String getStructDoc(String struct) {
 		StringBuffer lines = new StringBuffer();
 		
 		for (Documentation doc : docs) {
@@ -35,7 +35,7 @@ public class DocGenerator implements DocumentationProvider {
 	}
 
 	@Override
-	public String getFieldDoc(BlendStruct struct, BlendField field) {
+	public String getFieldDoc(String struct, String field) {
 		StringBuffer lines = new StringBuffer();
 		
 		for (Documentation doc : docs) {
@@ -47,4 +47,5 @@ public class DocGenerator implements DocumentationProvider {
 		}
 		return lines.toString();
 	}
+
 }

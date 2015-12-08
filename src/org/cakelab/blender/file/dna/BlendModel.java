@@ -60,13 +60,5 @@ public class BlendModel {
 		return structs;
 	}
 
-	
 
-	public static boolean isListElement(BlendStruct struct) {
-		BlendField[] blendFields = struct.getFields();
-		if (blendFields.length > 0) {
-			return blendFields[0].getType().getName().equals("ID");
-		}
-		return false;
-	}
 }

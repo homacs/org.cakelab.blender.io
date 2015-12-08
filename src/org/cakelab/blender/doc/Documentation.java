@@ -164,7 +164,7 @@ public class Documentation implements DocumentationProvider {
 		return getFieldDoc(struct.getType().getName(), field.getName());
 	}
 	
-	protected String getStructDoc(String structname) {
+	public String getStructDoc(String structname) {
 		String result = null;
 		JSONObject structdoc = (JSONObject) structdocs.get(structname);
 		if (structdoc != null) {
@@ -173,7 +173,7 @@ public class Documentation implements DocumentationProvider {
 		return result;
 	}
 	
-	protected String getFieldDoc(String structname, String fieldname) {
+	public String getFieldDoc(String structname, String fieldname) {
 		String result = null;
 		if (structdocs == null)  return result;
 		

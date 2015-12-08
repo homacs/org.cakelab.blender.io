@@ -4,15 +4,13 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 import org.cakelab.blender.file.block.Block;
 import org.cakelab.blender.file.block.BlockHeader;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.internal.StructDNA;
-import org.cakelab.blender.file.util.CDataReadAccess;
+import org.cakelab.blender.file.util.CDataReadWriteAccess;
 
 
 /**
@@ -48,21 +46,26 @@ import org.cakelab.blender.file.util.CDataReadAccess;
  */
 public class BlenderFile implements Closeable {
 
+
+
 	private FileHeader header;
 	
 	
-	private CDataReadAccess cin;
+	private CDataReadWriteAccess cin;
 	private long firstBlockOffset;
 
 
 	public BlenderFile(File file) throws IOException {
-		CDataReadAccess in = CDataReadAccess.create(new RandomAccessFile(file, "r"), ByteOrder.BIG_ENDIAN, 0);
+		// 
+		// Read file header (byte order doesn't matter in this cae)
+		//
+		CDataReadWriteAccess in = CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), Encoding.JAVA_NATIVE);
 		header = new FileHeader();
 		try {
 			try {
 				header.read(in);
 				// proceed from here with an input stream which decodes data according to its endianess
-				cin = CDataReadAccess.create(new RandomAccessFile(file, "r"), header.getByteOrder(), header.pointerSize.getSize());
+				cin = CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), getEncoding());
 				firstBlockOffset = in.offset();
 				in.close();
 			} catch (IOException e) {
@@ -105,7 +108,7 @@ public class BlenderFile implements Closeable {
 		BlockHeader blockHeader = new BlockHeader();
 		blockHeader.read(cin);
 		while (!blockHeader.getCode().equals(BlockHeader.CODE_ENDB)) {
-			CDataReadAccess data = readBlockData(blockHeader);
+			CDataReadWriteAccess data = readBlockData(blockHeader);
 			
 			Block block = new Block(blockHeader, data);
 			blocks.add(block);
@@ -117,12 +120,10 @@ public class BlenderFile implements Closeable {
 	}
 
 
-	private CDataReadAccess readBlockData(BlockHeader blockHeader) throws IOException {
+	private CDataReadWriteAccess readBlockData(BlockHeader blockHeader) throws IOException {
 		byte[] data = new byte[blockHeader.getSize()];
 		cin.readFully(data);
-		ByteBuffer buffer = ByteBuffer.wrap(data);
-		buffer.order(header.getByteOrder());
-		return CDataReadAccess.create(buffer, blockHeader.getAddress(), header.getPointerSize());
+		return CDataReadWriteAccess.create(data, blockHeader.getAddress(), getEncoding());
 	}
 
 
@@ -131,10 +132,12 @@ public class BlenderFile implements Closeable {
 		cin.close();
 	}
 
-
-	public int getPointerSize() {
-		return header.getPointerSize();
+	/**
+	 * @return Encoding according to the files header
+	 */
+	public Encoding getEncoding() {
+		return Encoding.get(header.getByteOrder(), header.getPointerSize());
 	}
-
+	
 
 }

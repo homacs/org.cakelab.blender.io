@@ -3,12 +3,12 @@ package org.cakelab.blender.file.util;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-public abstract class CDataFileInputStream extends CDataReadAccess {
+public abstract class CDataFileRWAccess extends CDataReadWriteAccess {
 
 	protected RandomAccessFile in;
 
 
-	protected CDataFileInputStream(RandomAccessFile in, int pointerSize) {
+	protected CDataFileRWAccess(RandomAccessFile in, int pointerSize) {
 		super(pointerSize);
 		this.in = in;
 	}
@@ -46,13 +46,29 @@ public abstract class CDataFileInputStream extends CDataReadAccess {
 	}
 
 	@Override
+	public final void writeFully(byte[] b, int off, int len)
+			throws IOException {
+		in.write(b, off, len);
+	}
+
+	@Override
 	public final boolean readBoolean() throws IOException {
 		return in.readBoolean();
 	}
 
 	@Override
+	public final void writeBoolean(boolean value) throws IOException {
+		in.writeBoolean(value);
+	}
+
+	@Override
 	public final byte readByte() throws IOException {
 		return in.readByte();
+	}
+
+	@Override
+	public final void writeByte(int value) throws IOException {
+		in.writeByte(value);
 	}
 
 	@Override

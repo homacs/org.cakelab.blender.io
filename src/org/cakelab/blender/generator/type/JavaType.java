@@ -54,10 +54,10 @@ public class JavaType {
 
 	private void mapStruct(CType ctype) {
 		this.typetype = JTypeType.TYPE_OBJECT;
-		if (ctype.size == 0) {
+		if (ctype.size32 == 0) {
 			name = Object.class.getSimpleName();
 		} else {
-			name = Renaming.mapStruct2Class(ctype.name);
+			name = Renaming.mapStruct2Class(ctype.signature);
 		}
 	}
 
@@ -66,24 +66,24 @@ public class JavaType {
 	private void mapScalar(CType ctype) {
 		this.typetype = JTypeType.TYPE_SCALAR;
 		
-		if (ctype.name.equals("char")) {
+		if (ctype.signature.equals("char")) {
 			name = "byte";
-		} else if (ctype.name.equals("short") || ctype.name.equals("ushort")) {
+		} else if (ctype.signature.equals("short") || ctype.signature.equals("ushort")) {
 			name = "short";
-		} else if (ctype.name.equals("int") || ctype.name.equals("unsigned int")) {
+		} else if (ctype.signature.equals("int") || ctype.signature.equals("unsigned int")) {
 			name = "int";
-		} else if (ctype.name.equals("long") 
-				|| ctype.name.equals("ulong")
-				|| ctype.name.equals("int64_t")
-				|| ctype.name.equals("uint64_t")
+		} else if (ctype.signature.equals("long") 
+				|| ctype.signature.equals("ulong")
+				|| ctype.signature.equals("int64_t")
+				|| ctype.signature.equals("uint64_t")
 				) {
 			name = "long";
-		} else if (ctype.name.equals("float")) {
+		} else if (ctype.signature.equals("float")) {
 			name = "float";
-		} else if (ctype.name.equals("double")) {
+		} else if (ctype.signature.equals("double")) {
 			name = "double";
 		} else {
-			throw new Error("unexpected type name " + ctype.name);
+			throw new Error("unexpected type name " + ctype.signature);
 		}
 	}
 

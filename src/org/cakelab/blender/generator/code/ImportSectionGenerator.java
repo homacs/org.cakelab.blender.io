@@ -20,16 +20,17 @@ public class ImportSectionGenerator extends CodeGenerator {
 	}
 	
 	public String toString() {
-		StringBuffer imports = new StringBuffer();
+		CodeSection imports = new CodeSection(0);
 		for (GPackage pkg : packages) {
-			imports.append("import " + pkg + ".*;").append(NL);
+			imports.appendln("import " + pkg + ".*;");
 		}
 		for (Class<?> clazz : classes) {
 			if (!packages.contains(clazz.getPackage().getName())) {
-				imports.append("import " + clazz.getCanonicalName() + ";").append(NL);
+				imports.appendln("import " + clazz.getCanonicalName() + ";");
 			}
 		}
-		return imports.toString();
+		imports.sortLines();
+		return imports.toString(0);
 	}
 
 

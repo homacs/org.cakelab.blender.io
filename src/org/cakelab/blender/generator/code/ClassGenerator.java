@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.generator.ModelGenerator;
 
-public class ClassGenerator extends CodeGenerator {
+public abstract class ClassGenerator extends CodeGenerator {
 
 
 
 	protected ModelGenerator modelgen;
 	protected GPackage gpackage;
 	protected ImportSectionGenerator imports;
+	protected ArrayList<GField> constFields;
 	protected ArrayList<GField> fields;
 	protected ArrayList<String> methods;
 	protected DocumentationProvider docs;
@@ -23,6 +24,7 @@ public class ClassGenerator extends CodeGenerator {
 		this.docs = docs2;
 		this.imports = new ImportSectionGenerator();
 		this.fields = new ArrayList<GField>();
+		this.constFields = new ArrayList<GField>();
 		this.methods = new ArrayList<String>();
 	}
 
@@ -40,8 +42,8 @@ public class ClassGenerator extends CodeGenerator {
 	}
 
 	public GField addField(String modifiers, String type, String name,
-			String comment) {
-		GField field = new GField(modifiers, type, name, comment);
+			GComment comment) {
+		GField field = new GField(modifiers, type, name, null, comment);
 		fields.add(field);
 		return field;
 	}
@@ -51,10 +53,23 @@ public class ClassGenerator extends CodeGenerator {
 		return addField(modifiers, type, name, null);
 	}
 
+	public GField addConstField(String modifiers, String type, String name,
+			String initialiser, GComment javadoc) {
+		GField field = new GField(modifiers, type, name, initialiser, javadoc);
+		constFields.add(field);
+		return field;
+	}
+
+
+	public GField addConstField(String modifiers, String type, String name, String initialiser) {
+		return addConstField(modifiers, type, name, initialiser, null);
+	}
+
 	@Override
 	public void reset() {
 		imports.reset();
 		fields.clear();
+		constFields.clear();
 		methods.clear();
 	}
 
@@ -62,5 +77,9 @@ public class ClassGenerator extends CodeGenerator {
 	public DocumentationProvider getDocs() {
 		return docs;
 	}
+
+
+	public abstract String getClassName();
+
 
 }

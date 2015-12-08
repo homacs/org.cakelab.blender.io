@@ -2,13 +2,14 @@ package org.cakelab.blender.file.util;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-public class CBufferInputStream extends CDataReadAccess {
+public class CBufferReadWrite extends CDataReadWriteAccess {
 
 	private ByteBuffer rawData;
 	private long address;
 
-	public CBufferInputStream(ByteBuffer rawData, long address, int pointerSize) {
+	public CBufferReadWrite(ByteBuffer rawData, long address, int pointerSize) {
 		super(pointerSize);
 		this.rawData = rawData;
 		this.address = address;
@@ -19,6 +20,7 @@ public class CBufferInputStream extends CDataReadAccess {
 		return rawData.getShort();
 	}
 
+	
 	@Override
 	public int readInt() throws IOException {
 		return rawData.getInt();
@@ -83,6 +85,41 @@ public class CBufferInputStream extends CDataReadAccess {
 	@Override
 	public void readFully(byte[] b, int off, int len) throws IOException {
 		rawData.get(b, off, len);
+	}
+
+	@Override
+	public void writeByte(int value) throws IOException {
+		rawData.put((byte) value);
+	}
+
+	@Override
+	public void writeShort(short value) throws IOException {
+		rawData.putShort(value);
+	}
+
+	@Override
+	public void writeInt(int value) throws IOException {
+		rawData.putInt(value);
+	}
+
+	@Override
+	public void writeInt64(long value) throws IOException {
+		rawData.putLong(value);
+	}
+
+	@Override
+	public void writeFloat(float value) throws IOException {
+		rawData.putFloat(value);
+	}
+
+	@Override
+	public void writeDouble(double value) throws IOException {
+		rawData.putDouble(value);
+	}
+
+	@Override
+	public ByteOrder getByteOrder() {
+		return rawData.order();
 	}
 
 	

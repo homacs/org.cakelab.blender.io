@@ -3,7 +3,7 @@ package org.cakelab.blender.file.block;
 import java.io.IOException;
 
 import org.cakelab.blender.file.dna.internal.StructDNA;
-import org.cakelab.blender.file.util.CDataReadAccess;
+import org.cakelab.blender.file.util.CDataReadWriteAccess;
 import org.cakelab.blender.file.util.Identifier;
 
 /**
@@ -179,13 +179,26 @@ public class BlockHeader {
 	/* ************************************************ */
 	
 
-	/** This is the start position of the block header in the blend file. 
-	 * This variable is not part of the blender blockheader, but is 
-	 * required to allow random access to structures on disk. */
-	long filePosition;
-	
-	public void read(CDataReadAccess in) throws IOException {
-		filePosition = in.offset();
+	public BlockHeader() {
+	}
+
+	public BlockHeader(Identifier code, int size, long address) {
+		this.code = code;
+		this.size = size;
+		this.address = address;
+	}
+
+	public BlockHeader(Identifier code, int size, long address, int sdnaIndex,
+			int count) {
+		super();
+		this.code = code;
+		this.size = size;
+		this.address = address;
+		this.sdnaIndex = sdnaIndex;
+		this.count = count;
+	}
+
+	public void read(CDataReadWriteAccess in) throws IOException {
 		code.read(in);
 		size = in.readInt();
 		address = in.readLong();
@@ -216,12 +229,6 @@ public class BlockHeader {
 	public int getCount() {
 		return count;
 	}
-
-
-	public long getFilePosition() {
-		return filePosition;
-	}
-
 
 	public String toString() {
 		return code + ": size=" + size + ", address=" + address + ", sdnaIndex=" + sdnaIndex + ", count=" + count;

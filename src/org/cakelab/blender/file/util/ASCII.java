@@ -35,7 +35,7 @@ public class ASCII {
 		return result;
 	}
 
-	public static String readZeroTerminatedString(CDataReadAccess in, boolean removeControlCodes) throws IOException {
+	public static String readZeroTerminatedString(CDataReadWriteAccess in, boolean removeControlCodes) throws IOException {
 		int len = 0;
 		int capacity = 1024;
 		byte[] buffer = new byte[capacity];
@@ -56,7 +56,7 @@ public class ASCII {
 		return toString(str, 0, str.length, removeControlCodes);
 	}
 
-	public static String readZeroTerminatedString(CDataReadAccess in) throws IOException {
+	public static String readZeroTerminatedString(CDataReadWriteAccess in) throws IOException {
 		return readZeroTerminatedString(in, false);
 	}
 

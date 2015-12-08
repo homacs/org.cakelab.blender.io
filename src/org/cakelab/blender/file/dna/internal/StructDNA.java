@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.cakelab.blender.file.util.ASCII;
-import org.cakelab.blender.file.util.CDataReadAccess;
+import org.cakelab.blender.file.util.CDataReadWriteAccess;
 import org.cakelab.blender.file.util.Identifier;
 
 
@@ -51,7 +51,7 @@ public class StructDNA {
 			/** name of field as index in {@link StructDNA#names} */
 			public short name;
 			
-			public void read(CDataReadAccess in) throws IOException {
+			public void read(CDataReadWriteAccess in) throws IOException {
 				type = in.readShort();
 				name = in.readShort();
 			}
@@ -69,7 +69,7 @@ public class StructDNA {
 		/** Fields (member) of the structure (class). */
 		public Field[] fields;
 		
-		public void read(CDataReadAccess in) throws IOException {
+		public void read(CDataReadWriteAccess in) throws IOException {
 			type = in.readShort();
 			fields_len = in.readShort();
 			fields = new Field[fields_len];
@@ -131,7 +131,7 @@ public class StructDNA {
  	
  	
  	
- 	public void read(CDataReadAccess in) throws IOException {
+ 	public void read(CDataReadWriteAccess in) throws IOException {
  		Identifier ident = new Identifier();
  		ident.consume(in, SDNA);
  		ident.consume(in, NAME);

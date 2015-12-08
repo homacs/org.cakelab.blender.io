@@ -1,9 +1,44 @@
 package org.cakelab.blender.model;
 
 import java.io.IOException;
-
-import org.cakelab.blender.model.DNAArray.DNAArrayIterator;
-
+/**
+ * <p>
+ * This class is the mutable variant of {@link DNAPointer}. It allows
+ * in-place modification of the pointers address and theirby advanced
+ * pointer arithmetics (better runtime performance).
+ * </p>
+ * <p>
+ * You receive a mutable variant of a pointer either by using 
+ * one of the copy constructors {@link #DNAPointerMutable(DNAPointer)}
+ * or {@link #DNAPointerMutable(DNAPointer, long)} or by calling
+ * the method {@link DNAPointer#mutable()}.
+ * </p>
+ * <h3>Pointer Arithmetics</h3>
+ * <p>
+ * Read documentation of {@link DNAPointer} first, to understand this
+ * section.
+ * </p><p>
+ * {@link DNAPointerMutable} inherits the methods of {@link DNAPointer}. 
+ * Since references to objects of {@link DNAPointerMutable} can be 
+ * assigned to {@link DNAPointer}, the method {@link #plus(int)} has
+ * to behave exactly like {@link DNAPointer#plus(int)} and return a
+ * new instance of {@link DNAPointerMutable}.
+ * </p>
+ * <p>
+ * The method {@link #add(int)} now provides the functionality of 
+ * {@link #plus(int)} with in-place modification, meaning the address 
+ * of the pointer object, on which the method was called, will be 
+ * changed afterwards.
+ * </p>
+ * <p>
+ * Furthermore, mutable pointers support direct modification of their
+ * address by use of the methods {@link #assign(long)} and 
+ * {@link #assign(DNAPointer)}. 
+ * </p>
+ * @author homac
+ *
+ * @param <T> target type of the pointer.
+ */
 public class DNAPointerMutable<T> extends DNAPointer<T> {
 
 	public DNAPointerMutable(DNAPointer<T> pointer) {
@@ -18,7 +53,7 @@ public class DNAPointerMutable<T> extends DNAPointer<T> {
 	 * 
 	 * {@link #add(int)} is different to {@link #plus(int)}.
 	 * While {@link #add(int)} modifies the address in-place
-	 * {@link #plus(int)} returns new instance with the result
+	 * {@link #plus(int)} returns a new instance with the result
 	 * of the addition.
 	 * 
 	 * 
@@ -61,8 +96,8 @@ public class DNAPointerMutable<T> extends DNAPointer<T> {
 	 * </pre>
 	 * holds.
 	 * 
-	 * @param value
-	 * @return new instance of this pointer with an address+=targetSize
+	 * @param value value to be added to the address, multiplied by sizeof(targetType).
+	 * @return new instance of this pointer with an address+=(targetSize*value)
 	 * @throws IOException
 	 */
 	public DNAPointerMutable<T> plus(int value) throws IOException {
@@ -104,32 +139,11 @@ public class DNAPointerMutable<T> extends DNAPointer<T> {
 	}
 
 	/**
-	 * Pointer comparison. 
-	 * 
-	 * This method provides pointer comparison functionality.
-	 * It allows comparison to all objects derived from {@link DNAFacet}
-	 * including pointers, arrays and iterators of both.
-	 * @param obj
+	 * Returns the value of the address.
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (obj instanceof DNAArrayIterator) {
-			return __dna__address == ((DNAArrayIterator)obj).getCurrentAddress();
-		}
-		if (obj instanceof DNAFacet) {
-			return ((DNAFacet) obj).__dna__address == __dna__address;
-		}
-		return false;
+	public long value() {
+		return __dna__address;
 	}
-
-	@Override
-	public int hashCode() {
-		return (int)((__dna__address>>32) | (__dna__address));
-	}
-
-
-
+	
 }
