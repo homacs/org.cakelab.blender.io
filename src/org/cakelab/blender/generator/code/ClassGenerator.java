@@ -14,7 +14,7 @@ public abstract class ClassGenerator extends CodeGenerator {
 	protected ImportSectionGenerator imports;
 	protected ArrayList<GField> constFields;
 	protected ArrayList<GField> fields;
-	protected ArrayList<String> methods;
+	protected ArrayList<GMethod> methods;
 	protected DocumentationProvider docs;
 	
 	public ClassGenerator(ModelGenerator modelgen, GPackage gpackage, DocumentationProvider docs2) {
@@ -25,7 +25,7 @@ public abstract class ClassGenerator extends CodeGenerator {
 		this.imports = new ImportSectionGenerator();
 		this.fields = new ArrayList<GField>();
 		this.constFields = new ArrayList<GField>();
-		this.methods = new ArrayList<String>();
+		this.methods = new ArrayList<GMethod>();
 	}
 
 
@@ -37,7 +37,7 @@ public abstract class ClassGenerator extends CodeGenerator {
 		imports.add(package2bImported);
 	}
 	
-	public void addMethod(String method) {
+	public void addMethod(GMethod method) {
 		methods.add(method);
 	}
 

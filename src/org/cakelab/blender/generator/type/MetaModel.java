@@ -250,5 +250,15 @@ public class MetaModel {
 	}
 
 
+
+	/**
+	 * Retrieve a type description for a given type signature.
+	 * @param typeSignature Signature of the type (e.g. a struct name such as "Scene" or "Mesh" or a type signature such as "int" or "int*" etc.)
+	 * @return Associated type.
+	 */
+	public CType getType(String typeSignature) {
+		return types.get(typeSignature);
+	}
+
 	
 }

@@ -65,13 +65,23 @@ public abstract class DNAFacet {
 	 * @return sizeof(ctype)
 	 */
 	public long __dna__sizeof(Class<?> type) {
+		return __dna__sizeof(type, __dna__pointersize);
+	}
+
+	/**
+	 * This method returns the size of the C type which corresponds
+	 * to the given Java type according to the type mapping of Java Blend.
+	 * @param type 
+	 * @return sizeof(ctype)
+	 */
+	public static long __dna__sizeof(Class<?> type, int addressWidth) {
 		if (type.equals(DNAPointer.class)) {
-			return __dna__pointersize;
+			return addressWidth;
 		} else if (type.equals(DNAArray.class)) {
 			throw new IllegalArgumentException("no generic runtime type information for array types available");
 		} else if (__dna__subclassof(type, DNAFacet.class)){
 			DNATypeInfo typeInfo = type.getAnnotation(DNATypeInfo.class);
-			return __dna__pointersize == 8 ? typeInfo.size64() : typeInfo.size32();
+			return addressWidth == 8 ? typeInfo.size64() : typeInfo.size32();
 		} else if (type.equals(byte.class) || type.equals(Byte.class)) {
 			return 1;
 		} else if (type.equals(short.class) || type.equals(Short.class)) {
@@ -79,7 +89,7 @@ public abstract class DNAFacet {
 		} else if (type.equals(int.class) || type.equals(Integer.class)) {
 			return 4;
 		} else if (type.equals(long.class) || type.equals(Long.class)) {
-			return __dna__pointersize;
+			return addressWidth;
 		} else if (type.equals(int64.class)) {
 			return 8;
 		} else if (type.equals(float.class) || type.equals(Float.class)) {

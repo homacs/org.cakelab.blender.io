@@ -171,6 +171,7 @@ public class DNAPointer<T> extends DNAFacet {
 			return !obj.isNull();
 		}
 	};
+	
 	/**
 	 * Type of the target the pointer is able to address.
 	 */

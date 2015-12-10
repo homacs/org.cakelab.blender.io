@@ -3,7 +3,6 @@ package org.cakelab.blender.generator;
 import java.io.IOException;
 
 import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.dna.BlendField;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.FieldVisitor;
 import org.cakelab.blender.generator.code.GComment;

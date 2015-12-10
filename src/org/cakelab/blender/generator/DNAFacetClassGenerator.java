@@ -11,6 +11,7 @@ import org.cakelab.blender.file.block.BlockMap;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GField;
+import org.cakelab.blender.generator.code.GMethod;
 import org.cakelab.blender.generator.code.GPackage;
 import org.cakelab.blender.generator.type.CField;
 import org.cakelab.blender.generator.type.CStruct;
@@ -18,6 +19,7 @@ import org.cakelab.blender.generator.type.CType;
 import org.cakelab.blender.generator.type.JavaType;
 import org.cakelab.blender.generator.type.Renaming;
 import org.cakelab.blender.model.DNAFacet;
+import org.cakelab.blender.model.DNAPointer;
 import org.cakelab.blender.model.DNATypeInfo;
 
 
@@ -60,6 +62,8 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 			offset64 += ctype.sizeof(Encoding.ADDR_WIDTH_64BIT);
 		}
 		
+		createMethod__dna__addressof();
+		
 		PrintStream out = new PrintStream(new FileOutputStream(new File(gpackage.getDir(), classname + ".java")));
 		try {
 			out.println("package " + gpackage + ";");
@@ -98,13 +102,29 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 			out.println();
 			
 			
-			for (String method : methods) {
-				out.println(method);
+			for (GMethod method : methods) {
+				out.println(method.toString(1));
 			}
 			out.println("}");
 		} finally {
 			out.close();
 		}
+	}
+
+
+
+	private void createMethod__dna__addressof() {
+		addImport(DNAPointer.class);
+		GMethod method = new GMethod(0);
+		String pointerType = "DNAPointer<" + classname + ">";
+		method.appendln("public " + pointerType + " __dna__addressof() {");
+		method.indent(+1);
+		
+		method.appendln("return new " + pointerType + "(__dna__address, new Class[]{" + classname + ".class}, __dna__blockMap);");
+		
+		method.indent(-1);
+		method.appendln("}");
+		addMethod(method);
 	}
 
 

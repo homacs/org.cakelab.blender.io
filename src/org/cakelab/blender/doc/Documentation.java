@@ -32,6 +32,13 @@ import org.cakelab.json.Parser;
  *
  */
 public class Documentation implements DocumentationProvider {
+	/* TODO: merge class documentations from different sources.
+	 * see FileGlobal for an example of a missing class documentation.
+	 * 
+	 */
+	
+	
+	
 	protected JSONObject structdocs;
 	protected String[] authors;
 

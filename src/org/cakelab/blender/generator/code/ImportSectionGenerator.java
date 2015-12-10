@@ -20,7 +20,7 @@ public class ImportSectionGenerator extends CodeGenerator {
 	}
 	
 	public String toString() {
-		CodeSection imports = new CodeSection(0);
+		GCodeSection imports = new GCodeSection(0);
 		for (GPackage pkg : packages) {
 			imports.appendln("import " + pkg + ".*;");
 		}

@@ -5,11 +5,11 @@ public abstract class MethodGenerator extends FieldVisitor {
 
 
 	protected ClassGenerator classgen;
-	protected CodeSection content;
+	protected GMethod content;
 
 	public MethodGenerator(ClassGenerator classGenerator) {
 		super(classGenerator, 0);
-		content = new CodeSection(0);
+		content = new GMethod(0);
 		this.classgen = classGenerator;
 	}
 
@@ -18,7 +18,7 @@ public abstract class MethodGenerator extends FieldVisitor {
 		content.reset();
 	}
 
-	protected CodeSection appendln(String line) {
+	protected GCodeSection appendln(String line) {
 		return content.appendln(line);
 	}
 

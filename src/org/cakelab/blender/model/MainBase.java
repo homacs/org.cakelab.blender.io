@@ -33,10 +33,9 @@ public abstract class MainBase {
 
 	protected MainBase(String packageName, BlenderFile blend) throws IOException {
 		this.packageName = packageName;
-		ArrayList<Block> blocks = blend.readBlocks();
-		BlendModel model = blend.readBlenderModel();
-		blockMap = new BlockMap(blend.getEncoding());
-		blockMap.addAll(blocks);
+		BlendModel model = blend.getBlenderModel();
+		blockMap = blend.getBlockMap();
+		ArrayList<Block> blocks = blend.getBlocks();
 		for (Block block : blocks) {
 			BlockHeader header = block.header;
 			if (isPossibleLibraryBlock(header.getCode())) {

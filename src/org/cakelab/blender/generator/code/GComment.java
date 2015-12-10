@@ -1,7 +1,7 @@
 package org.cakelab.blender.generator.code;
 
 
-public class GComment extends CodeSection {
+public class GComment extends GCodeSection {
 	private Type type;
 	private String prefix;
 	private boolean finished;

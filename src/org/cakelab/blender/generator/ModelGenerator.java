@@ -2,14 +2,12 @@ package org.cakelab.blender.generator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.BlenderFile;
+import org.cakelab.blender.file.FileVersionInfo;
 import org.cakelab.blender.file.dna.BlendModel;
-import org.cakelab.blender.file.dna.BlendStruct;
-import org.cakelab.blender.file.dna.BlendType;
 import org.cakelab.blender.generator.code.GPackage;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.MetaModel;
@@ -21,9 +19,11 @@ public class ModelGenerator {
 	
 	private MetaModel model;
 	private HashSet<CStruct> classes = new HashSet<CStruct>();
+	private FileVersionInfo versionInfo;
 
 
-	public ModelGenerator(BlendModel model) {
+	public ModelGenerator(BlendModel model, FileVersionInfo versionInfo) {
+		this.versionInfo = versionInfo;
 		this.model = new MetaModel(model);
 	}
 
@@ -46,6 +46,7 @@ public class ModelGenerator {
 
 	}
 
+	
 	
 	public static void main(String[] args) throws IOException, JSONException {
 		// TODO: read version from file
@@ -99,7 +100,8 @@ public class ModelGenerator {
 		
 		
 		BlenderFile blend = new BlenderFile(input);
-		ModelGenerator generator = new ModelGenerator(blend.readBlenderModel());
+		FileVersionInfo versionInfo = blend.readFileGlobal();
+		ModelGenerator generator = new ModelGenerator(blend.getBlenderModel(), versionInfo);
 		blend.close();
 		File[] docfiles = {
 				new File("resources/dnadoc/" + version + "/added/doc.json"),
@@ -117,5 +119,9 @@ public class ModelGenerator {
 		System.err.println("Example: java " + clazz.getName() + " -in cube.blend -out ../project/gen -v 2.69 -p org.blender");
 		System.err.println("         reads type info from cube.blend which was stored from blender v2.69 and generates class in folder ../project/gen/org/blender");
 		System.err.println("         Use \"-d true\" to get additional debug information during class generation.");
+	}
+
+	public FileVersionInfo getVersionInfo() {
+		return versionInfo;
 	}
 }

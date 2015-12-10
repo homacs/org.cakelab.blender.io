@@ -225,9 +225,16 @@ public class BlockHeader {
 		return sdnaIndex;
 	}
 
+	public void setSdnaIndex(int sdnaIndex) {
+		this.sdnaIndex = sdnaIndex;
+	}
 
 	public int getCount() {
 		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 	public String toString() {

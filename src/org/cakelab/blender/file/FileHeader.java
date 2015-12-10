@@ -3,7 +3,7 @@ package org.cakelab.blender.file;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import org.cakelab.blender.file.util.ASCII;
+import org.cakelab.blender.file.util.CStringUtils;
 import org.cakelab.blender.file.util.CDataReadWriteAccess;
 
 /**
@@ -72,8 +72,24 @@ public class FileHeader {
 		public static Version read(CDataReadWriteAccess in) throws IOException {
 			byte[] str = new byte[3];
 			in.readFully(str);
-			int v = Integer.valueOf(ASCII.toString(str));
+			int v = Integer.valueOf(CStringUtils.toString(str));
 			return new Version(v);
+		}
+
+		
+		/**
+		 * @return returns version code := major*100 + minor
+		 */
+		public int getCode() {
+			return code;
+		}
+
+		public int getMajor() {
+			return major;
+		}
+
+		public int getMinor() {
+			return minor;
 		}
 	}
 	
@@ -93,7 +109,7 @@ public class FileHeader {
 		byte[] magic = new byte[BLENDER_MAGIC.length()];
 		in.readFully(magic);
 		
-		if (!ASCII.toString(magic).equals(BLENDER_MAGIC)) {
+		if (!CStringUtils.toString(magic).equals(BLENDER_MAGIC)) {
 			throw new IOException("not a blender file");
 		}
 		pointerSize = PointerSize.decode(in.readByte());

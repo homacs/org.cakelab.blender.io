@@ -6,11 +6,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
+import org.cakelab.blender.file.FileHeader.Version;
 import org.cakelab.blender.file.block.Block;
 import org.cakelab.blender.file.block.BlockHeader;
+import org.cakelab.blender.file.block.BlockMap;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.internal.StructDNA;
 import org.cakelab.blender.file.util.CDataReadWriteAccess;
+import org.cakelab.blender.file.util.Identifier;
+import org.cakelab.blender.generator.type.MetaModel;
 
 
 /**
@@ -45,7 +49,7 @@ import org.cakelab.blender.file.util.CDataReadWriteAccess;
  * </p>
  */
 public class BlenderFile implements Closeable {
-
+	// TODO: optimize data caching in BlenderFile
 
 
 	private FileHeader header;
@@ -53,6 +57,12 @@ public class BlenderFile implements Closeable {
 	
 	private CDataReadWriteAccess cin;
 	private long firstBlockOffset;
+
+
+	private ArrayList<Block> blocks;
+
+	private StructDNA sdna;
+	private BlendModel model;
 
 
 	public BlenderFile(File file) throws IOException {
@@ -73,37 +83,83 @@ public class BlenderFile implements Closeable {
 				throw new IOException("file is either corrupted or uses the compressed format (not yet supported).\n"
 						+ "In the latter case, please uncompress it first (i.e. gunzip <file>.");
 			}
-			
-		
+			readStructDNA();
+			readBlocks();
 		} finally {
 			try {in.close();} catch (Throwable suppress){}
 		}
 	}
 	
 	
-	public BlendModel readBlenderModel() throws IOException {
-		StructDNA sdna = null;
-		
+	public BlendModel getBlenderModel() throws IOException {
+		if (model == null) {
+			model = new BlendModel(sdna);
+		}
+		return model;
+	}
+	
+	public FileVersionInfo readFileGlobal() throws IOException {
+		FileVersionInfo versionInfo = null;
+		BlockHeader blockHeader = seekFirstBlock(BlockHeader.CODE_GLOB);
+
+		if (blockHeader != null) {
+			versionInfo = new FileVersionInfo();
+			versionInfo.read(cin);
+		} else {
+			throw new IOException("Can't find block GLOB (file global version info)");
+		}
+		versionInfo.version = header.version;
+		return versionInfo;
+	}
+	
+	
+	private void readStructDNA() throws IOException {
+		sdna = null;
+		BlockHeader blockHeader = seekFirstBlock(BlockHeader.CODE_DNA1);
+
+		if (blockHeader != null) {
+			sdna = new StructDNA();
+			sdna.read(cin);
+		} else {
+			throw new IOException("corrupted file. Can't find block DNA1");
+		}
+	}
+	
+	public BlockHeader seekFirstBlock(Identifier code) throws IOException {
+		BlockHeader result = null;
+
 		cin.offset(firstBlockOffset);
 		BlockHeader blockHeader = new BlockHeader();
 		blockHeader.read(cin);
-		
 		while (!blockHeader.getCode().equals(BlockHeader.CODE_ENDB)) {
-			if (blockHeader.getCode().equals(BlockHeader.CODE_DNA1)) {
-				sdna = new StructDNA();
-				sdna.read(cin);
+			if (blockHeader.getCode().equals(code)) {
+				result = blockHeader;
 				break;
 			}
 			cin.skip(blockHeader.getSize());
 			blockHeader.read(cin);
 		}
-		if (sdna == null) throw new IOException("corrupted file. Can't find block DNA1");
-		
-		return new BlendModel(sdna);
+		return result;
+	}
+
+
+	
+	
+	
+	public ArrayList<Block> getBlocks() throws IOException {
+		if (blocks == null) {
+			readBlocks();
+		}
+		return blocks;
+	}
+
+	public BlockMap getBlockMap () throws IOException {
+		return new BlockMap(getEncoding(), getBlocks());
 	}
 	
-	public ArrayList<Block> readBlocks() throws IOException {
-		ArrayList<Block> blocks = new ArrayList<Block>();
+	
+	private void readBlocks() throws IOException {
+		blocks = new ArrayList<Block>();
 		cin.offset(firstBlockOffset);
 		BlockHeader blockHeader = new BlockHeader();
 		blockHeader.read(cin);
@@ -116,9 +172,7 @@ public class BlenderFile implements Closeable {
 			blockHeader = new BlockHeader();
 			blockHeader.read(cin);
 		}
-		return blocks;
 	}
-
 
 	private CDataReadWriteAccess readBlockData(BlockHeader blockHeader) throws IOException {
 		byte[] data = new byte[blockHeader.getSize()];
@@ -130,6 +184,7 @@ public class BlenderFile implements Closeable {
 	@Override
 	public void close() throws IOException {
 		cin.close();
+		cin = null;
 	}
 
 	/**
@@ -138,6 +193,16 @@ public class BlenderFile implements Closeable {
 	public Encoding getEncoding() {
 		return Encoding.get(header.getByteOrder(), header.getPointerSize());
 	}
-	
+
+
+	public MetaModel getMetaModel() throws IOException {
+		return new MetaModel(getBlenderModel());
+	}
+
+
+	public Version getVersion() {
+		return header.version;
+	}
+
 
 }

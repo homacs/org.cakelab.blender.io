@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import org.cakelab.blender.file.dna.BlendStruct;
 
 public class CStruct extends CType {
+	int sdnaIndex;
+	
 	private ArrayList<CField> fields = new ArrayList<CField>();
 
 	public CStruct(BlendStruct bstruct) {
 		super(bstruct.getType().getName(), CTypeType.TYPE_STRUCT);
+		this.sdnaIndex = bstruct.getIndex();
 	}
 
 	public void addField(CField cfield) {
@@ -17,5 +20,9 @@ public class CStruct extends CType {
 
 	public ArrayList<CField> getFields() {
 		return fields;
+	}
+
+	public int getSdnaIndex() {
+		return sdnaIndex;
 	}
 }

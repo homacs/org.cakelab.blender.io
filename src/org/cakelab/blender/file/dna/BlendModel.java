@@ -24,9 +24,9 @@ public class BlendModel {
 		}
 	}
 
-	private BlendStruct createStruct(int i, Struct s) {
+	private BlendStruct createStruct(int sdnaIndex, Struct s) {
 		BlendType type = getType(s.type);
-		BlendStruct struct = new BlendStruct(i, type, s.fields_len);
+		BlendStruct struct = new BlendStruct(sdnaIndex, type, s.fields_len);
 		for (int fieldNo = 0; fieldNo < s.fields_len; fieldNo++) {
 			Field field = s.fields[fieldNo];
 			struct.set(fieldNo, createField(struct, fieldNo, field));

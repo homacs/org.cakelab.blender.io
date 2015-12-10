@@ -8,8 +8,8 @@ public class BlendStruct {
 	BlendType type;
 	BlendField[] fields;
 	
-	public BlendStruct(int index, BlendType type, short fields_len) {
-		this.index = index;
+	public BlendStruct(int sdnaIndex, BlendType type, short fields_len) {
+		this.index = sdnaIndex;
 		this.type = type;
 		fields = new BlendField[fields_len];
 	}

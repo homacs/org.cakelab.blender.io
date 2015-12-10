@@ -3,7 +3,7 @@ package org.cakelab.blender.file.dna.internal;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.cakelab.blender.file.util.ASCII;
+import org.cakelab.blender.file.util.CStringUtils;
 import org.cakelab.blender.file.util.CDataReadWriteAccess;
 import org.cakelab.blender.file.util.Identifier;
 
@@ -138,7 +138,7 @@ public class StructDNA {
  		names_len = in.readInt();
  		names = new String[names_len];
  		for (int i = 0; i < names_len; i++) {
- 			names[i] = ASCII.readZeroTerminatedString(in, true);
+ 			names[i] = CStringUtils.readNullTerminatedString(in, true);
  		}
  		
  		in.padding(4);
@@ -146,7 +146,7 @@ public class StructDNA {
  		types_len = in.readInt();
  		types = new String[types_len];
  		for (int i = 0; i < types_len; i++) {
- 			types[i] = ASCII.readZeroTerminatedString(in, true);
+ 			types[i] = CStringUtils.readNullTerminatedString(in, true);
  		}
  		
  		in.padding(4);

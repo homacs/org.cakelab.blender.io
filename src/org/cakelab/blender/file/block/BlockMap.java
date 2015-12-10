@@ -25,6 +25,18 @@ public class BlockMap {
 	}
 	
 	
+	public BlockMap(Encoding encoding, ArrayList<Block> blocks) {
+		this(encoding);
+		addAll(blocks);
+		if (!blocks.isEmpty()) {
+			Block first = blocks.get(0);
+			if (UnsignedLong.lt(first.header.address, heapBase)) {
+				heapBase = first.header.address;
+			}
+		}
+	}
+
+
 	public void addAll(ArrayList<Block> blocks) {
 		this.blocks.addAll(blocks);
 		Collections.sort(this.blocks, new Comparator<Block>() {
@@ -33,6 +45,7 @@ public class BlockMap {
 				return b1.compareTo(b2.header.getAddress());
 			}
 		});
+		if (cursorRR == -1) cursorRR = 0;
 	}
 
 	public Block getBlock(long address) {
@@ -55,24 +68,30 @@ public class BlockMap {
 			}
 		}
 		
-		if (block != null && block.header.address < heapBase) {
-			heapBase = block.header.address;
-		}
-		
 		return block;
 	}
 
-	
 	public Block allocate(Identifier blockCode, int size) {
+		// TODO: implement allocate and free
 		Block block = null;
 		if (blocks.isEmpty()) {
 			long address = heapBase;
 			block = createBlock(blockCode, address, size);
 			blocks.add(block);
 			cursorRR = 0;
+		} else if (blocks.size() == 1) {
+			Block lonely = blocks.get(0);
+			long space = UnsignedLong.minus(heapBase, lonely.header.address);
+			if (UnsignedLong.le(size, space)) {
+				block = createBlock(blockCode, heapBase, size);
+			} else {
+				block = createBlock(blockCode, UnsignedLong.plus(lonely.header.address, lonely.header.size), size);
+			}
+			blocks.add(cursorRR, block);
 		} else {
 			Block lowerNeighbour = blocks.get(cursorRR);
 			cursorRR = nextRRIndex(cursorRR);
+			
 			for (int i = 0; i < blocks.size(); i++) {
 				Block upperNeighbour = blocks.get(cursorRR);
 				long space = UnsignedLong.minus(upperNeighbour.header.address, lowerNeighbour.header.address) - lowerNeighbour.header.size;

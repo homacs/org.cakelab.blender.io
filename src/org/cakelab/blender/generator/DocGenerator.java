@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.file.dna.BlendField;
-import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.json.JSONException;
 
 public class DocGenerator implements DocumentationProvider {

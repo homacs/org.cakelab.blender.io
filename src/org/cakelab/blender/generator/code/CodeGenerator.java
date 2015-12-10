@@ -11,6 +11,10 @@ public abstract class CodeGenerator {
 		indent(initialIndent);
 	}
 	
+	public CodeGenerator(GCodeSection other) {
+		this.indent = other.indent;
+	}
+
 	public void indent(int n) {
 		if (n > 0) {
 			for (int i = 0; i < n; i++) indent += TAB; 

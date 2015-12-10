@@ -5,15 +5,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.BlenderFile;
+import org.cakelab.blender.file.FileVersionInfo;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GField;
+import org.cakelab.blender.generator.code.GMethod;
 import org.cakelab.blender.generator.code.GPackage;
-import org.cakelab.blender.generator.type.CField;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.Renaming;
 import org.cakelab.blender.model.MainBase;
@@ -46,6 +46,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 				+ "main lib and all main libs are linked to each other.\n"
 				+ "\n"
 				+ "@author homac");
+
+		addVersionSpecifiers(modelgen.getVersionInfo());
 		
 		
 		addField("private", classname, "next", "Linkage between main libraries.");
@@ -57,6 +59,58 @@ public class MainLibClassGenerator extends ClassGenerator {
 		addField("private", "short", "minsubversionfile");
 		addField("private", "int", "revision", "svn revision of binary that saved file");
 		addField("private", "short", "recovered", "indicate the main->name (file) is the recovered one");
+		
+		
+		addVersionCheckMethod();
+	}
+
+
+
+	private void addVersionCheckMethod() {
+		GMethod method = new GMethod(0);
+		method.appendln("public static boolean isFileSupported(BlenderFile blendFile, FileGlobal global) throws IOException {");
+		method.indent(+1);
+		method.appendln("int version = blendFile.getVersion().getCode();");
+		method.appendln("short subversion = global.getSubversion();");
+		method.appendln("return (version > BLENDER_MINVERSION ");
+		method.indent(+2);
+		method.appendln("|| (version == BLENDER_MINVERSION && subversion >= BLENDER_MINSUBVERSION))");
+		method.indent(-1);
+		method.appendln("&& ");
+		method.indent(+1);
+		method.appendln("(version < BLENDER_VERSION ");
+		method.appendln("|| (version == BLENDER_VERSION && subversion <= BLENDER_SUBVERSION));");
+		method.indent(-3);
+		method.appendln("}");
+		addMethod(method);
+	}
+
+
+
+	private void addVersionSpecifiers(FileVersionInfo versionInfo) {
+		GComment comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln();
+		comment.appendln("This is the version of blender, the data model was generated from.");
+		comment.appendln("Implicitly, it is the maximum version the generated import code can understand.");
+		addConstField("public static final", "int", "BLENDER_VERSION", Integer.toString(versionInfo.getVersion().getCode()), comment);
+
+		comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln();
+		comment.appendln("This is the subversion of blender, the data model was generated from.");
+		comment.appendln("Implicitly, it is the maximum subversion the generated import code can understand.");
+		addConstField("public static final", "int", "BLENDER_SUBVERSION", Short.toString(versionInfo.getSubversion()), comment);
+
+		comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln();
+		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
+		comment.appendln("Every file with a version lower than this needs conversion.");
+		addConstField("public static final", "int", "BLENDER_MINVERSION", Short.toString(versionInfo.getMinversion()), comment);
+
+		comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln();
+		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
+		comment.appendln("Every file with a version lower than this needs conversion.");
+		addConstField("public static final", "int", "BLENDER_MINSUBVERSION", Short.toString(versionInfo.getMinsubversion()), comment);
 	}
 
 
@@ -71,18 +125,24 @@ public class MainLibClassGenerator extends ClassGenerator {
 	
 
 	private void addGetMethod(GField field) {
-		StringBuffer method = new StringBuffer();
-		method.append("public " + field.getType() + " get" +  toCamelCase(field.getName()) + "(){ return " + field.getName() + ";}");
-		addMethod(method.toString());
+		GMethod method = new GMethod(0);
+		method.appendln("public " + field.getType() + " get" +  toCamelCase(field.getName()) + "(){");
+		method.indent(+1);
+		method.appendln("return " + field.getName() + ";");
+		method.indent(-1);
+		method.appendln("}");
+		addMethod(method);
 	}
 
 	private void addSetMethod(GField field) {
-		StringBuffer method = new StringBuffer();
-		method.append("public void set" +  toCamelCase(field.getName()) + "("
-				+ field.getType() + " " + field.getName() + ") {\n"
-				+ "\t\tthis." + field.getName() + " = " + field.getName() + ";\n"
-						+ "\t}");
-		addMethod(method.toString());
+		GMethod method = new GMethod(0);
+		method.appendln("public void set" +  toCamelCase(field.getName()) + "("
+				+ field.getType() + " " + field.getName() + ") {");
+		method.indent(+1);
+		method.appendln("this." + field.getName() + " = " + field.getName() + ";");
+		method.indent(-1);
+		method.appendln("}");
+		addMethod(method);
 	}
 
 
@@ -100,9 +160,15 @@ public class MainLibClassGenerator extends ClassGenerator {
 			out.print(comment.toString(0));
 			
 			out.println("public class " + classname + " extends " + MainBase.class.getSimpleName() + " {");
+			indent(+1);
 			out.println();
 
-			indent(+1);
+			
+			for (GField constField : constFields) {
+				out.println(constField.toString("\t"));
+			}
+			
+			
 			for (GField field : fields) {
 				out.println(field.toString(indent));
 			}
@@ -119,8 +185,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 			out.println();
 			
 			
-			for (String method : methods) {
-				out.println(indent + method);
+			for (GMethod method : methods) {
+				out.println(method.toString(1));
 			}
 			indent(-1);
 			out.println("}");

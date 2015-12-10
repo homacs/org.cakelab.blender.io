@@ -3,7 +3,7 @@ package org.cakelab.blender.file.util;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.cakelab.blender.file.util.ASCII;
+import org.cakelab.blender.file.util.CStringUtils;
 
 /**
  * This class implements an abstraction layer to 4 byte
@@ -28,7 +28,7 @@ public class Identifier {
 	 * @param strCode
 	 */
 	public Identifier(String strCode) {
-		code = ASCII.valueOf(strCode);
+		code = CStringUtils.valueOf(strCode);
 	}
 
 	public Identifier(byte[] code) {
@@ -68,7 +68,7 @@ public class Identifier {
 	}
 
 	public String toString() {
-		return ASCII.toString(code, true);
+		return CStringUtils.toString(code, true);
 	}
 
 	/**

@@ -4,13 +4,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class CodeSection extends CodeGenerator {
+
+/**
+ * Contains generated code or comment lines.
+ * 
+ * @author homac
+ *
+ */
+public class GCodeSection extends CodeGenerator {
 	ArrayList<String> lines = new ArrayList<String>();
 
 	protected StringBuffer currentLine = new StringBuffer();
 	
-	public CodeSection(int initialIndent) {
+	public GCodeSection(int initialIndent) {
 		super(initialIndent);
+	}
+
+	public GCodeSection(GCodeSection other) {
+		super(other);
+		lines.addAll(other.lines);
 	}
 
 	@Override
@@ -30,7 +42,7 @@ public class CodeSection extends CodeGenerator {
 		return result.toString();
 	}
 
-	public CodeSection appendln(String line) {
+	public GCodeSection appendln(String line) {
 		if (line.contains(NL)) {
 			append(line);
 		} else {
@@ -39,7 +51,7 @@ public class CodeSection extends CodeGenerator {
 		return appendln();
 	}
 
-	public CodeSection append(String text) {
+	public GCodeSection append(String text) {
 		boolean multiline = text.contains(NL);
 		for (int endln = text.indexOf(NL); endln >= 0; endln = text.indexOf(NL)) {
 			appendln(text.substring(0, endln));
@@ -49,7 +61,7 @@ public class CodeSection extends CodeGenerator {
 		return this;
 	}
 
-	public CodeSection appendln() {
+	public GCodeSection appendln() {
 		lines.add(indent + currentLine.toString());
 		currentLine.setLength(0);
 		return this;
@@ -63,7 +75,7 @@ public class CodeSection extends CodeGenerator {
 		return lines;
 	}
 
-	public CodeSection append(int i) {
+	public GCodeSection append(int i) {
 		return append(Integer.toString(i));
 	}
 
