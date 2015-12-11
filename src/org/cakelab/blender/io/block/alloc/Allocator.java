@@ -1,7 +1,7 @@
-package org.cakelab.blender.file.block.alloc;
+package org.cakelab.blender.io.block.alloc;
 
-import static org.cakelab.blender.file.block.alloc.Chunk.State.FREE;
-import static org.cakelab.blender.file.block.alloc.Chunk.State.ALLOCATED;
+import static org.cakelab.blender.io.block.alloc.Chunk.State.ALLOCATED;
+import static org.cakelab.blender.io.block.alloc.Chunk.State.FREE;
 
 import org.cakelab.blender.model.UnsignedLong;
 

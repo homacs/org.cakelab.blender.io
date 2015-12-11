@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 
-import org.cakelab.blender.file.dna.BlendField;
-import org.cakelab.blender.file.dna.BlendStruct;
+import org.cakelab.blender.io.dna.BlendField;
+import org.cakelab.blender.io.dna.BlendStruct;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONException;
 import org.cakelab.json.JSONObject;

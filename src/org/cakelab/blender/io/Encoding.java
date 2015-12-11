@@ -1,4 +1,4 @@
-package org.cakelab.blender.file;
+package org.cakelab.blender.io;
 
 import java.nio.ByteOrder;
 

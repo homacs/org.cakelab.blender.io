@@ -8,10 +8,6 @@ import java.io.PrintStream;
 import java.util.List;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.file.BlenderFile;
-import org.cakelab.blender.file.FileVersionInfo;
-import org.cakelab.blender.file.block.Block;
-import org.cakelab.blender.file.block.BlockHeader;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GComment.Type;
@@ -20,6 +16,10 @@ import org.cakelab.blender.generator.code.GMethod;
 import org.cakelab.blender.generator.code.GPackage;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.Renaming;
+import org.cakelab.blender.io.BlenderFile;
+import org.cakelab.blender.io.FileVersionInfo;
+import org.cakelab.blender.io.block.Block;
+import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.model.MainBase;
 
 public class MainLibClassGenerator extends ClassGenerator {

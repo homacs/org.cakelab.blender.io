@@ -6,7 +6,7 @@ import java.nio.ReadOnlyBufferException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.cakelab.blender.file.block.BlockTable;
+import org.cakelab.blender.io.block.BlockTable;
 
 
 /**

@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.block.BlockTable;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GField;
@@ -18,6 +16,8 @@ import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.CType;
 import org.cakelab.blender.generator.type.JavaType;
 import org.cakelab.blender.generator.type.Renaming;
+import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.model.DNAFacet;
 import org.cakelab.blender.model.DNAPointer;
 import org.cakelab.blender.model.DNATypeInfo;

@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.cakelab.blender.file.BlenderFile;
-import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.block.Block;
-import org.cakelab.blender.file.block.BlockHeader;
-import org.cakelab.blender.file.block.BlockTable;
-import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.MetaModel;
+import org.cakelab.blender.io.BlenderFile;
+import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.block.Block;
+import org.cakelab.blender.io.block.BlockHeader;
+import org.cakelab.blender.io.block.BlockTable;
+import org.cakelab.blender.io.dna.BlendModel;
 
 public class Main {
 	

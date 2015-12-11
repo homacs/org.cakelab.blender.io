@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-import org.cakelab.blender.file.block.BlockTable;
+import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.model.DNAArray.DNAArrayIterator;
 
 /**

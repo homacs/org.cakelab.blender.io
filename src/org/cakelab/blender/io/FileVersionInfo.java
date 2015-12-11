@@ -1,11 +1,11 @@
-package org.cakelab.blender.file;
+package org.cakelab.blender.io;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import org.cakelab.blender.file.FileHeader.Version;
-import org.cakelab.blender.file.util.CStringUtils;
-import org.cakelab.blender.file.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.FileHeader.Version;
+import org.cakelab.blender.io.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.CStringUtils;
 
 
 /**

@@ -1,6 +1,6 @@
 package org.cakelab.blender.generator.type;
 
-import org.cakelab.blender.file.Encoding;
+import org.cakelab.blender.io.Encoding;
 
 public class CType {
 

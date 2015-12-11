@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.dna.BlendField;
-import org.cakelab.blender.file.dna.BlendModel;
-import org.cakelab.blender.file.dna.BlendStruct;
 import org.cakelab.blender.generator.type.CType.CTypeType;
+import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.dna.BlendField;
+import org.cakelab.blender.io.dna.BlendModel;
+import org.cakelab.blender.io.dna.BlendStruct;
 
 public class MetaModel {
 

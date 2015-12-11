@@ -7,9 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteOrder;
 
-import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.block.Block;
-import org.cakelab.blender.file.block.BlockTable;
+import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.block.Block;
+import org.cakelab.blender.io.block.BlockTable;
 
 /**
  * {@link DNAFacet} is the base class of all complex types

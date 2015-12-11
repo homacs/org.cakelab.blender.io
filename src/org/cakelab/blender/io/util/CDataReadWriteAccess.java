@@ -1,4 +1,4 @@
-package org.cakelab.blender.file.util;
+package org.cakelab.blender.io.util;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.FileHeader.PointerSize;
+import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.FileHeader.PointerSize;
 
 
 public abstract class CDataReadWriteAccess implements Closeable {

@@ -1,4 +1,4 @@
-package org.cakelab.blender.file.util;
+package org.cakelab.blender.io.util;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

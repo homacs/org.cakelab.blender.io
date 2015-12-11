@@ -1,4 +1,4 @@
-package org.cakelab.blender.file.dna;
+package org.cakelab.blender.io.dna;
 
 
 public class BlendType {

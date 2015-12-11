@@ -1,10 +1,10 @@
-package org.cakelab.blender.file;
+package org.cakelab.blender.io;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import org.cakelab.blender.file.util.CStringUtils;
-import org.cakelab.blender.file.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.CStringUtils;
 
 /**
  * The first 12 bytes of every blend-file is the file-header. 

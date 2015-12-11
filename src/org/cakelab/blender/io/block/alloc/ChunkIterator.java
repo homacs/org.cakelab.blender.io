@@ -1,4 +1,4 @@
-package org.cakelab.blender.file.block.alloc;
+package org.cakelab.blender.io.block.alloc;
 
 import java.util.Iterator;
 

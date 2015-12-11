@@ -5,17 +5,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import org.cakelab.blender.file.BlenderFile;
-import org.cakelab.blender.file.block.Block;
-import org.cakelab.blender.file.block.BlockHeader;
-import org.cakelab.blender.file.block.BlockTable;
-import org.cakelab.blender.file.dna.BlendField;
-import org.cakelab.blender.file.dna.BlendModel;
-import org.cakelab.blender.file.dna.BlendStruct;
-import org.cakelab.blender.file.util.Identifier;
 import org.cakelab.blender.generator.type.CField;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.Renaming;
+import org.cakelab.blender.io.BlenderFile;
+import org.cakelab.blender.io.block.Block;
+import org.cakelab.blender.io.block.BlockHeader;
+import org.cakelab.blender.io.block.BlockTable;
+import org.cakelab.blender.io.dna.BlendField;
+import org.cakelab.blender.io.dna.BlendModel;
+import org.cakelab.blender.io.dna.BlendStruct;
+import org.cakelab.blender.io.util.Identifier;
 
 /**
  * Blender organises data in so-called libraries. A main library contains

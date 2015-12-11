@@ -1,14 +1,14 @@
-package org.cakelab.blender.file.block;
+package org.cakelab.blender.io.block;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.block.alloc.Allocator;
-import org.cakelab.blender.file.util.CDataReadWriteAccess;
-import org.cakelab.blender.file.util.Identifier;
+import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.block.alloc.Allocator;
+import org.cakelab.blender.io.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.Identifier;
 import org.cakelab.blender.model.UnsignedLong;
 
 

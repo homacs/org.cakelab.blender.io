@@ -1,4 +1,4 @@
-package org.cakelab.blender.file.block.alloc;
+package org.cakelab.blender.io.block.alloc;
 
 import org.cakelab.blender.model.UnsignedLong;
 

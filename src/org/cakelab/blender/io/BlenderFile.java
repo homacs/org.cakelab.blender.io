@@ -1,4 +1,4 @@
-package org.cakelab.blender.file;
+package org.cakelab.blender.io;
 
 import java.io.Closeable;
 import java.io.File;
@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-import org.cakelab.blender.file.FileHeader.Version;
-import org.cakelab.blender.file.block.Block;
-import org.cakelab.blender.file.block.BlockHeader;
-import org.cakelab.blender.file.block.BlockTable;
-import org.cakelab.blender.file.dna.BlendModel;
-import org.cakelab.blender.file.dna.internal.StructDNA;
-import org.cakelab.blender.file.util.CDataReadWriteAccess;
-import org.cakelab.blender.file.util.Identifier;
 import org.cakelab.blender.generator.type.MetaModel;
+import org.cakelab.blender.io.FileHeader.Version;
+import org.cakelab.blender.io.block.Block;
+import org.cakelab.blender.io.block.BlockHeader;
+import org.cakelab.blender.io.block.BlockTable;
+import org.cakelab.blender.io.dna.BlendModel;
+import org.cakelab.blender.io.dna.internal.StructDNA;
+import org.cakelab.blender.io.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.Identifier;
 
 
 /**

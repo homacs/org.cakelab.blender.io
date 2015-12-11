@@ -2,7 +2,7 @@ package org.cakelab.blender.generator.type;
 
 import java.util.ArrayList;
 
-import org.cakelab.blender.file.dna.BlendStruct;
+import org.cakelab.blender.io.dna.BlendStruct;
 
 public class CStruct extends CType {
 	int sdnaIndex;

@@ -1,8 +1,8 @@
-package org.cakelab.blender.file.dna;
+package org.cakelab.blender.io.dna;
 
-import org.cakelab.blender.file.dna.internal.StructDNA;
-import org.cakelab.blender.file.dna.internal.StructDNA.Struct;
-import org.cakelab.blender.file.dna.internal.StructDNA.Struct.Field;
+import org.cakelab.blender.io.dna.internal.StructDNA;
+import org.cakelab.blender.io.dna.internal.StructDNA.Struct;
+import org.cakelab.blender.io.dna.internal.StructDNA.Struct.Field;
 
 
 public class BlendModel {

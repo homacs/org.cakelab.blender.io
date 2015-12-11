@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.util.HashSet;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.file.BlenderFile;
-import org.cakelab.blender.file.FileVersionInfo;
-import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.generator.code.GPackage;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.MetaModel;
+import org.cakelab.blender.io.BlenderFile;
+import org.cakelab.blender.io.FileVersionInfo;
+import org.cakelab.blender.io.dna.BlendModel;
 import org.cakelab.json.JSONException;
 
 public class ModelGenerator {

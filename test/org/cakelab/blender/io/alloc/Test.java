@@ -1,6 +1,6 @@
 package org.cakelab.blender.io.alloc;
 
-import org.cakelab.blender.file.block.alloc.Allocator;
+import org.cakelab.blender.io.block.alloc.Allocator;
 import org.cakelab.blender.model.UnsignedLong;
 
 public class Test {

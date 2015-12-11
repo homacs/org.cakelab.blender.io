@@ -1,9 +1,9 @@
-package org.cakelab.blender.file.util;
+package org.cakelab.blender.io.util;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.cakelab.blender.file.util.CStringUtils;
+import org.cakelab.blender.io.util.CStringUtils;
 
 /**
  * This class implements an abstraction layer to 4 byte

@@ -2,7 +2,6 @@ package org.cakelab.blender.generator;
 
 import java.io.IOException;
 
-import org.cakelab.blender.file.Encoding;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.FieldVisitor;
 import org.cakelab.blender.generator.code.GComment;
@@ -10,6 +9,7 @@ import org.cakelab.blender.generator.code.HtmlEncoder;
 import org.cakelab.blender.generator.type.CField;
 import org.cakelab.blender.generator.type.CType;
 import org.cakelab.blender.generator.type.JavaType;
+import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.model.DNAPointer;
 
 

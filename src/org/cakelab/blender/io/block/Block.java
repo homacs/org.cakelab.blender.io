@@ -1,9 +1,9 @@
-package org.cakelab.blender.file.block;
+package org.cakelab.blender.io.block;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import org.cakelab.blender.file.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.model.UnsignedLong;
 
 

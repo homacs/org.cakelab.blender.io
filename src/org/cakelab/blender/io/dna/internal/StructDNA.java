@@ -1,11 +1,11 @@
-package org.cakelab.blender.file.dna.internal;
+package org.cakelab.blender.io.dna.internal;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.cakelab.blender.file.util.CStringUtils;
-import org.cakelab.blender.file.util.CDataReadWriteAccess;
-import org.cakelab.blender.file.util.Identifier;
+import org.cakelab.blender.io.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.CStringUtils;
+import org.cakelab.blender.io.util.Identifier;
 
 
 /**

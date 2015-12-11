@@ -1,10 +1,10 @@
-package org.cakelab.blender.file.block;
+package org.cakelab.blender.io.block;
 
 import java.io.IOException;
 
-import org.cakelab.blender.file.dna.internal.StructDNA;
-import org.cakelab.blender.file.util.CDataReadWriteAccess;
-import org.cakelab.blender.file.util.Identifier;
+import org.cakelab.blender.io.dna.internal.StructDNA;
+import org.cakelab.blender.io.util.CDataReadWriteAccess;
+import org.cakelab.blender.io.util.Identifier;
 
 /**
  * <p>
