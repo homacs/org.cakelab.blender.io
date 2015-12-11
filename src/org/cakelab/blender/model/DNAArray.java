@@ -6,7 +6,7 @@ import java.nio.ReadOnlyBufferException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.cakelab.blender.file.block.BlockMap;
+import org.cakelab.blender.file.block.BlockTable;
 
 
 /**
@@ -57,8 +57,8 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		this.componentSize = other.componentSize;
 	}
 	
-	public DNAArray(long baseAddress, Class<?>[] targetTypeList, int[] dimensions, BlockMap __blockMap) {
-		super(baseAddress, Arrays.copyOfRange(targetTypeList, dimensions.length-1, targetTypeList.length), __blockMap);
+	public DNAArray(long baseAddress, Class<?>[] targetTypeList, int[] dimensions, BlockTable __blockTable) {
+		super(baseAddress, Arrays.copyOfRange(targetTypeList, dimensions.length-1, targetTypeList.length), __blockTable);
 		this.targetTypeList = targetTypeList;
 		this.componentType = targetTypeList[dimensions.length-1];
 		this.dimensions = dimensions;
@@ -94,11 +94,11 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 					address,
 					Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), 
 					Arrays.copyOfRange(dimensions, 1, dimensions.length), 
-					__dna__blockMap);
+					__dna__blockTable);
 		} else if (componentType.equals(DNAPointer.class)) {
 			// array of pointers
 			long pointerAddress = __dna__block.readLong(address);
-			return (T) new DNAPointer(pointerAddress, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __dna__blockMap);
+			return (T) new DNAPointer(pointerAddress, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __dna__blockTable);
 		} else if (isPrimitive(componentType)) {
 			return getScalar(address);
 		} else {

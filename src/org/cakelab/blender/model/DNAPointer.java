@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-import org.cakelab.blender.file.block.BlockMap;
+import org.cakelab.blender.file.block.BlockTable;
 import org.cakelab.blender.model.DNAArray.DNAArrayIterator;
 
 /**
@@ -199,7 +199,7 @@ public class DNAPointer<T> extends DNAFacet {
 	
 	
 	@SuppressWarnings("unchecked")
-	public DNAPointer(long targetAddress, Class<?>[] targetTypes, BlockMap memory) {
+	public DNAPointer(long targetAddress, Class<?>[] targetTypes, BlockTable memory) {
 		super(targetAddress, memory);
 		this.targetTypeList = (Class<T>[]) targetTypes;
 		this.targetSize = __dna__sizeof(targetTypes[0]);
@@ -289,7 +289,7 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @return
 	 */
 	public <U> DNAPointer<U> cast(Class<U> type) {
-		return new DNAPointer<U>(__dna__address, new Class<?>[]{type}, __dna__blockMap);
+		return new DNAPointer<U>(__dna__address, new Class<?>[]{type}, __dna__blockTable);
 	}
 	
 	/**
@@ -310,7 +310,7 @@ public class DNAPointer<T> extends DNAFacet {
 	 * @return
 	 */
 	public <U> DNAPointer<U> cast(Class<U>[] types) {
-		return new DNAPointer<U>(__dna__address, types, __dna__blockMap);
+		return new DNAPointer<U>(__dna__address, types, __dna__blockTable);
 	}
 
 	/**
@@ -360,7 +360,7 @@ public class DNAPointer<T> extends DNAFacet {
 	
 
 	public DNAArray<T> toDNAArray(int len) {
-		return new DNAArray<T>(__dna__address, targetTypeList, new int[]{len}, __dna__blockMap);
+		return new DNAArray<T>(__dna__address, targetTypeList, new int[]{len}, __dna__blockTable);
 	}
 	
 	public byte[] toArray(byte[] b, int off, int len)
@@ -458,9 +458,9 @@ public class DNAPointer<T> extends DNAFacet {
 		try {
 			if (targetTypeList[0].equals(DNAPointer.class)) {
 				long address = __dna__block.readLong(targetAddress);
-				return (T) new DNAPointer(address, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __dna__blockMap);
+				return (T) new DNAPointer(address, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __dna__blockTable);
 			} else {
-				return (T) DNAFacet.__dna__newInstance((Class<? extends DNAFacet>) targetTypeList[0], targetAddress, __dna__blockMap);
+				return (T) DNAFacet.__dna__newInstance((Class<? extends DNAFacet>) targetTypeList[0], targetAddress, __dna__blockTable);
 			}
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {

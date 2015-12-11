@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
 
 import org.cakelab.blender.file.Encoding;
 import org.cakelab.blender.file.block.Block;
-import org.cakelab.blender.file.block.BlockMap;
+import org.cakelab.blender.file.block.BlockTable;
 
 /**
  * {@link DNAFacet} is the base class of all complex types
@@ -28,23 +28,23 @@ public abstract class DNAFacet {
 	
 	
 	protected long __dna__address;
-	protected BlockMap __dna__blockMap;
+	protected BlockTable __dna__blockTable;
 	protected Block __dna__block;
 	protected int __dna__arch_index;
 	protected int __dna__pointersize;
 	
-	public DNAFacet(long __address, BlockMap __blockMap) {
+	public DNAFacet(long __address, BlockTable __blockTable) {
 		this.__dna__address = __address;
-		this.__dna__block = __blockMap.getBlock(__address);
-		this.__dna__blockMap = __blockMap;
-		this.__dna__pointersize = __blockMap.getEncoding().getAddressWidth();
-		this.__dna__arch_index = __blockMap.getEncoding().getAddressWidth() == Encoding.ADDR_WIDTH_32BIT ? 0 : 1;
+		this.__dna__block = __blockTable.getBlock(__address);
+		this.__dna__blockTable = __blockTable;
+		this.__dna__pointersize = __blockTable.getEncoding().getAddressWidth();
+		this.__dna__arch_index = __blockTable.getEncoding().getAddressWidth() == Encoding.ADDR_WIDTH_32BIT ? 0 : 1;
 	}
 	
 	public DNAFacet(DNAFacet other, long targetAddress) {
 		this.__dna__address = targetAddress;
 		this.__dna__block = other.__dna__block;
-		this.__dna__blockMap = other.__dna__blockMap;
+		this.__dna__blockTable = other.__dna__blockTable;
 		this.__dna__arch_index = other.__dna__arch_index;
 	}
 
@@ -54,7 +54,7 @@ public abstract class DNAFacet {
 	 * represented by this facet.
 	 */
 	protected Block __dna__getBlock() {
-		return __dna__blockMap.getBlock(__dna__address);
+		return __dna__blockTable.getBlock(__dna__address);
 	}
 	
 
@@ -113,7 +113,7 @@ public abstract class DNAFacet {
 	 * @return
 	 */
 	public static <T extends DNAFacet> DNAPointer<T> __dna__addressof(T object) {
-		return new DNAPointer<T>(object.__dna__address, new Class[]{object.getClass()}, object.__dna__blockMap);
+		return new DNAPointer<T>(object.__dna__address, new Class[]{object.getClass()}, object.__dna__blockTable);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public abstract class DNAFacet {
 	 * @return
 	 */
 	public DNAPointer<Object> __dna__addressof(long[] fieldDescriptor) {
-		return new DNAPointer<Object>(this.__dna__address + fieldDescriptor[__dna__arch_index], new Class[]{Object.class}, this.__dna__blockMap);
+		return new DNAPointer<Object>(this.__dna__address + fieldDescriptor[__dna__arch_index], new Class[]{Object.class}, this.__dna__blockTable);
 	}
 
 	
@@ -171,7 +171,7 @@ public abstract class DNAFacet {
 	 * Creates a new facet instance of the given type.
 	 * @param type The type of facet to instantiate.
 	 * @param address The associated address for the instantiated facet.
-	 * @param blockMap the global block map of the associated file.
+	 * @param blockTable the global block map of the associated file.
 	 * @return new facet instance of the given type
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
@@ -181,10 +181,10 @@ public abstract class DNAFacet {
 	 * @throws SecurityException
 	 */
 	public static DNAFacet __dna__newInstance(Class<? extends DNAFacet> type, long address,
-			BlockMap blockMap) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+			BlockTable blockTable) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		// TODO: cache constructors
-		Constructor<?> constructor = type.getDeclaredConstructor(long.class, BlockMap.class);
-		return (DNAFacet) constructor.newInstance(address, blockMap);
+		Constructor<?> constructor = type.getDeclaredConstructor(long.class, BlockTable.class);
+		return (DNAFacet) constructor.newInstance(address, blockTable);
 	}
 
 	/** Generates a string representation of the given DNAFacet considering all getter methods. 
@@ -319,7 +319,7 @@ public abstract class DNAFacet {
 	 * @return byte order used by the underlying data block.
 	 */
 	private ByteOrder __dna__byteorder() {
-		return __dna__blockMap.getEncoding().getByteOrder();
+		return __dna__blockTable.getEncoding().getByteOrder();
 	}
 
 	

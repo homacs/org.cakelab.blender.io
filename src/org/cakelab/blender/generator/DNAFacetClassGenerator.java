@@ -7,7 +7,7 @@ import java.io.PrintStream;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.file.Encoding;
-import org.cakelab.blender.file.block.BlockMap;
+import org.cakelab.blender.file.block.BlockTable;
 import org.cakelab.blender.generator.code.ClassGenerator;
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GField;
@@ -49,7 +49,7 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 		
 		addImport(DNAFacet.class);
 		addImport(DNATypeInfo.class);
-		addImport(BlockMap.class);
+		addImport(BlockTable.class);
 		long offset32 = 0;
 		long offset64 = 0;
 		for (CField field : struct.getFields()) {
@@ -96,8 +96,8 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 			//
 			// Create constructor
 			//
-			out.println("\tpublic " + classname + "(long __address, " + BlockMap.class.getSimpleName() + " __blockMap) {");
-			out.println("\t\tsuper(__address, __blockMap);");
+			out.println("\tpublic " + classname + "(long __address, " + BlockTable.class.getSimpleName() + " __blockTable) {");
+			out.println("\t\tsuper(__address, __blockTable);");
 			out.println("\t}");
 			out.println();
 			
@@ -120,7 +120,7 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 		method.appendln("public " + pointerType + " __dna__addressof() {");
 		method.indent(+1);
 		
-		method.appendln("return new " + pointerType + "(__dna__address, new Class[]{" + classname + ".class}, __dna__blockMap);");
+		method.appendln("return new " + pointerType + "(__dna__address, new Class[]{" + classname + ".class}, __dna__blockTable);");
 		
 		method.indent(-1);
 		method.appendln("}");

@@ -1,7 +1,7 @@
 package org.cakelab.blender.generator.code;
 
 public abstract class MethodGenerator extends FieldVisitor {
-	protected static final String ARCH64_IDENTIFICATION_BOOLEAN = "(__dna__pointersize == 8)";
+	protected static final String ARCH64_TEST = "(__dna__pointersize == 8)";
 
 
 	protected ClassGenerator classgen;

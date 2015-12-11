@@ -50,7 +50,7 @@ public abstract class ClassGenerator extends CodeGenerator {
 
 
 	public GField addField(String modifiers, String type, String name) {
-		return addField(modifiers, type, name, null);
+		return addField(modifiers, type, name, GComment.EMPTY);
 	}
 
 	public GField addConstField(String modifiers, String type, String name,

@@ -119,7 +119,7 @@ public class DNAPointerMutable<T> extends DNAPointer<T> {
 	public void assign(long address) throws IOException {
 		__dna__address = address;
 		if (!isValid()) {
-			__dna__block = __dna__blockMap.getBlock(address);
+			__dna__block = __dna__blockTable.getBlock(address);
 		}
 	}
 

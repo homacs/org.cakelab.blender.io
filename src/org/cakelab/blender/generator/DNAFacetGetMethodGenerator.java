@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GMethod;
-import org.cakelab.blender.generator.code.MethodGenerator;
 import org.cakelab.blender.generator.type.CField;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.CType;
@@ -15,7 +14,7 @@ import org.cakelab.blender.model.DNAPointer;
 
 
 
-public class DNAFacetGetMethodGenerator extends MethodGenerator {
+public class DNAFacetGetMethodGenerator extends DNAFacetMethodGenerator {
 
 
 
@@ -56,13 +55,13 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		content.indent(-1);
 		appendln("};");
 		
-		appendln("if (" + ARCH64_IDENTIFICATION_BOOLEAN + ") {");
+		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
-		appendln("return new " + parameterizedArrayType + "(__dna__address + " + offset64 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", __dna__blockMap);");
+		appendln("return new " + parameterizedArrayType + "(__dna__address + " + offset64 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", " + MEMBER__dna__blockTable + ");");
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);
-		appendln("return new " + parameterizedArrayType + "(__dna__address + " + offset32 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", __dna__blockMap);");
+		appendln("return new " + parameterizedArrayType + "(__dna__address + " + offset32 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", " + MEMBER__dna__blockTable + ");");
 		content.indent(-1);
 		appendln("}");
 	
@@ -89,7 +88,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		appendln("long " + targetAddrVar + ";");
 		
 		
-		appendln("if (" + ARCH64_IDENTIFICATION_BOOLEAN + ") {");
+		appendln("if (" + ARCH64_TEST + ") {");
 
 		content.indent(+1);
 		appendln(targetAddrVar + " = " + "__dna__block.readLong(__dna__address + " + offset64 + ");");
@@ -105,7 +104,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		String targetTypeListVar = "__dna__targetTypes";
 		__appendTargetTypeList(targetTypeListVar, jtype, field.getType());
 		
-		appendln("return new " + parameterizedPointerType + "(" + targetAddrVar +", "+ targetTypeListVar + ", __dna__blockMap);");
+		appendln("return new " + parameterizedPointerType + "(" + targetAddrVar +", "+ targetTypeListVar + ", " + MEMBER__dna__blockTable + ");");
 		
 		content.indent(-1);
 		appendln("}");
@@ -120,16 +119,16 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		appendMethodSignature(field, jtype);
 		appendln("{");
 		content.indent(+1);
-		appendln("if (" + ARCH64_IDENTIFICATION_BOOLEAN + ") {");
+		appendln("if (" + ARCH64_TEST + ") {");
 
 		content.indent(+1);
-		appendln("return new " + jtype.getName() + "(__dna__address + " + offset64 + ", __dna__blockMap);");
+		appendln("return new " + jtype.getName() + "(__dna__address + " + offset64 + ", " + MEMBER__dna__blockTable + ");");
 		content.indent(-1);
 		
 		appendln("} else {");
 		
 		content.indent(+1);
-		appendln("return new " + jtype.getName() + "(__dna__address + " + offset32 + ", __dna__blockMap);");
+		appendln("return new " + jtype.getName() + "(__dna__address + " + offset32 + ", " + MEMBER__dna__blockTable + ");");
 		content.indent(-1);
 		appendln("}");
 		
@@ -143,7 +142,7 @@ public class DNAFacetGetMethodGenerator extends MethodGenerator {
 		appendMethodSignature(field, jtype);
 		appendln("{");
 		content.indent(+1);
-		appendln("if (" + ARCH64_IDENTIFICATION_BOOLEAN + ") {");
+		appendln("if (" + ARCH64_TEST + ") {");
 
 		content.indent(+1);
 		appendln("return __dna__block." + readMethod(jtype, field.getType()) + "(__dna__address + " + offset64 + ");");

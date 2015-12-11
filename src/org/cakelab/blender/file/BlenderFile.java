@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import org.cakelab.blender.file.FileHeader.Version;
 import org.cakelab.blender.file.block.Block;
 import org.cakelab.blender.file.block.BlockHeader;
-import org.cakelab.blender.file.block.BlockMap;
+import org.cakelab.blender.file.block.BlockTable;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.internal.StructDNA;
 import org.cakelab.blender.file.util.CDataReadWriteAccess;
@@ -153,8 +153,8 @@ public class BlenderFile implements Closeable {
 		return blocks;
 	}
 
-	public BlockMap getBlockMap () throws IOException {
-		return new BlockMap(getEncoding(), getBlocks());
+	public BlockTable getBlockMap () throws IOException {
+		return new BlockTable(getEncoding(), getBlocks());
 	}
 	
 	

@@ -8,7 +8,7 @@ import org.cakelab.blender.file.BlenderFile;
 import org.cakelab.blender.file.Encoding;
 import org.cakelab.blender.file.block.Block;
 import org.cakelab.blender.file.block.BlockHeader;
-import org.cakelab.blender.file.block.BlockMap;
+import org.cakelab.blender.file.block.BlockTable;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.MetaModel;
@@ -25,8 +25,8 @@ public class Main {
 		
 		Encoding encoding = blender.getEncoding();
 		
-		BlockMap blockMap = new BlockMap(encoding);
-		blockMap.addAll(blocks);
+		BlockTable blockTable = new BlockTable(encoding);
+		blockTable.addAll(blocks);
 
 		//
 		// retrieve the meta model, which is encoding independent
@@ -38,7 +38,7 @@ public class Main {
 		//
 		CStruct struct = (CStruct) meta.getType("Scene");
 		int size = struct.sizeof(encoding.getAddressWidth());
-		Block block = blockMap.allocate(BlockHeader.CODE_SCE, size);
+		Block block = blockTable.allocate(BlockHeader.CODE_SCE, size);
 
 		// 
 		// init the block to retrieve the scene struct

@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GMethod;
-import org.cakelab.blender.generator.code.MethodGenerator;
 import org.cakelab.blender.generator.type.CField;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.CType;
@@ -14,7 +13,7 @@ import org.cakelab.blender.model.DNAPointer;
 
 
 
-public class DNAFacetSetMethodGenerator extends MethodGenerator {
+public class DNAFacetSetMethodGenerator extends DNAFacetMethodGenerator {
 
 
 	public DNAFacetSetMethodGenerator(DNAFacetClassGenerator classGenerator) 
@@ -37,7 +36,7 @@ public class DNAFacetSetMethodGenerator extends MethodGenerator {
 		appendln("{");
 		content.indent(+1);
 		
-		appendln("if (" + ARCH64_IDENTIFICATION_BOOLEAN + ") {");
+		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
 		appendln("__dna__block." + writeMethod(jtype, field.getType()) + "(__dna__address + " + offset64 + ", " + field.getName() + ");");
 		content.indent(-1);
@@ -59,7 +58,7 @@ public class DNAFacetSetMethodGenerator extends MethodGenerator {
 		appendln("{");
 		content.indent(+1);
 		
-		appendln("if (" + ARCH64_IDENTIFICATION_BOOLEAN + ") {");
+		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
 		appendln("__dna__block.writeLong(__dna__address + " + offset64 + ", " + field.getName() + ".getAddress());");
 		content.indent(-1);
@@ -94,7 +93,7 @@ public class DNAFacetSetMethodGenerator extends MethodGenerator {
 		
 		String offsetVar = "__dna__offset";
 		appendln("long " + offsetVar + ";");
-		appendln("if (" + ARCH64_IDENTIFICATION_BOOLEAN + ") {");
+		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
 		appendln(offsetVar + " = " + offset64 + ";");
 		content.indent(-1);

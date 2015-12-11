@@ -2,7 +2,13 @@ package org.cakelab.blender.generator.code;
 
 
 public class GComment extends GCodeSection {
-	private Type type;
+	public static final GComment EMPTY = new GComment() {
+		@Override
+		public String toString(int indent) {
+			return "";
+		}
+	};
+	private Type type = Type.Unspecified;
 	private String prefix;
 	private boolean finished;
 
@@ -18,7 +24,11 @@ public class GComment extends GCodeSection {
 		/**
 		 * JavaDoc conform multi-line comment. 
 		 */
-		JavaDoc
+		JavaDoc,
+		/**
+		 * Unspecified. Comment is handled like a simple code section.
+		 */
+		Unspecified
 	}
 	
 	
@@ -26,6 +36,17 @@ public class GComment extends GCodeSection {
 		super(0);
 		this.type = type;
 		reset();
+	}
+
+	public GComment(GComment other) {
+		super(other);
+		this.type = other.type;
+		this.prefix = other.prefix;
+		this.finished = other.finished;
+	}
+
+	GComment() {
+		super(0);
 	}
 
 	@Override

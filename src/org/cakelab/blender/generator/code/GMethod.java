@@ -20,6 +20,9 @@ public class GMethod extends GCodeSection {
 		super(indent);
 	}
 
+	public void setComment(GComment comment) {
+		this.comment = comment;
+	}
 
 	public String toString(int indent) {
 		if (comment != null) {

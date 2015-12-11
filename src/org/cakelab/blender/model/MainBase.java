@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.cakelab.blender.file.BlenderFile;
 import org.cakelab.blender.file.block.Block;
 import org.cakelab.blender.file.block.BlockHeader;
-import org.cakelab.blender.file.block.BlockMap;
+import org.cakelab.blender.file.block.BlockTable;
 import org.cakelab.blender.file.dna.BlendField;
 import org.cakelab.blender.file.dna.BlendModel;
 import org.cakelab.blender.file.dna.BlendStruct;
@@ -28,13 +28,15 @@ import org.cakelab.blender.generator.type.Renaming;
  *
  */
 public abstract class MainBase {
-	private BlockMap blockMap;
+	protected BlockTable blockTable;
 	private String packageName;
+	protected BlenderFile __dna__blendFile;
 
 	protected MainBase(String packageName, BlenderFile blend) throws IOException {
 		this.packageName = packageName;
+		this.__dna__blendFile = blend;
 		BlendModel model = blend.getBlenderModel();
-		blockMap = blend.getBlockMap();
+		blockTable = blend.getBlockMap();
 		ArrayList<Block> blocks = blend.getBlocks();
 		for (Block block : blocks) {
 			BlockHeader header = block.header;
@@ -56,7 +58,7 @@ public abstract class MainBase {
 			for (long address = block.header.getAddress(); count < block.header.getCount();
 					address += size) 
 			{
-				DNAFacet libElem = DNAFacet.__dna__newInstance(clazz, address, blockMap);
+				DNAFacet libElem = DNAFacet.__dna__newInstance(clazz, address, blockTable);
 				addLibraryElement(libElem);
 				count++;
 			}
