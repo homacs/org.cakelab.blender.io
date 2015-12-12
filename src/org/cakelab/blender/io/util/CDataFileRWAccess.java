@@ -5,12 +5,12 @@ import java.io.RandomAccessFile;
 
 public abstract class CDataFileRWAccess extends CDataReadWriteAccess {
 
-	protected RandomAccessFile in;
+	protected RandomAccessFile io;
 
 
 	protected CDataFileRWAccess(RandomAccessFile in, int pointerSize) {
 		super(pointerSize);
-		this.in = in;
+		this.io = in;
 	}
 
 	@Override
@@ -22,13 +22,11 @@ public abstract class CDataFileRWAccess extends CDataReadWriteAccess {
         if (n <= 0) {
             return 0;
         }
-        pos = in.getFilePointer();
-        len = in.length();
+        pos = io.getFilePointer();
+        len = io.length();
         newpos = pos + n;
-        if (newpos > len) {
-            newpos = len;
-        }
-        in.seek(newpos);
+        if (newpos > len) throw new IOException("Skipping beyond file boundary.");
+        io.seek(newpos);
 
         /* return the actual number of bytes skipped */
         return (newpos - pos);
@@ -36,62 +34,75 @@ public abstract class CDataFileRWAccess extends CDataReadWriteAccess {
 
 	@Override
 	public final int available() throws IOException {
-		return (int) (in.length() - in.getFilePointer());
+		return (int) (io.length() - io.getFilePointer());
 	}
 
 	@Override
 	public final void readFully(byte[] b, int off, int len)
 			throws IOException {
-		in.readFully(b, off, len);
+		io.readFully(b, off, len);
 	}
 
 	@Override
 	public final void writeFully(byte[] b, int off, int len)
 			throws IOException {
-		in.write(b, off, len);
+		io.write(b, off, len);
 	}
 
 	@Override
 	public final boolean readBoolean() throws IOException {
-		return in.readBoolean();
+		return io.readBoolean();
 	}
 
 	@Override
 	public final void writeBoolean(boolean value) throws IOException {
-		in.writeBoolean(value);
+		io.writeBoolean(value);
 	}
 
 	@Override
 	public final byte readByte() throws IOException {
-		return in.readByte();
+		return io.readByte();
 	}
 
 	@Override
 	public final void writeByte(int value) throws IOException {
-		in.writeByte(value);
+		io.writeByte(value);
 	}
 
 	@Override
 	public final void offset(long offset) throws IOException {
-		in.seek(offset);
+		io.seek(offset);
 	}
 
 	@Override
 	public long offset() throws IOException {
-		return in.getFilePointer();
+		return io.getFilePointer();
 	}
 	
 	@Override
 	public void padding(int alignment) throws IOException {
+		padding(alignment, false);
+	}
+
+	@Override
+	public void padding(int alignment, boolean extend) throws IOException {
 		long pos = offset();
 		long misalignment = pos%alignment;
 		if (misalignment > 0) {
-			skip(alignment-misalignment);
+			long len = io.length();
+			long correction = alignment-misalignment;
+			if (pos + correction <= len) {
+				skip(correction);
+			} else if (extend) {
+				offset(pos + (correction-1));
+				writeByte(0);
+			} else {
+				throw new IOException("padding beyond file boundary without permission.");
+			}
 		}
 	}
 
-
 	public void close() throws IOException {
-		in.close();
+		io.close();
 	}
 }

@@ -13,52 +13,52 @@ public class LittleEndianFileRW extends CDataFileRWAccess {
 	
 	@Override
 	public final short readShort() throws IOException {
-		return swapShort(in.readShort());
+		return swapShort(io.readShort());
 	}
 
 	@Override
 	public final void writeShort(short value) throws IOException {
-		in.writeShort(swapShort(value));
+		io.writeShort(swapShort(value));
 	}
 
 	@Override
 	public final int readInt() throws IOException {
-		return swapInteger(in.readInt());
+		return swapInteger(io.readInt());
 	}
 
 	@Override
 	public final void writeInt(int value) throws IOException {
-		in.writeInt(swapInteger(value));
+		io.writeInt(swapInteger(value));
 	}
 
 	@Override
 	public final long readInt64() throws IOException {
-		return swapLong(in.readLong());
+		return swapLong(io.readLong());
 	}
 
 	@Override
 	public final void writeInt64(long value) throws IOException {
-		in.writeLong(swapLong(value));
+		io.writeLong(swapLong(value));
 	}
 
 	@Override
 	public final float readFloat() throws IOException {
-		return swapFloat(in.readFloat());
+		return swapFloat(io.readFloat());
 	}
 
 	@Override
 	public final void writeFloat(float value) throws IOException {
-		in.writeFloat(swapFloat(value));
+		io.writeFloat(swapFloat(value));
 	}
 
 	@Override
 	public final double readDouble() throws IOException {
-		return swapDouble(in.readDouble());
+		return swapDouble(io.readDouble());
 	}
 
 	@Override
 	public final void writeDouble(double value) throws IOException {
-		in.writeDouble(swapDouble(value));
+		io.writeDouble(swapDouble(value));
 	}
 
 

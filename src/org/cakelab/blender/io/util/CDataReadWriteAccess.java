@@ -204,6 +204,25 @@ public abstract class CDataReadWriteAccess implements Closeable {
 	}
 	
 	
+	/**
+	 * Inserts padding at a given offset to fit a given alignment during reading or 
+	 * writing in streams.
+	 * In case of writing, the stream can't just skip past the end 
+	 * and needs to actually write. The parameter 'extend' tells this
+	 * method whether it is allowed to extend past the end or not.
+	 * 
+	 * @param alignment Requrested aligment
+	 * @param extend Extend past boundary (write mode)
+	 * @throws IOException
+	 */
+	public abstract void padding(int alignment, boolean extend) throws IOException;
+
+	/**
+	 * Same as {@link #padding(int, boolean)} with 'extend == false'.
+	 * 
+	 * @param alignment Requrested aligment
+	 * @throws IOException
+	 */
 	public abstract void padding(int alignment) throws IOException;
 
 	public abstract long skip(long n) throws IOException;

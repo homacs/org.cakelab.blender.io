@@ -73,6 +73,12 @@ public class CBufferReadWrite extends CDataReadWriteAccess {
 	}
 
 	@Override
+	public void padding(int alignment, boolean extend) throws IOException {
+		if (extend)	throw new IllegalArgumentException("cannot extend underlying buffer");
+		else padding(alignment);
+	}
+
+	@Override
 	public void close() throws IOException {
 		rawData = null;
 	}
@@ -122,6 +128,17 @@ public class CBufferReadWrite extends CDataReadWriteAccess {
 		return rawData.order();
 	}
 
-	
+	/**
+	 * provides access to the native data buffer.
+	 * 
+	 * This is supposed to be used by internal methods only, which 
+	 * know how to handle the data.
+	 * 
+	 * @return
+	 */
+	public byte[] getBytes() {
+		return rawData.array();
+	}
+
 	
 }

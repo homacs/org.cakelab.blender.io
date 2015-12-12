@@ -17,6 +17,7 @@ public class ModelGenerator {
 	
 	
 	
+	private static final String PACKAGE_LIB = "lib";
 	private MetaModel model;
 	private HashSet<CStruct> classes = new HashSet<CStruct>();
 	private FileVersionInfo versionInfo;
@@ -30,11 +31,11 @@ public class ModelGenerator {
 	private void generate(File destinationDir, String packageName, DocumentationProvider docs, boolean debug) throws IOException {
 		if(!destinationDir.exists()) throw new IOException("Directory " + destinationDir + "does not exist");
 		GPackage dnaPackage = new GPackage(destinationDir, packageName + ".dna");
-		GPackage loaderPackage = new GPackage(destinationDir, packageName + ".lib");
+		GPackage loaderPackage = new GPackage(destinationDir, packageName + "." + PACKAGE_LIB);
 		
 		DNAFacetClassGenerator classgen = new DNAFacetClassGenerator(this, dnaPackage, docs);
 		MainLibClassGenerator libgen = new MainLibClassGenerator(this, loaderPackage, dnaPackage, docs);
-
+		FactoryClassGenerator facgen = new FactoryClassGenerator(this, loaderPackage, dnaPackage, docs);
 		for (CStruct struct : model.getStructs()) {
 			if (!classes.contains(struct)) {
 				classgen.visit(struct);
@@ -43,7 +44,7 @@ public class ModelGenerator {
 		}
 		
 		libgen.write();
-
+		facgen.write();
 	}
 
 	
@@ -98,10 +99,11 @@ public class ModelGenerator {
 			System.exit(-1);
 		}
 		
-		
+		//
+		// gather required resources
+		//
 		BlenderFile blend = new BlenderFile(input);
 		FileVersionInfo versionInfo = blend.readFileGlobal();
-		ModelGenerator generator = new ModelGenerator(blend.getBlenderModel(), versionInfo);
 		blend.close();
 		File[] docfiles = {
 				new File("resources/dnadoc/" + version + "/added/doc.json"),
@@ -109,7 +111,24 @@ public class ModelGenerator {
 				new File("resources/dnadoc/" + version + "/dnasrc/doc.json")
 		};
 		DocumentationProvider docs = new DocGenerator(docfiles, debug);
+
+		//
+		// generate model
+		//
+		ModelGenerator generator = new ModelGenerator(blend.getBlenderModel(), versionInfo);
 		generator.generate(output, javaPackage, docs, debug);
+		
+		//
+		// create native sdna image
+		//
+		File resourcesDir = new File(output, javaPackage.replace('.', File.separatorChar) + File.separator + PACKAGE_LIB + File.separator + "resources");
+		resourcesDir.mkdirs();
+		File sdnaImageFile = new File(resourcesDir, "sdna.blend");
+		sdnaImageFile.delete();
+		sdnaImageFile.createNewFile();
+		@SuppressWarnings("resource")
+		StructDNAImageGenerator sdnaImage = new StructDNAImageGenerator(sdnaImageFile, blend.getStructDNA(), blend.getVersion().getCode());
+		sdnaImage.generate();
 	}
 
 

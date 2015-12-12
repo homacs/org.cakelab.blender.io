@@ -18,12 +18,13 @@ import org.cakelab.blender.generator.type.JavaType;
 import org.cakelab.blender.generator.type.Renaming;
 import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.io.block.BlockTable;
+import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.model.DNAFacet;
 import org.cakelab.blender.model.DNAPointer;
 import org.cakelab.blender.model.DNATypeInfo;
 
 
-public class DNAFacetClassGenerator extends ClassGenerator {
+public class DNAFacetClassGenerator extends ClassGenerator implements DNAFacetMembers {
 
 	private DNAFacetGetMethodGenerator readgen;
 	private DNAFacetSetMethodGenerator writegen;
@@ -50,6 +51,17 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 		addImport(DNAFacet.class);
 		addImport(DNATypeInfo.class);
 		addImport(BlockTable.class);
+
+		GComment doc = new GComment(GComment.Type.JavaDoc);
+		doc.appendln();
+		doc.appendln("This is the sdna index of the struct " + struct.getSignature() + ".");
+		doc.appendln("<p>");
+		doc.appendln("It is required when allocating a new block to store data for " + struct.getSignature() + ".");
+		doc.appendln("</p>");
+		doc.appendln("@see {@link " + StructDNA.class.getName() + "}");
+		doc.appendln("@see {@link " + BlockTable.class.getName() + "#allocate}");
+		this.addConstField("public static final", "int", __dna__sdnaIndex, Integer.toString(struct.getSdnaIndex()), doc);
+		
 		long offset32 = 0;
 		long offset64 = 0;
 		for (CField field : struct.getFields()) {
@@ -120,7 +132,7 @@ public class DNAFacetClassGenerator extends ClassGenerator {
 		method.appendln("public " + pointerType + " __dna__addressof() {");
 		method.indent(+1);
 		
-		method.appendln("return new " + pointerType + "(__dna__address, new Class[]{" + classname + ".class}, __dna__blockTable);");
+		method.appendln("return new " + pointerType + "(" + __dna__address + ", new Class[]{" + classname + ".class}, " + __dna__blockTable + ");");
 		
 		method.indent(-1);
 		method.appendln("}");

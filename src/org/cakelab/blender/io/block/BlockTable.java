@@ -102,6 +102,20 @@ public class BlockTable extends Allocator {
 		return block;
 	}
 	
+	public Block allocate(Identifier blockCode, long size,
+			int sdnaIndex, int count) {
+		Block block = allocate(blockCode, size);
+		block.header.sdnaIndex = sdnaIndex;
+		block.header.count = count;
+		return block;
+	}
+
+
+	
+	public Block allocate(Identifier code, long size) {
+		return allocate(code, (int)size);
+	}
+
 	public void free(Block block) {
 		// When the allocator gets initialised, it will receive all blocks
 		// that still exist. Thus, we don't need to do anything
@@ -151,6 +165,7 @@ public class BlockTable extends Allocator {
 		}
 		return result;
 	}
+
 
 	
 }

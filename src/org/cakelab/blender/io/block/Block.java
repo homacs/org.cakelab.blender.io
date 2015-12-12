@@ -3,6 +3,7 @@ package org.cakelab.blender.io.block;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
+import org.cakelab.blender.io.util.CBufferReadWrite;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.model.UnsignedLong;
 
@@ -199,6 +200,28 @@ public class Block implements Comparable<Long> {
 
 	public ByteOrder getByteOrder() {
 		return data.getByteOrder();
+	}
+
+	public void flush(CDataReadWriteAccess io) throws IOException {
+		if (data instanceof CBufferReadWrite) {
+			// in-memory buffer
+			header.write(io);
+			io.writeFully(((CBufferReadWrite)data).getBytes());
+		} else if (io == data) {
+			// data io is direct file access (data on disk is up-to-date)
+			// Update the header only (just in case)
+			header.write(io);
+			io.skip(header.size);
+		} else if (io.getByteOrder().equals(data.getByteOrder()) && io.getPointerSize() == data.getPointerSize()) {
+			// copy to another file
+			header.write(io);
+			byte[] buf = new byte[header.size];
+			data.readFully(buf);
+			io.writeFully(buf);
+		} else {
+			throw new IOException("error: attempt to write a block with different encoding to another file");
+		}
+
 	}
 
 }

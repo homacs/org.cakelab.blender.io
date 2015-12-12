@@ -27,16 +27,16 @@ import org.cakelab.blender.io.util.Identifier;
  * @author homac
  *
  */
-public abstract class MainBase {
+public abstract class MainLibBase {
 	protected BlockTable blockTable;
 	private String packageName;
 	protected BlenderFile __dna__blendFile;
 
-	protected MainBase(String packageName, BlenderFile blend) throws IOException {
+	protected MainLibBase(String packageName, BlenderFile blend) throws IOException {
 		this.packageName = packageName;
 		this.__dna__blendFile = blend;
 		BlendModel model = blend.getBlenderModel();
-		blockTable = blend.getBlockMap();
+		blockTable = blend.getBlockTable();
 		ArrayList<Block> blocks = blend.getBlocks();
 		for (Block block : blocks) {
 			BlockHeader header = block.header;
@@ -53,7 +53,7 @@ public abstract class MainBase {
 	private void addLibraryElements(Block block, BlendStruct struct) throws IOException {
 		short size = struct.getType().getSize();
 		try {
-			Class<? extends DNAFacet> clazz = (Class<? extends DNAFacet>) MainBase.class.getClassLoader().loadClass(packageName + '.' + Renaming.mapStruct2Class(struct.getType().getName()));
+			Class<? extends DNAFacet> clazz = (Class<? extends DNAFacet>) MainLibBase.class.getClassLoader().loadClass(packageName + '.' + Renaming.mapStruct2Class(struct.getType().getName()));
 			int count = 0;
 			for (long address = block.header.getAddress(); count < block.header.getCount();
 					address += size) 

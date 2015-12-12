@@ -5,12 +5,14 @@ import java.io.File;
 public class GPackage {
 	private String name;
 	private File dir;
+	private String resourcePath;
 	
 	
 	
 	public GPackage(File parentDir, String packageName) {
 		name = packageName;
-		dir = new File(parentDir, packageName.replace('.', File.separatorChar));
+		resourcePath = packageName.replace('.', File.separatorChar);
+		dir = new File(parentDir, resourcePath);
 		dir.mkdirs();
 	}
 
@@ -50,6 +52,10 @@ public class GPackage {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public String getResourcePath() {
+		return resourcePath;
 	}
 
 }

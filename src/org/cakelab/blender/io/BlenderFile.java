@@ -55,7 +55,7 @@ public class BlenderFile implements Closeable {
 	private FileHeader header;
 	
 	
-	private CDataReadWriteAccess cin;
+	protected CDataReadWriteAccess io;
 	private long firstBlockOffset;
 
 
@@ -65,32 +65,134 @@ public class BlenderFile implements Closeable {
 	private BlendModel model;
 
 
+	private BlockTable blockTable;
+
+	
 	public BlenderFile(File file) throws IOException {
-		// 
-		// Read file header (byte order doesn't matter in this cae)
-		//
-		CDataReadWriteAccess in = CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), Encoding.JAVA_NATIVE);
+		this(CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), Encoding.JAVA_NATIVE));
+		// proceed from here with an input stream which decodes data according to its endianess
+		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), getEncoding());
+		readStructDNA();
+		readBlocks();
+	}
+	
+	/**
+	 * Just basic read initialisation. Reading file header.
+	 * (byte order doesn't matter in this case).
+	 * 
+	 * @param in
+	 * @throws IOException
+	 */
+	protected BlenderFile(CDataReadWriteAccess in) throws IOException {
 		header = new FileHeader();
 		try {
 			try {
 				header.read(in);
-				// proceed from here with an input stream which decodes data according to its endianess
-				cin = CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), getEncoding());
 				firstBlockOffset = in.offset();
 				in.close();
+				
 			} catch (IOException e) {
 				// it might be a compressed file
 				throw new IOException("file is either corrupted or uses the compressed format (not yet supported).\n"
 						+ "In the latter case, please uncompress it first (i.e. gunzip <file>.");
 			}
-			readStructDNA();
-			readBlocks();
 		} finally {
 			try {in.close();} catch (Throwable suppress){}
 		}
 	}
 	
+	protected BlenderFile(File file, StructDNA sdna, int blenderVersion) throws IOException {
+		this.sdna = sdna;
+		
+		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), Encoding.JAVA_NATIVE);
+		header = new FileHeader();
+		header.endianess = FileHeader.Endianess.from(io.getByteOrder());
+		header.pointerSize = FileHeader.PointerSize.from(io.getPointerSize());
+		header.version = new Version(blenderVersion);
+		
+		//
+		// determine firstBlockOffset
+		//
+		header.write(io);
+		firstBlockOffset = io.offset();
+		
+		blocks = new ArrayList<Block>();
+		blockTable = getBlockTable();
+	}
 	
+	public void write() throws IOException {
+		io.offset(firstBlockOffset);
+		
+		boolean sdnaWritten = false;
+		Block endBlock = null;
+		
+		io.offset(firstBlockOffset);
+		// flush all blocks to disk
+		for (Block block : blocks) {
+			if (block.header.getCode().equals(BlockHeader.CODE_ENDB)) {
+				endBlock = block;
+				continue;
+			}
+			block.flush(io);
+			
+			if (block.header.getCode().equals(BlockHeader.CODE_DNA1)) {
+				sdnaWritten = true;
+			}
+		}
+		
+		if (!sdnaWritten) {
+			// sdna never existed in a block. Thus, we create one now on disk.
+			writeSdnaBlock();
+		}
+		
+		if (endBlock != null) {
+			endBlock.flush(io);
+		} else {
+			writeEndBlock();
+		}
+		
+	}
+	
+	private void writeEndBlock() throws IOException {
+		BlockHeader endb = new BlockHeader(BlockHeader.CODE_ENDB, 0, 0, 0, 0);
+		endb.write(io);
+	}
+
+	private void writeSdnaBlock() throws IOException {
+		// TODO: calculate size of snda block beforehand
+		long headerOffset = io.offset();
+		
+		//
+		// write a dummy header (lazy way to determine its size)
+		//
+		BlockHeader header = new BlockHeader();
+		header.write(io);
+
+		//
+		// write sdna to disk
+		//
+		long dataOffset = io.offset();
+		sdna.write(io);
+		
+		long end = io.offset();
+		
+		//
+		// create the actual header and write it to 'headerOffset'
+		//
+		
+		int size = (int) (end - dataOffset);
+		/// receive an address for the block from allocator
+		long address = blockTable.alloc(size);
+		int sdnaIndex = 0;
+		int count = 1;
+		header = new BlockHeader(BlockHeader.CODE_DNA1, size, address, sdnaIndex, count);
+		
+		io.offset(headerOffset);
+		header.write(io);
+		
+		io.offset(end);
+	}
+
 	public BlendModel getBlenderModel() throws IOException {
 		if (model == null) {
 			model = new BlendModel(sdna);
@@ -104,7 +206,7 @@ public class BlenderFile implements Closeable {
 
 		if (blockHeader != null) {
 			versionInfo = new FileVersionInfo();
-			versionInfo.read(cin);
+			versionInfo.read(io);
 		} else {
 			throw new IOException("Can't find block GLOB (file global version info)");
 		}
@@ -119,7 +221,7 @@ public class BlenderFile implements Closeable {
 
 		if (blockHeader != null) {
 			sdna = new StructDNA();
-			sdna.read(cin);
+			sdna.read(io);
 		} else {
 			throw new IOException("corrupted file. Can't find block DNA1");
 		}
@@ -128,16 +230,16 @@ public class BlenderFile implements Closeable {
 	public BlockHeader seekFirstBlock(Identifier code) throws IOException {
 		BlockHeader result = null;
 
-		cin.offset(firstBlockOffset);
+		io.offset(firstBlockOffset);
 		BlockHeader blockHeader = new BlockHeader();
-		blockHeader.read(cin);
+		blockHeader.read(io);
 		while (!blockHeader.getCode().equals(BlockHeader.CODE_ENDB)) {
 			if (blockHeader.getCode().equals(code)) {
 				result = blockHeader;
 				break;
 			}
-			cin.skip(blockHeader.getSize());
-			blockHeader.read(cin);
+			io.skip(blockHeader.getSize());
+			blockHeader.read(io);
 		}
 		return result;
 	}
@@ -153,16 +255,19 @@ public class BlenderFile implements Closeable {
 		return blocks;
 	}
 
-	public BlockTable getBlockMap () throws IOException {
-		return new BlockTable(getEncoding(), getBlocks());
+	public BlockTable getBlockTable () throws IOException {
+		if (blockTable == null) {
+			blockTable = new BlockTable(getEncoding(), getBlocks());
+		}
+		return blockTable;
 	}
 	
 	
 	private void readBlocks() throws IOException {
 		blocks = new ArrayList<Block>();
-		cin.offset(firstBlockOffset);
+		io.offset(firstBlockOffset);
 		BlockHeader blockHeader = new BlockHeader();
-		blockHeader.read(cin);
+		blockHeader.read(io);
 		while (!blockHeader.getCode().equals(BlockHeader.CODE_ENDB)) {
 			CDataReadWriteAccess data = readBlockData(blockHeader);
 			
@@ -170,21 +275,21 @@ public class BlenderFile implements Closeable {
 			blocks.add(block);
 			
 			blockHeader = new BlockHeader();
-			blockHeader.read(cin);
+			blockHeader.read(io);
 		}
 	}
 
 	private CDataReadWriteAccess readBlockData(BlockHeader blockHeader) throws IOException {
 		byte[] data = new byte[blockHeader.getSize()];
-		cin.readFully(data);
+		io.readFully(data);
 		return CDataReadWriteAccess.create(data, blockHeader.getAddress(), getEncoding());
 	}
 
 
 	@Override
 	public void close() throws IOException {
-		cin.close();
-		cin = null;
+		io.close();
+		io = null;
 	}
 
 	/**
@@ -202,6 +307,10 @@ public class BlenderFile implements Closeable {
 
 	public Version getVersion() {
 		return header.version;
+	}
+
+	public StructDNA getStructDNA() {
+		return sdna;
 	}
 
 

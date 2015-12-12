@@ -146,7 +146,7 @@ public abstract class DNAFacet {
 	 * @param superType expected base class of the given type.
 	 * @return true if true.
 	 */
-	static boolean __dna__subclassof(Class<?> type,
+	public static boolean __dna__subclassof(Class<?> type,
 			Class<?> superType) {
 		Class<?> superClass = type.getSuperclass();
 		if (superClass == null || superClass.equals(Object.class)) return false;
@@ -161,7 +161,7 @@ public abstract class DNAFacet {
 	 * @param superType expected base class of the given type.
 	 * @return true if true.
 	 */
-	static boolean __dna__instanceof(DNAFacet object, Class<?> clazz) {
+	public static boolean __dna__instanceof(DNAFacet object, Class<?> clazz) {
 		Class<?> testClass = object.getClass();
 		if (testClass.equals(clazz)) return true;
 		return __dna__subclassof(testClass, clazz);

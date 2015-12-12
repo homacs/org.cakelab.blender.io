@@ -206,6 +206,13 @@ public class BlockHeader {
 		count = in.readInt();
 	}
 
+	public void write(CDataReadWriteAccess out) throws IOException {
+		code.write(out);
+		out.writeInt(size);
+		out.writeLong(address);
+		out.writeInt(sdnaIndex);
+		out.writeInt(count);
+	}
 	
 	public Identifier getCode() {
 		return code;
@@ -245,4 +252,5 @@ public class BlockHeader {
 	public static long getHeaderSize(int pointerSize) {
 		return 16 + pointerSize;
 	}
+
 }

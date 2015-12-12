@@ -157,20 +157,6 @@ import org.cakelab.blender.model.DNAArray.DNAArrayIterator;
  * @param <T> Target type of the pointer.
  */
 public class DNAPointer<T> extends DNAFacet {
-	@SuppressWarnings("rawtypes")
-	public static final Constraint<DNAPointer> CONSTRAINT_POINTER_IS_VALID = new Constraint<DNAPointer>() {
-		@Override
-		public boolean satisfied(DNAPointer obj) {
-			return obj.isValid();
-		}
-	};
-	@SuppressWarnings("rawtypes")
-	public static final Constraint<DNAPointer> CONSTRAINT_POINTER_NOT_NULL = new Constraint<DNAPointer>() {
-		@Override
-		public boolean satisfied(DNAPointer obj) {
-			return !obj.isNull();
-		}
-	};
 	
 	/**
 	 * Type of the target the pointer is able to address.
@@ -222,6 +208,31 @@ public class DNAPointer<T> extends DNAFacet {
 			throw new ClassCastException("unexpected case where pointer points on array.");
 		} else {
 			return (T) getDNAFacet(address);
+		}
+	}
+	
+	public void set(T value) throws IOException {
+		__set(__dna__address, value);
+	}
+	
+	protected void __set(long address, T value) throws IOException {
+		if (isPrimitive(targetTypeList[0])) {
+			setScalar(address, value);
+		} else if (targetTypeList[0].equals(DNAPointer.class)) {
+			DNAPointer<?> p = (DNAPointer<?>) value;
+			__dna__block.writeLong(address, p.__dna__address);
+		} else {
+			// object or array
+			
+			if (__dna__equals((DNAFacet)value, address)) {
+				// this is a reference on the object, which is already inside the array
+			} else if (__dna__same__encoding(this, (DNAFacet)value)) {
+				// we can perform a low level copy
+				__dna__native__copy(__dna__block, address, (DNAFacet)value);
+			} else {
+				// we have to reinterpret data to convert to different encoding
+				__dna__generic__copy((DNAFacet)__get(address));
+			}
 		}
 	}
 	
@@ -363,11 +374,16 @@ public class DNAPointer<T> extends DNAFacet {
 		return new DNAArray<T>(__dna__address, targetTypeList, new int[]{len}, __dna__blockTable);
 	}
 	
-	public byte[] toArray(byte[] b, int off, int len)
+	public byte[] toArray(byte[] data, int off, int len)
 			throws IOException {
-		if (!targetTypeList[0].equals(Byte.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(__dna__address, b, off, len);
-		return b;
+		if (!targetTypeList[0].equals(Byte.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + data.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, data, off, len);
+		return data;
+	}
+
+	public void fromArray(byte[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Byte.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.writeFully(__dna__address, data, off, len);
 	}
 
 	public byte[] toByteArray(int len)
@@ -375,23 +391,37 @@ public class DNAPointer<T> extends DNAFacet {
 		return toArray(new byte[len], 0, len);
 	}
 
-
-	public short[] toArray(short[] b, int off, int len) throws IOException {
-		if (!targetTypeList[0].equals(Short.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(__dna__address, b, off, len);
-		return b;
+	public void fromArray(byte[] data) throws IOException {
+		if (!targetTypeList[0].equals(Byte.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		fromArray(data, 0, data.length);
 	}
+	
 
+	public short[] toArray(short[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Short.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + data.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, data, off, len);
+		return data;
+	}
+	
+	public void fromArray(short[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Short.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.writeFully(__dna__address, data, off, len);
+	}
+	
 	public short[] toShortArray(int len)
 			throws IOException {
 		return toArray(new short[len], 0, len);
 	}
 
+	public void fromArray(short[] data) throws IOException {
+		fromArray(data, 0, data.length);
+	}
+	
 
-	public int[] toArray(int[] b, int off, int len) throws IOException {
-		if (!targetTypeList[0].equals(Integer.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(__dna__address, b, off, len);
-		return b;
+	public int[] toArray(int[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Integer.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + data.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, data, off, len);
+		return data;
 	}
 
 	public int[] toIntArray(int len)
@@ -399,11 +429,20 @@ public class DNAPointer<T> extends DNAFacet {
 		return toArray(new int[len], 0, len);
 	}
 
+	public void fromArray(int[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Integer.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.writeFully(__dna__address, data, off, len);
+	}
+	
+	public void fromArray(int[] data) throws IOException {
+		fromArray(data, 0, data.length);
+	}
+	
 
-	public long[] toArray(long[] b, int off, int len) throws IOException {
-		if (!targetTypeList[0].equals(Long.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(__dna__address, b, off, len);
-		return b;
+	public long[] toArray(long[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Long.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + data.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, data, off, len);
+		return data;
 	}
 
 	public long[] toLongArray(int len)
@@ -411,11 +450,20 @@ public class DNAPointer<T> extends DNAFacet {
 		return toArray(new long[len], 0, len);
 	}
 
+	public void fromArray(long[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Long.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.writeFully(__dna__address, data, off, len);
+	}
+	
+	public void fromArray(long[] data) throws IOException {
+		fromArray(data, 0, data.length);
+	}
+	
 
-	public long[] toArrayInt64(long[] b, int off, int len) throws IOException {
-		if (!targetTypeList[0].equals(int64.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFullyInt64(__dna__address, b, off, len);
-		return b;
+	public long[] toArrayInt64(long[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(int64.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + data.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFullyInt64(__dna__address, data, off, len);
+		return data;
 	}
 
 	public long[] toInt64Array(int len)
@@ -423,11 +471,21 @@ public class DNAPointer<T> extends DNAFacet {
 		return toArray(new long[len], 0, len);
 	}
 
+	public void fromInt64Array(long[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(int64.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.writeFullyInt64(__dna__address, data, off, len);
+	}
+	
+	public void fromInt64Array(long[] data) throws IOException {
+		fromArray(data, 0, data.length);
+	}
+	
 
-	public float[] toArray(float[] b, int off, int len) throws IOException {
-		if (!targetTypeList[0].equals(Float.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(__dna__address, b, off, len);
-		return b;
+
+	public float[] toArray(float[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Float.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + data.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, data, off, len);
+		return data;
 	}
 
 	public float[] toFloatArray(int len)
@@ -435,11 +493,21 @@ public class DNAPointer<T> extends DNAFacet {
 		return toArray(new float[len], 0, len);
 	}
 
+	public void fromArray(float[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Float.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.writeFully(__dna__address, data, off, len);
+	}
+	
+	public void fromArray(float[] data) throws IOException {
+		fromArray(data, 0, data.length);
+	}
+	
 
-	public double[] toArray(double[] b, int off, int len) throws IOException {
-		if (!targetTypeList[0].equals(Double.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + b.getClass().getSimpleName() + ". You have to cast the pointer first.");
-		__dna__block.readFully(__dna__address, b, off, len);
-		return b;
+
+	public double[] toArray(double[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Double.class)) throw new ClassCastException("cannot cast " + targetTypeList[0].getSimpleName() + " to " + data.getClass().getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.readFully(__dna__address, data, off, len);
+		return data;
 	}
 	
 	public double[] toDoubleArray(int len)
@@ -447,7 +515,17 @@ public class DNAPointer<T> extends DNAFacet {
 		return toArray(new double[len], 0, len);
 	}
 
+	public void fromArray(double[] data, int off, int len) throws IOException {
+		if (!targetTypeList[0].equals(Double.class)) throw new ClassCastException("cannot cast " + data.getClass().getSimpleName() + " to " + targetTypeList[0].getSimpleName() + ". You have to cast the pointer first.");
+		__dna__block.writeFully(__dna__address, data, off, len);
+	}
 	
+	public void fromArray(double[] data) throws IOException {
+		fromArray(data, 0, data.length);
+	}
+	
+
+
 	/* ************************************************** */
 	//                    PROTECTED
 	/* ************************************************** */
@@ -585,6 +663,6 @@ public class DNAPointer<T> extends DNAFacet {
 	public int hashCode() {
 		return (int)((__dna__address>>32) | (__dna__address));
 	}
-	
+
 	
 }

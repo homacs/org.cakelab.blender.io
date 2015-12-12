@@ -6,10 +6,11 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 public class CStringUtils {
-	private static final Charset CHARSET = Charset.forName("ASCII");
+	public static final Charset ASCII = Charset.forName("ASCII");
+	public static final Charset UTF8 = Charset.forName("UTF-8");
 
 	public static String toString(byte[] ascii, int start, int len, boolean removeControlCodes) {
-		String str = new String(ascii, start, len, CHARSET);
+		String str = new String(ascii, start, len, ASCII);
 		if (removeControlCodes) {
 			char[] chars = str.toCharArray();
 			for (int i = 0; i < chars.length; i++) {
@@ -46,7 +47,7 @@ public class CStringUtils {
 
 	public static byte[] valueOf(String str) {
 		byte[] result = null;
-		ByteBuffer encoded = CHARSET.encode(str);
+		ByteBuffer encoded = ASCII.encode(str);
 		result = new byte[encoded.limit()];
 		encoded.get(result);
 		return result;
@@ -79,6 +80,12 @@ public class CStringUtils {
 
 	public static String readNullTerminatedString(CDataReadWriteAccess in) throws IOException {
 		return readNullTerminatedString(in, false);
+	}
+	
+	public static void writeNullTerminatedString(String string, Charset charset,
+			CDataReadWriteAccess io, boolean b) throws IOException {
+		io.writeFully(string.getBytes(charset));
+		io.writeByte(0);
 	}
 	public static String toNullTerminatedString(byte[] buf, Charset charset) {
 		int len = strlen(buf);

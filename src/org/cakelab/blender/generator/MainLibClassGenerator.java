@@ -20,11 +20,11 @@ import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.FileVersionInfo;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
-import org.cakelab.blender.model.MainBase;
+import org.cakelab.blender.model.MainLibBase;
 
 public class MainLibClassGenerator extends ClassGenerator {
 
-	private static final String CLASSNAME = "Main";
+	private static final String CLASSNAME = "MainLib";
 	private static final String MEMBER_fileGlobal = "__dna__fileGlobal";
 	private static final String MEMBER_blendFile = "__dna__blendFile";
 	private static final String MEMBER_doVersionCheck = "doVersionCheck";
@@ -39,7 +39,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 		
 		addImport(dnaPackage);
 		addImport(BlenderFile.class);
-		addImport(MainBase.class);
+		addImport(MainLibBase.class);
 		addImport(IOException.class);
 		addImport(BlockHeader.class);
 		addImport(Block.class);
@@ -115,31 +115,31 @@ public class MainLibClassGenerator extends ClassGenerator {
 		comment.appendln();
 		comment.appendln("This is the version of blender, the data model was generated from.");
 		comment.appendln("Implicitly, it is the maximum version the generated import code can understand.");
-		addConstField("public static final", "int", "BLENDER_VERSION", Integer.toString(versionInfo.getVersion().getCode()), comment);
+		addConstField("public static final", "short", "BLENDER_VERSION", Integer.toString(versionInfo.getVersion().getCode()), comment);
 
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("This is the subversion of blender, the data model was generated from.");
 		comment.appendln("Implicitly, it is the maximum subversion the generated import code can understand.");
-		addConstField("public static final", "int", "BLENDER_SUBVERSION", Short.toString(versionInfo.getSubversion()), comment);
+		addConstField("public static final", "short", "BLENDER_SUBVERSION", Short.toString(versionInfo.getSubversion()), comment);
 
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
 		comment.appendln("Every file with a version lower than this needs conversion.");
-		addConstField("public static final", "int", "BLENDER_MINVERSION", Short.toString(versionInfo.getMinversion()), comment);
+		addConstField("public static final", "short", "BLENDER_MINVERSION", Short.toString(versionInfo.getMinversion()), comment);
 
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
 		comment.appendln("Every file with a version lower than this needs conversion.");
-		addConstField("public static final", "int", "BLENDER_MINSUBVERSION", Short.toString(versionInfo.getMinsubversion()), comment);
+		addConstField("public static final", "short", "BLENDER_MINSUBVERSION", Short.toString(versionInfo.getMinsubversion()), comment);
 	}
 
 
 
 	public void visit(CStruct struct) throws FileNotFoundException {
-		if (MainBase.isLibraryElement(struct)) {
+		if (MainLibBase.isLibraryElement(struct)) {
 			String classname = Renaming.mapStruct2Class(struct.getSignature());
 			GComment comment = new GComment(Type.JavaDoc);
 			comment.appendln();
@@ -190,7 +190,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 			
 			out.print(comment.toString(0));
 			
-			out.println("public class " + CLASSNAME + " extends " + MainBase.class.getSimpleName() + " {");
+			out.println("public class " + CLASSNAME + " extends " + MainLibBase.class.getSimpleName() + " {");
 			indent(+1);
 			out.println();
 

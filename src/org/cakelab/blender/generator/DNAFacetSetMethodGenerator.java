@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.cakelab.blender.generator.code.GComment;
 import org.cakelab.blender.generator.code.GMethod;
+import org.cakelab.blender.generator.code.MethodGenerator;
 import org.cakelab.blender.generator.type.CField;
 import org.cakelab.blender.generator.type.CStruct;
 import org.cakelab.blender.generator.type.CType;
@@ -13,7 +14,7 @@ import org.cakelab.blender.model.DNAPointer;
 
 
 
-public class DNAFacetSetMethodGenerator extends DNAFacetMethodGenerator {
+public class DNAFacetSetMethodGenerator extends MethodGenerator implements DNAFacetMembers {
 
 
 	public DNAFacetSetMethodGenerator(DNAFacetClassGenerator classGenerator) 
@@ -38,11 +39,11 @@ public class DNAFacetSetMethodGenerator extends DNAFacetMethodGenerator {
 		
 		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
-		appendln("__dna__block." + writeMethod(jtype, field.getType()) + "(__dna__address + " + offset64 + ", " + field.getName() + ");");
+		appendln(__dna__block + "." + writeMethod(jtype, field.getType()) + "(" + __dna__address + " + " + offset64 + ", " + field.getName() + ");");
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);
-		appendln("__dna__block." + writeMethod(jtype, field.getType()) + "(__dna__address + " + offset32 + ", " + field.getName() + ");");
+		appendln(__dna__block + "." + writeMethod(jtype, field.getType()) + "(" + __dna__address + " + " + offset32 + ", " + field.getName() + ");");
 		content.indent(-1);
 		appendln("}");
 
@@ -60,11 +61,11 @@ public class DNAFacetSetMethodGenerator extends DNAFacetMethodGenerator {
 		
 		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
-		appendln("__dna__block.writeLong(__dna__address + " + offset64 + ", " + field.getName() + ".getAddress());");
+		appendln(__dna__block + ".writeLong(" + __dna__address + " + " + offset64 + ", " + field.getName() + ".getAddress());");
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);
-		appendln("__dna__block.writeLong(__dna__address + " + offset32 + ", " + field.getName() + ".getAddress());");
+		appendln(__dna__block + ".writeLong(" + __dna__address + " + " + offset32 + ", " + field.getName() + ".getAddress());");
 		content.indent(-1);
 		appendln("}");
 
@@ -105,13 +106,13 @@ public class DNAFacetSetMethodGenerator extends DNAFacetMethodGenerator {
 
 		
 		
-		appendln("if (__dna__equals(" + other + ", __dna__address + "+ offsetVar +")) {");
+		appendln("if (__dna__equals(" + other + ", " + __dna__address + " + "+ offsetVar +")) {");
 		content.indent(+1);
 		appendln("return;");
 		content.indent(-1);
 		appendln("} else if (__dna__same__encoding(this, " + other + ")) {");
 		content.indent(+1);
-		appendln("__dna__native__copy(__dna__block, __dna__address + " + offsetVar + ", " + other + ");");
+		appendln("__dna__native__copy(" + __dna__block + ", " + __dna__address + " + " + offsetVar + ", " + other + ");");
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);

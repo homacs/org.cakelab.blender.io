@@ -51,10 +51,16 @@ public class StructDNA {
 			/** name of field as index in {@link StructDNA#names} */
 			public short name;
 			
-			public void read(CDataReadWriteAccess in) throws IOException {
-				type = in.readShort();
-				name = in.readShort();
+			public void read(CDataReadWriteAccess io) throws IOException {
+				type = io.readShort();
+				name = io.readShort();
 			}
+
+			public void write(CDataReadWriteAccess io) throws IOException {
+				io.writeShort(type);
+				io.writeShort(name);
+			}
+
 
 			@Override
 			public String toString() {
@@ -69,13 +75,21 @@ public class StructDNA {
 		/** Fields (member) of the structure (class). */
 		public Field[] fields;
 		
-		public void read(CDataReadWriteAccess in) throws IOException {
-			type = in.readShort();
-			fields_len = in.readShort();
+		public void read(CDataReadWriteAccess io) throws IOException {
+			type = io.readShort();
+			fields_len = io.readShort();
 			fields = new Field[fields_len];
 			for (int i = 0; i < fields_len; i++) {
 				fields[i] = new Field();
-				fields[i].read(in);
+				fields[i].read(io);
+			}
+		}
+
+		public void write(CDataReadWriteAccess io) throws IOException {
+			io.writeShort(type);
+			io.writeShort(fields_len);
+			for (int i = 0; i < fields_len; i++) {
+				fields[i].write(io);
 			}
 		}
 
@@ -131,44 +145,70 @@ public class StructDNA {
  	
  	
  	
- 	public void read(CDataReadWriteAccess in) throws IOException {
+ 	public void read(CDataReadWriteAccess io) throws IOException {
  		Identifier ident = new Identifier();
- 		ident.consume(in, SDNA);
- 		ident.consume(in, NAME);
- 		names_len = in.readInt();
+ 		ident.consume(io, SDNA);
+ 		ident.consume(io, NAME);
+ 		names_len = io.readInt();
  		names = new String[names_len];
  		for (int i = 0; i < names_len; i++) {
- 			names[i] = CStringUtils.readNullTerminatedString(in, true);
+ 			names[i] = CStringUtils.readNullTerminatedString(io, true);
  		}
  		
- 		in.padding(4);
- 		ident.consume(in, TYPE);
- 		types_len = in.readInt();
+ 		io.padding(4);
+ 		ident.consume(io, TYPE);
+ 		types_len = io.readInt();
  		types = new String[types_len];
  		for (int i = 0; i < types_len; i++) {
- 			types[i] = CStringUtils.readNullTerminatedString(in, true);
+ 			types[i] = CStringUtils.readNullTerminatedString(io, true);
  		}
  		
- 		in.padding(4);
- 		ident.consume(in, TLEN);
+ 		io.padding(4);
+ 		ident.consume(io, TLEN);
  		type_lengths = new short[types_len];
  		for (int i = 0; i < types_len; i++) {
- 			type_lengths[i] = in.readShort();
+ 			type_lengths[i] = io.readShort();
  		}
  	 	
- 		in.padding(4);
- 		ident.consume(in, STRC);
- 		structs_len = in.readInt();
+ 		io.padding(4);
+ 		ident.consume(io, STRC);
+ 		structs_len = io.readInt();
  		structs = new Struct[structs_len];
  		for (int i = 0; i < structs_len; i++) {
  			structs[i] = new Struct();
- 			structs[i].read(in);
+ 			structs[i].read(io);
  			
  		}
  	 	
 	}
-
-
+ 	public void write(CDataReadWriteAccess io) throws IOException {
+ 		SDNA.write(io);
+ 		NAME.write(io);
+ 		io.writeInt(names_len);
+ 		for (int i = 0; i < names_len; i++) {
+ 			CStringUtils.writeNullTerminatedString(names[i], CStringUtils.ASCII, io, true);
+ 		}
+ 		
+ 		io.padding(4, true);
+ 		TYPE.write(io);
+ 		io.writeInt(types_len);
+ 		for (int i = 0; i < types_len; i++) {
+ 			CStringUtils.writeNullTerminatedString(types[i], CStringUtils.ASCII, io, true);
+ 		}
+ 		
+ 		io.padding(4, true);
+ 		TLEN.write(io);
+ 		for (int i = 0; i < types_len; i++) {
+ 			io.writeShort(type_lengths[i]);
+ 		}
+ 	 	
+ 		io.padding(4, true);
+ 		STRC.write(io);
+ 		io.writeInt(structs_len);
+ 		for (int i = 0; i < structs_len; i++) {
+ 			structs[i].write(io);
+ 		}
+	}
 
 	@Override
 	public String toString() {

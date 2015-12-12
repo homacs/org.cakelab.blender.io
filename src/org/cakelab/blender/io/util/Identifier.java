@@ -45,6 +45,10 @@ public class Identifier {
 		in.readFully(code);
 	}
 
+	public void write(CDataReadWriteAccess io) throws IOException {
+		io.writeFully(code);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -89,4 +93,5 @@ public class Identifier {
 	public String getDataString() {
 		return Arrays.toString(code);
 	}
+
 }

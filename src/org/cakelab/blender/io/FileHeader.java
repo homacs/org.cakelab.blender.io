@@ -30,6 +30,13 @@ public class FileHeader {
 			else if (c == BIG_ENDIAN.code) return BIG_ENDIAN;
 			else throw new IllegalArgumentException("undefined endianess code '" + code + "'");
 		}
+		public static Endianess from(ByteOrder byteOrder) {
+			if (byteOrder == ByteOrder.BIG_ENDIAN) {
+				return BIG_ENDIAN;
+			} else {
+				return LITTLE_ENDIAN;
+			}
+		}
 	}
 	public static enum PointerSize {
 		
@@ -51,6 +58,13 @@ public class FileHeader {
 		}
 		public int getSize() {
 			return size;
+		}
+		public static PointerSize from(int pointerSize) {
+			if (pointerSize == 8) {
+				return POINTER_SIZE_64BIT;
+			} else {
+				return POINTER_SIZE_32BIT;
+			}
 		}
 	}
 	public static class Version {
@@ -76,6 +90,9 @@ public class FileHeader {
 			return new Version(v);
 		}
 
+		public void write(CDataReadWriteAccess io) throws IOException {
+			io.writeFully(Integer.toString(code).getBytes(CStringUtils.ASCII));
+		}
 		
 		/**
 		 * @return returns version code := major*100 + minor
@@ -91,6 +108,7 @@ public class FileHeader {
 		public int getMinor() {
 			return minor;
 		}
+
 	}
 	
 	/** File identifier (always "BLENDER" (ASCII)).*/
@@ -116,7 +134,16 @@ public class FileHeader {
 		endianess = Endianess.decode(in.readByte());
 		version = Version.read(in);
 	}
+
+	public void write(CDataReadWriteAccess io) throws IOException {
+		io.writeFully(BLENDER_MAGIC.getBytes(CStringUtils.ASCII));
+		
+		io.writeByte(pointerSize.code);
+		io.writeByte(endianess.code);
+		version.write(io);
+	}
 	
+
 	public String toString() {
 		return BLENDER_MAGIC + pointerSize.code + endianess.code + version.code;
 	}
@@ -128,5 +155,5 @@ public class FileHeader {
 	public int getPointerSize() {
 		return pointerSize.getSize();
 	}
-	
+
 }
