@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * This annotation is used for classes
  * derived from {@link DNAFacet}. It provides necessary
  * runtime meta data such as the memory footprint of
- * a the corresponding C struct. This is for example used
+ * the corresponding C type. This is for example used
  * in the method {@link DNAFacet#__dna__sizeof(Class)}.
  * 
  * @author homac

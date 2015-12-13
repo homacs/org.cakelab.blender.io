@@ -19,26 +19,26 @@ import org.cakelab.blender.io.block.BlockTable;
  * always be assigned to a pointer variable. 
  * </p>
  * <p>
- * Arrays provide common array functionality and conversion of the 
- * underlying data to actual Java arrays.
+ * Arrays provide common array functionality and conversion between
+ * underlying data and corresponding Java arrays (see various toArray and fromArray methods).
  * </p>
  * <p>
- * Arrays have a component type and an elementary type. This is important
- * when dealing with multidimensional arrays.
+ * Arrays have a <em>component type</em> and an <em>elementary type</em>. This is important
+ * when dealing with multi-dimensional arrays.
  * The elementary type is the most basic type contained in the array. If
  * the array is an array of arrays of int (i.e. DNAArray&lt;DNAArray&lt;int&gt;&gt;), 
- * then the <em>elementary</em> type is 'int' but it's <em>component type</em> 
+ * then the elementary type is 'int' but it's component type
  * is DNAArray&lt;int&gt;. In case the array has just one dimension, the
  * component type and the elementary type are the same.
  * </p>
  * <p>
  * Arrays need runtime information about their component type. 
  * If the component type is an array or a pointer then the array 
- * needs the information about their types, too. Thus, arrays are 
- * instanciated with a list of types, where each element in the type 
+ * needs the information about those contained types, too. Thus, arrays are 
+ * instanciated with a list of types as type specification, where each element in the type 
  * list corresponds to a component type of the component type.
  * </p>
- * <b>Example:</b>
+ * <b>Detailed Example:</b>
  * The following code snippet denotes an array of arrays of 
  * pointers on integers.
  * <pre>
@@ -59,14 +59,14 @@ import org.cakelab.blender.io.block.BlockTable;
  * and put them in an array. The array also needs to know the length 
  * of each dimension beforehand. Thus we create another array which holds
  * the length for each dimension. Let's say we want an array which 
- * corresponds to <code>int* array[2][8]</code>.
+ * corresponds to the C type declaration <code>int* array[2][8]</code>.
  * </p>
  * <pre>
  * int[] dimensions = new int[]{2,8};
  * </pre>
  * <p>
  * Finally we can create an instance of that array (given that we 
- * have an open blender file and a blockTable).
+ * have an open blender file and a blockTable and the address of that array).
  * </p>
  * <pre>
  * array = new DNAArray&lt;DNAArray&lt;DNAPointer&lt;Integer&gt;&gt;&gt;(
@@ -81,6 +81,11 @@ import org.cakelab.blender.io.block.BlockTable;
  * a block of the blender file. Thus, the address (first parameter) is
  * either received from {@link DNAFacet#__dna__addressof(long[])} or
  * from a pointer or by allocating a new block.
+ * </p>
+ * <p>
+ * To allocate a block for an entirely new array, refer to the block 
+ * allocation methods in either {@link BlenderFactoryBase}
+ * or the derived class {@link BlenderFactory} in the generated code.
  * </p>
  * 
  * @author homac
@@ -103,7 +108,11 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 	 */
 	protected long componentSize;
 
-	
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param other
+	 */
 	public DNAArray(DNAArray<T> other) {
 		super(other);
 		this.targetTypeList = other.targetTypeList;
@@ -111,6 +120,21 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		this.componentSize = other.componentSize;
 	}
 	
+	/**
+	 * This is the constructor to attach an array facet to existing 
+	 * data in a block of a blender file.
+	 * 
+	 * <p>
+	 * To allocate a block for an entirely new array, refer to the block 
+	 * allocation methods in either {@link BlenderFactoryBase}
+	 * or the derived class {@link BlenderFactory} in the generated code.
+	 * </p>
+	 * 
+	 * @param baseAddress virtual start address of the array (file specific).
+	 * @param targetTypeList Type specification of the component type (see class documentation).
+	 * @param dimensions Length of each dimension (see class documentation)
+	 * @param __blockTable Block table of the associated blender file.
+	 */
 	public DNAArray(long baseAddress, Class<?>[] targetTypeList, int[] dimensions, BlockTable __blockTable) {
 		super(baseAddress, Arrays.copyOfRange(targetTypeList, dimensions.length-1, targetTypeList.length), __blockTable);
 		this.targetTypeList = targetTypeList;
@@ -137,6 +161,13 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		return __dna__address + (index * componentSize);
 	}
 	
+	/**
+	 * Returns the element with the given 'index'.
+	 * 
+	 * @param index
+	 * @return array[index]
+	 * @throws IOException
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public T get(int index) throws IOException {
 		long address = getAddress(index);
@@ -159,6 +190,13 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		}
 	}
 
+	/**
+	 * Set the value of the array element with given 'index'.
+	 * I.e. array[index] = value;
+	 * @param index index of the array element.
+	 * @param value New value for that element.
+	 * @throws IOException
+	 */
 	public void set(int index, T value) throws IOException {
 		long address = getAddress(index);
 		super.__set(address, value);
@@ -166,7 +204,12 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 
 
 	
-
+	/**
+	 * Converts the underlying data into a Java array with
+	 * component type T.
+	 * @return
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unchecked")
 	public T[] toArray() throws IOException {
 		Object array = Array.newInstance(targetTypeList[0], length());
@@ -182,6 +225,13 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 		}
 	}
 
+	/**
+	 * Converts the array into a string.
+	 * <b>Warning:</b> This method assumes, that the string 
+	 * is null terminated.
+	 * @return
+	 * @throws IOException
+	 */
 	public String asString() throws IOException {
 		if ((targetTypeList[0].equals(byte.class) || targetTypeList[0].equals(Byte.class)) && dimensions.length == 1) {
 			byte[] bytes = toByteArray();
@@ -267,9 +317,6 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 	}
 	
 
-
-	
-	
 	private long calcComponentSize(Class<?> elementaryType) {
 		long size = __dna__sizeof(elementaryType);
 		if (dimensions.length > 1) {
@@ -324,7 +371,14 @@ public class DNAArray<T> extends DNAPointer<T> implements Iterable<T>{
 	}
 
 	
-	
+	/**
+	 * For convienient iteration over this array's elements.
+	 * <pre>
+	 * for (T elem : array) {
+	 *   // ..
+	 * }
+	 * </pre>
+	 */
 	@Override
 	public Iterator<T> iterator() {
 		return new DNAArrayIterator<T>(this);
