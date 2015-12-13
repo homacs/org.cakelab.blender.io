@@ -15,7 +15,7 @@ import org.cakelab.blender.io.util.CStringUtils;
  * during saving. 
  */
 public class FileHeader {
-	// TODO: use java.nio.ByteOrder
+	// TODO: ZZZ use java.nio.ByteOrder
 	public static enum Endianess {
 		LITTLE_ENDIAN('v'),
 		BIG_ENDIAN('V');
@@ -73,14 +73,39 @@ public class FileHeader {
 		/** code == major*100 + minor */
 		int code;
 
-		Version(int v) {
+		public Version(int v) {
 			major = v/100;
 			minor = v%100;
 			code = v;
 		}
 		
+		/**
+		 * Create a version instance from a version string.
+		 * Expected format: '%1d.%2d' (printf format string)
+		 * @param verstr
+		 * @throws NumberFormatException on any format violation
+		 */
+		public Version(String verstr) throws NumberFormatException {
+			final String formatExceptionMsg = "Unsupported version string format in '" + verstr + "'";
+			
+			String[] parts = verstr.split("\\.");
+			if (parts.length < 2) throw new NumberFormatException(formatExceptionMsg);
+			
+			try {
+				major = Integer.valueOf(parts[0]);
+				minor = Integer.valueOf(parts[1]);
+			} catch (NumberFormatException e) {
+				throw new NumberFormatException(formatExceptionMsg);
+			}
+			
+			if (major >= 10 || minor >= 100) {
+				throw new NumberFormatException(formatExceptionMsg);
+			}
+			code = major*100 + minor;
+		}
+
 		public String toString() {
-			return "" + major + '.' + minor;
+			return "" + major + '.' + (minor < 10 ? "0"+minor : minor);
 		}
 
 		public static Version read(CDataReadWriteAccess in) throws IOException {

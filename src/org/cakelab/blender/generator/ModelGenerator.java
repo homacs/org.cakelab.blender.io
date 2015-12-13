@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
+import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.generator.code.GPackage;
 import org.cakelab.blender.generator.type.CStruct;
@@ -16,15 +17,16 @@ import org.cakelab.json.JSONException;
 public class ModelGenerator {
 	
 	
-	
-	private static final String PACKAGE_LIB = "lib";
+	private static final String PACKAGE_LIB = "utils";
 	private MetaModel model;
 	private HashSet<CStruct> classes = new HashSet<CStruct>();
 	private FileVersionInfo versionInfo;
+	private boolean generateUtils;
 
 
-	public ModelGenerator(BlendModel model, FileVersionInfo versionInfo) {
+	public ModelGenerator(BlendModel model, FileVersionInfo versionInfo, boolean generateUtils) {
 		this.versionInfo = versionInfo;
+		this.generateUtils = generateUtils;
 		this.model = new MetaModel(model);
 	}
 
@@ -34,28 +36,34 @@ public class ModelGenerator {
 		GPackage loaderPackage = new GPackage(destinationDir, packageName + "." + PACKAGE_LIB);
 		
 		DNAFacetClassGenerator classgen = new DNAFacetClassGenerator(this, dnaPackage, docs);
-		MainLibClassGenerator libgen = new MainLibClassGenerator(this, loaderPackage, dnaPackage, docs);
-		FactoryClassGenerator facgen = new FactoryClassGenerator(this, loaderPackage, dnaPackage, docs);
+		MainLibClassGenerator libgen = null;
+		FactoryClassGenerator facgen = null;
+		if (generateUtils) {
+			libgen = new MainLibClassGenerator(this, loaderPackage, dnaPackage, docs);
+			facgen = new FactoryClassGenerator(this, loaderPackage, dnaPackage, docs);
+		}
 		for (CStruct struct : model.getStructs()) {
 			if (!classes.contains(struct)) {
 				classgen.visit(struct);
-				libgen.visit(struct);
+				if (generateUtils) libgen.visit(struct);
 			}
 		}
 		
-		libgen.write();
-		facgen.write();
+		if (generateUtils) {
+			libgen.write();
+			facgen.write();
+		}
 	}
 
 	
 	
 	public static void main(String[] args) throws IOException, JSONException {
-		// TODO: read version from file
-		// TODO: map file version to blender documentation version 
-		String version = null;
+		// TODO: ZZZ use gopt for command line options
 		File input = null;
 		File output = null;
 		String javaPackage = null;
+		String docpath = "resources/dnadoc";
+		boolean generateUtils = false;
 		boolean debug = false;
 		
 		for (int i = 0; i < args.length; i++) {
@@ -66,9 +74,9 @@ public class ModelGenerator {
 				System.exit(-1);
 			} else {
 				value = args[i];
-
-				if (name.equals("-v")) {
-					version = value;
+				// TODO: ZZZ add long options
+				if (name.equals("-u")) {
+					generateUtils = Boolean.valueOf(value);
 				} else if (name.equals("-in")) {
 					input = new File(value);
 					if (!input.exists() || !input.canRead() || input.isDirectory()) {
@@ -81,6 +89,8 @@ public class ModelGenerator {
 					javaPackage = value;
 				} else if (name.equals("-d")) {
 					debug = Boolean.valueOf(value);
+				} else if (name.equals("-c")) {
+					docpath = value;
 				} else if (name.equals("-h") || name.equals("--help") || name.equals("?")) {
 					synopsis();
 					System.exit(0);
@@ -92,30 +102,45 @@ public class ModelGenerator {
 			}
 		}
 		
-		if (version == null || input == null || output == null || javaPackage == null) {
+		if (input == null || output == null || javaPackage == null) {
 			System.err.println("error: missing arguments.");
 			System.err.println();
 			synopsis();
 			System.exit(-1);
 		}
 		
+		
+		
 		//
 		// gather required resources
 		//
 		BlenderFile blend = new BlenderFile(input);
+		BlendModel model = blend.getBlenderModel();
 		FileVersionInfo versionInfo = blend.readFileGlobal();
 		blend.close();
-		File[] docfiles = {
-				new File("resources/dnadoc/" + version + "/added/doc.json"),
-				new File("resources/dnadoc/" + version + "/pyapi/doc.json"),
-				new File("resources/dnadoc/" + version + "/dnasrc/doc.json")
-		};
+		
+		//
+		// load source code documentation
+		//
+		File docfolder = new File(docpath);
+		File[] docfiles = null;
+		docfolder = Documentation.getDocFolder(docfolder, versionInfo);
+		if (docfolder == null) {
+			System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo + "'");
+			docfiles = new File[0];
+		} else {
+			docfiles = new File[] {
+					new File(docfolder, "/added/doc.json"),
+					new File(docfolder, "/pyapi/doc.json"),
+					new File(docfolder, "/dnasrc/doc.json")
+			};
+		}
 		DocumentationProvider docs = new DocGenerator(docfiles, debug);
 
 		//
 		// generate model
 		//
-		ModelGenerator generator = new ModelGenerator(blend.getBlenderModel(), versionInfo);
+		ModelGenerator generator = new ModelGenerator(model, versionInfo, generateUtils);
 		generator.generate(output, javaPackage, docs, debug);
 		
 		//
@@ -133,11 +158,12 @@ public class ModelGenerator {
 
 
 	private static void synopsis() {
+		// TODO: ZZZ document synopsis of model generator
 		Class<?> clazz = ModelGenerator.class;
-		System.err.println("Synopsis: java " + clazz.getName() + " -in input.blend -out output/src/path -v blenderVersionStr -p target.package.name");
-		System.err.println("Example: java " + clazz.getName() + " -in cube.blend -out ../project/gen -v 2.69 -p org.blender");
-		System.err.println("         reads type info from cube.blend which was stored from blender v2.69 and generates class in folder ../project/gen/org/blender");
-		System.err.println("         Use \"-d true\" to get additional debug information during class generation.");
+		System.out.println("Synopsis: java " + clazz.getName() + " -in input.blend -out output/src/path [-p \"target.package.name\"] [-u true]");
+		System.out.println("Example: java " + clazz.getName() + " -in cube.blend -out ../project/gen -p org.blender");
+		System.out.println("         reads type and version info from cube.blend and generates classes in folder ../project/gen/org/blender");
+		System.out.println("         Use \"-d true\" to get additional debug information during class generation.");
 	}
 
 	public FileVersionInfo getVersionInfo() {

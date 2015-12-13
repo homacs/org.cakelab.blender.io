@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
+import static org.cakelab.blender.generator.DNAFacetMembers.*;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockTable;
@@ -13,7 +14,10 @@ import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.util.BigEndianInputStreamWrapper;
 import org.cakelab.blender.io.util.Identifier;
 
+
+
 public class BlenderFactoryBase {
+	// TODO: ZZZ merge similar functionalities in factory methods
 	protected static class BlenderFileImplBase extends BlenderFile {
 
 		protected BlenderFileImplBase(BigEndianInputStreamWrapper in) throws IOException {
@@ -27,12 +31,11 @@ public class BlenderFactoryBase {
 		
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	public static <T extends DNAFacet> T newDNAStructBlock(Identifier blockCode, Class<T> facetClass, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
 		try {
-			Field field__dna__sdnaIndex = facetClass.getDeclaredField("__dna__sdnaIndex");
+			Field field__dna__sdnaIndex = facetClass.getDeclaredField(__dna__sdnaIndex);
 			int sdnaIndex = field__dna__sdnaIndex.getInt(null);
 			Block block = blockTable.allocate(blockCode, DNAFacet.__dna__sizeof(facetClass, blend.getEncoding().getAddressWidth()), sdnaIndex, 1);
 			return (T)DNAFacet.__dna__newInstance(facetClass, block.header.getAddress(), blockTable);
@@ -46,7 +49,7 @@ public class BlenderFactoryBase {
 	public static <T extends DNAFacet> DNAPointer<T> newDNAStructBlock(Identifier blockCode, Class<T> facetClass, int count, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
 		try {
-			Field field__dna__sdnaIndex = facetClass.getDeclaredField("__dna__sdnaIndex");
+			Field field__dna__sdnaIndex = facetClass.getDeclaredField(__dna__sdnaIndex);
 			int sdnaIndex = field__dna__sdnaIndex.getInt(null);
 			Block block = blockTable.allocate(blockCode, DNAFacet.__dna__sizeof(facetClass, blend.getEncoding().getAddressWidth()), sdnaIndex, count);
 			return new DNAPointer<T>(block.header.getAddress(), new Class[]{facetClass}, blockTable);
@@ -71,7 +74,7 @@ public class BlenderFactoryBase {
 	
 	public static <T> DNAArray<T> newDNAArrayBlock(Identifier blockCode, Class<?>[] typeList, int[] dimensions, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
-		// TODO: ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
+		// TODO: ZZZ ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
 		int sdnaIndex = 0; // not a struct
 		Class<?> elementaryType = typeList[dimensions.length-1];
 		long size = DNAArray.__dna__sizeof(elementaryType, dimensions, blend.getEncoding());
@@ -94,7 +97,7 @@ public class BlenderFactoryBase {
 	 */
 	public static <T> DNAPointer<DNAPointer<T>> newDNAPointerBlock(Identifier blockCode, Class<?>[] typeList, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
-		// TODO: ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
+		// TODO: ZZZ ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
 		int sdnaIndex = 0; // not a struct
 		int count = 0;
 		int size = blend.getEncoding().getAddressWidth();
@@ -122,7 +125,7 @@ public class BlenderFactoryBase {
 	 */
 	public static <T> DNAPointerMutable<DNAPointer<T>> newDNAPointerBlock(Identifier blockCode, Class<?>[] typeList, int count, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
-		// TODO: ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
+		// TODO: ZZZ ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
 		int sdnaIndex = 0; // not a struct
 		int size = blend.getEncoding().getAddressWidth();
 		Block block = blockTable.allocate(blockCode, size);
@@ -145,7 +148,7 @@ public class BlenderFactoryBase {
 	 * @throws IOException
 	 */
 	protected static StructDNA createStructDNA(String resourcePathTo_sdna_blend) throws IOException {
-		InputStream in = BlenderFactoryBase.class.getClassLoader().getResourceAsStream("org/blender/resources/sdna.blend");
+		InputStream in = BlenderFactoryBase.class.getClassLoader().getResourceAsStream(resourcePathTo_sdna_blend);
 		BlenderFileImplBase sdnaImage = new BlenderFileImplBase(new BigEndianInputStreamWrapper(in, 8));
 		StructDNA sdna = sdnaImage.getStructDNA();
 		sdnaImage.close();

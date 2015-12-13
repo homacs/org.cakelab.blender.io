@@ -22,7 +22,7 @@ import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.util.BigEndianInputStreamWrapper;
 import org.cakelab.blender.model.BlenderFactoryBase;
 
-public class FactoryClassGenerator extends ClassGenerator {
+public class FactoryClassGenerator extends ClassGenerator implements DNAFacetMembers {
 
 	private static final String CLASSNAME = "BlenderFactory";
 	private static final String MEMBER_sdna = "sdna";
@@ -90,7 +90,7 @@ public class FactoryClassGenerator extends ClassGenerator {
 		code.indent(+1);
 		code.appendln("super(file, sdna, blenderVersion);");
 		code.appendln("BlockTable blockTable = getBlockTable();");
-		code.appendln("Block block = blockTable.allocate(BlockHeader.CODE_GLOB, FileGlobal.__dna__sizeof(FileGlobal.class, getEncoding().getAddressWidth()), FileGlobal.__dna__sdnaIndex, 1);");
+		code.appendln("Block block = blockTable.allocate(BlockHeader.CODE_GLOB, FileGlobal.__dna__sizeof(FileGlobal.class, getEncoding().getAddressWidth()), FileGlobal." + __dna__sdnaIndex + ", 1);");
 		code.appendln("global = new FileGlobal(block.header.getAddress(), blockTable);");
 		code.appendln("String filename = file.getCanonicalPath();");
 		code.appendln("global.getFilename().fromString(filename);");

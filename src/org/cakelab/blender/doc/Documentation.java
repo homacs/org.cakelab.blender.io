@@ -1,12 +1,15 @@
 package org.cakelab.blender.doc;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 
+import org.cakelab.blender.io.FileHeader.Version;
+import org.cakelab.blender.io.FileVersionInfo;
 import org.cakelab.blender.io.dna.BlendField;
 import org.cakelab.blender.io.dna.BlendStruct;
 import org.cakelab.json.JSONArray;
@@ -32,7 +35,7 @@ import org.cakelab.json.Parser;
  *
  */
 public class Documentation implements DocumentationProvider {
-	/* TODO: merge class documentations from different sources.
+	/* TODO: ZZZ merge class documentations from different sources.
 	 * see FileGlobal for an example of a missing class documentation.
 	 * 
 	 */
@@ -264,6 +267,33 @@ public class Documentation implements DocumentationProvider {
 
 	public String getSource() {
 		return source;
+	}
+
+	public static File getDocFolder(File docfolder, FileVersionInfo versionInfo) {
+		File[] folders = docfolder.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory();
+			}
+		});
+		File subfolder = null;
+		if (folders.length > 0) {
+			int maxVersion = versionInfo.getVersion().getCode();
+			int minVersion = versionInfo.getMinversion();
+			int subfolderVer = -1;
+			for (File folder : folders) {
+				try {
+					int version = new Version(folder.getName()).getCode();
+					if (version <= maxVersion && version >= minVersion && version > subfolderVer) {
+						subfolder = folder;
+						subfolderVer = version;
+					}
+				} catch (NumberFormatException e) {
+					System.err.println("Warning: doc folder '" + folder.getPath() + "': " + e.getMessage());
+				}
+			}
+		} 
+		return subfolder;
 	}
 
 

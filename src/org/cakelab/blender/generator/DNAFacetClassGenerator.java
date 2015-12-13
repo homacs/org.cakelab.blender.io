@@ -127,6 +127,8 @@ public class DNAFacetClassGenerator extends ClassGenerator implements DNAFacetMe
 
 	private void createMethod__dna__addressof() {
 		addImport(DNAPointer.class);
+		// TODO: ZZZ add comment to __dna__addressof()
+		
 		GMethod method = new GMethod(0);
 		String pointerType = "DNAPointer<" + classname + ">";
 		method.appendln("public " + pointerType + " __dna__addressof() {");

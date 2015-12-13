@@ -204,8 +204,7 @@ public class DNAPointer<T> extends DNAFacet {
 		if (isPrimitive(targetTypeList[0])) {
 			return getScalar(address);
 		} else if (targetTypeList[0].isArray()){
-			// TODO: array abstraction (not used in dna)
-			throw new ClassCastException("unexpected case where pointer points on array.");
+			throw new ClassCastException("Impossible type declaration containing a pointer on an array (Cannot be declared in C).");
 		} else {
 			return (T) getDNAFacet(address);
 		}

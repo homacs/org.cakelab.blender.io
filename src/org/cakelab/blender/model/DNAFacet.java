@@ -24,9 +24,6 @@ import org.cakelab.blender.io.block.BlockTable;
  */
 public abstract class DNAFacet {
 	
-	// TODO: need constants of all member offsets for dereferencing.
-	
-	
 	protected long __dna__address;
 	protected BlockTable __dna__blockTable;
 	protected Block __dna__block;
@@ -182,7 +179,7 @@ public abstract class DNAFacet {
 	 */
 	public static DNAFacet __dna__newInstance(Class<? extends DNAFacet> type, long address,
 			BlockTable blockTable) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		// TODO: cache constructors
+		// TODO: ZZZ cache constructors?
 		Constructor<?> constructor = type.getDeclaredConstructor(long.class, BlockTable.class);
 		return (DNAFacet) constructor.newInstance(address, blockTable);
 	}
@@ -233,8 +230,6 @@ public abstract class DNAFacet {
 	 * @throws IOException 
 	 */
 	protected static void __dna__native__copy(Block targetBlock, long targetAddress, DNAFacet source) throws IOException {
-		// TODO: consider array
-		// TODO: test
 		// just copy memory
 		assert(targetBlock.contains(targetAddress));
 		
@@ -244,8 +239,7 @@ public abstract class DNAFacet {
 		} else {
 			size = (int) source.__dna__sizeof(source.getClass());
 		}
-		// TODO: support direct memory copy (without buffer)
-		// or at least reuse buffer
+		// TODO: ZZZ support direct memory copy (without buffer) or reuse buffer
 		byte[] buffer = new byte[size];
 		source.__dna__block.readFully(source.__dna__address, buffer);
 		targetBlock.writeFully(targetAddress, buffer);

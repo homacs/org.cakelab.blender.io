@@ -9,9 +9,9 @@ package org.cakelab.blender.generator;
  *
  */
 public interface DNAFacetMembers {
-	String __dna__sdnaIndex = "__dna__sdnaIndex";
-	String __dna__address = "__dna__address";
-	String __dna__block = "__dna__block";
-	String __dna__blockTable = "__dna__blockTable";
+	public String __dna__sdnaIndex = "__DNA__SDNA_INDEX";
+	public String __dna__address = "__dna__address";
+	public String __dna__block = "__dna__block";
+	public String __dna__blockTable = "__dna__blockTable";
 
 }

@@ -14,7 +14,7 @@ import org.cakelab.blender.model.UnsignedLong;
 
 public class BlockTable extends Allocator {
 
-	// TODO: consider actual heap base?
+	// TODO: ZZZ consider actual heap base?
 	private static final long HEAPBASE = UnsignedLong.plus(UnsignedLong.MIN_VALUE, 4096L);
 	private static final long HEAPSIZE = UnsignedLong.minus(UnsignedLong.MAX_VALUE, HEAPBASE);
 	private List<Block> blocks = new ArrayList<Block>();

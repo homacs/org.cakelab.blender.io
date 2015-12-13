@@ -49,7 +49,8 @@ import org.cakelab.blender.io.util.Identifier;
  * </p>
  */
 public class BlenderFile implements Closeable {
-	// TODO: optimize data caching in BlenderFile
+	
+	// TODO: ZZZ improve data management in BlenderFile
 
 
 	private FileHeader header;
@@ -159,7 +160,7 @@ public class BlenderFile implements Closeable {
 	}
 
 	private void writeSdnaBlock() throws IOException {
-		// TODO: calculate size of snda block beforehand
+		// TODO: ZZZ calculate size of snda block beforehand
 		long headerOffset = io.offset();
 		
 		//

@@ -4,7 +4,7 @@ import org.cakelab.blender.io.Encoding;
 
 public class CType {
 
-	// TODO: rename to CKind
+	// TODO: ZZZ rename to CKind
 	public enum CTypeType {
 		TYPE_POINTER,
 		TYPE_FUNCTION_POINTER,
