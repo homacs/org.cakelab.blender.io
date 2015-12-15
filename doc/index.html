@@ -15,9 +15,12 @@
 </head>
 <body>
 <h1 style="text-align: center">Java Blend</h1>
+<br/>
 <p style="text-align: center"><em>Complete Mapping of Blender DNA for Java</em></p>
 <p style="text-align: center"><em>Supports import <b>and</b> export</em></p>
+<br/>
 <p style="text-align: center">-- 2nd tech. demo --</p>
+<br/>
 <p style="text-align: center">(no decision on type of open source license yet)</p>
 <p style="text-align: center">${system.date}</p>
 <p style="text-align: center">Holger Machens</p>
@@ -25,9 +28,9 @@
 <h2>Introduction</h2>
 <p>
 The Blender core is developed in C and blender files are basically dumps 
-of the native memory content (C structs and scalar types) 
-from heap to disk. The file is organised in blocks of arbitrary length, and 
-the type of data in it is described in a special block, which 
+of native memory content (C structs and scalar types) 
+from heap to a file on disk. A .blend file is organised in blocks of arbitrary length, and 
+the type of data is described in a special block, which 
 contains type information (meta data) for all C native and 
 structured types which can exist in a <code>.blend</code> file.
 </p>
@@ -38,8 +41,22 @@ the data in blender files of the same version. Java Blend
 is a combination of a code generator and a runtime Blender data access module 
 which provides generation of Java classes at development time and 
 random access to Blender data at runtime. Together, it provides a generic 
-any-version blender file import/export in Java. 
+any-version blender file import/export in Java which features all aspects of the
+Blender DNA data model. 
 </p>
+<p>
+This toolkit was designed with the ambitious goal to serve for any kind of interaction 
+with blender. Whether just importing data into another graphics engine, conversion to 
+a different data format or external processing of data to add features to blender. 
+The fully generic mapping of the entire Blender DNA core data model combined with 
+both import <b>and</b> export supports e.v.e.r.y.t.h.i.n.g! 
+Another convenient feature of the generic approach is its low maintenance effort 
+on developer side (that's me and eventually you ;). New details in blender's DNA will be instantly 
+reflected in the generated data model and implicitly supported during import and export.
+Thus, users don't have to worry how long they can rely on this library, they can even 
+generate new models by themselves without touching the sources.
+</p>
+
 <h2>Concept</h2>
 This section gives a brief overview of the general concept behind Java Blend. 
 For further details refer to the <a href="spec.html">system specification</a> (not finished yet).
@@ -53,29 +70,29 @@ Java Blend basically consists of two modules:
 <dd>The model generator (see image above) is a code generator, 
 which generates Java code according to the meta data found in a 
 reference Blender file. The generated code comprises a data model 
-which reflects the data model used in Blender core. This generated 
-data model consists of facets with methods to access native data 
+which reflects the data model (so-called DNA) used in Blender core. This generated 
+data model consists of facades with methods to access native data 
 in heap memory at runtime.
 </dd>
 <dt>Runtime Data I/O</dt> 
 <dd>Random access to native data of a 
 Blender file is provided by the data I/O sub-module (see image below) which is 
 working behind the scenes at runtime. It is responsible to transfer data between file and heap memory and
-supports facets of the data model in address translation, type 
+supports facades of the data model in address translation, type 
 conversion and data access in general. 
 </dd>
 </dl>
 
 
-<p style="text-align: center"><img src="images/facet.png"/></p>
+<p style="text-align: center"><img src="images/facade.png"/></p>
 
 To summarise: Based on the type information of any reference blender 
 file, the model generator generates a data model in 
-terms of facets which provide type-safe access to native Blender data. 
+terms of facades which provide type-safe access to native Blender data. 
 The generated data model in combination with the runtime data I/O module 
 is used at runtime to access data of any Blender file of the same version.
 Native Blender data is kept in its format in heap memory and accessed through 
-the facets getter and setter methods. Life cycle of native data is implicitly 
+the facades getter and setter methods. Life cycle of native data is implicitly 
 covered by the Java VMs garbage collection. 
 
 <h3>Method</h3>
@@ -124,14 +141,15 @@ blender file and retrieves the polygons of a mesh.
 	MPoly[] polygons = mesh.getMpoly().toArray(mesh.getTotpoly());
 </pre>
 <p>
-<em>A full example which demonstrates retrieval of the data for a 
-textured cube can be found in the download section below.</em>
+<em>A more comprehensive example involving materials and textures can be 
+found in the download section below.</em>
 </p>
 
 <h2>Download</h2>
 <p>
-This is a first tech. demo which demonstrates the data read part based on a generated 
-data model. It consists of
+This is the second tech. demo now comprising all features of Java Blend, such as import/export, 
+dealing with facades of a generated data model as well as pointers and arrays. 
+It consists of
 </p>
 <ul>
 <li>the <b><a href="downloads/JavaBlend-src-0.0.2.zip">source code</a></b> of model generator and data I/O and</li>
@@ -144,12 +162,48 @@ a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
 </ul>
 <p><em>Please note: The <a href="spec.html">documentation</a> is not finished (see roadmap).</em>
 </p>
+
 <h1>Roadmap</h1>
 <ul>
 <li>File compression/decompression (?)</li>
-<li>Documentation (!)</li>
-<li>Testing, improving, optimising, polishing (!)</li>
+<li>Documentation and community based documentation system support</li>
+<li>Testing, improving, optimising, polishing</li>
 <li>Release (end of 2015)</li>
+</ul>
+
+<h1>Change Log</h1>
+<ul>
+<li>[0.0.2]: Second tech. demo comprising all specified features
+	<ul>
+	<li>Refactored the hell out of it!</li>
+	<li>Fixed several bugs</li>
+	<li>Improved source code documentation all over the place</li>
+	<li>Added support for blender <b>version compatibility checks</b> against data model version</li>
+	<li>Introduced blender file <b>write access</b></li>
+	<li>Introduced blender <b>file creation</b> and initialisation (with StructDNA and FileGlobal)</li>
+	<li>Added creation of StructDNA to support initialisation of .blend files.</li>
+	<li>Added blender <b>factory class</b> supporting allocation of blocks and implicit assignment to facades</li>
+	<li>Made generation of blender version specific utilities optional, since those are not fully generic.</li>
+	<li>Introduced <b>allocator to manage virtual addresses</b> of a block table for block allocation</li>
+	<li>Introduced <b>documentation system</b> to provide more information to generated classes</li>
+	<li>Added script to extract documentation from blender python api</li>
+	<li>Documentation system considers file version to retrieve appropriate version of available documentation</li>
+	<li>Added several methods to convert between strings, arrays, pointers considering null termination and charsets.</li>
+	<li>Added conversion of pointers or array facades to Java native scalar type arrays</li>
+	<li>Introduced iterators for arrays</li>
+	<li>Optimised bulk data retrieval</li>
+	<li>Improved runtime adaption to architecture dependent encoding (byte order and address width)</li>
+	</ul>
+</li> <!-- 0.0.2 -->
+<li>[0.0.1]: First demo of model generation and data reading capabilities
+	<ul>
+	<li>add: Facade concept for structured C types</li>
+	<li>add: Abstraction for C pointers and arrays</li>
+	<li>add: data model generation from StructDNA</li>
+	<li>add: runtime conversion between Java and native data representations</li>
+	<li>mod: demo application (cube.blend)</li>
+	</ul>
+</li> <!-- 0.0.2 -->
 </ul>
 
 </body>
