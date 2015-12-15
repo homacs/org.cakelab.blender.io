@@ -6,28 +6,28 @@ import java.util.HashSet;
 
 import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.generator.code.GPackage;
-import org.cakelab.blender.generator.type.CStruct;
-import org.cakelab.blender.generator.type.MetaModel;
+import org.cakelab.blender.generator.utils.GPackage;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.FileVersionInfo;
-import org.cakelab.blender.io.dna.BlendModel;
+import org.cakelab.blender.io.dna.DNAModel;
+import org.cakelab.blender.metac.CMetaModel;
+import org.cakelab.blender.metac.CStruct;
 import org.cakelab.json.JSONException;
 
 public class ModelGenerator {
 	
 	
 	private static final String PACKAGE_LIB = "utils";
-	private MetaModel model;
+	private CMetaModel model;
 	private HashSet<CStruct> classes = new HashSet<CStruct>();
 	private FileVersionInfo versionInfo;
 	private boolean generateUtils;
 
 
-	public ModelGenerator(BlendModel model, FileVersionInfo versionInfo, boolean generateUtils) {
+	public ModelGenerator(DNAModel model, FileVersionInfo versionInfo, boolean generateUtils) {
 		this.versionInfo = versionInfo;
 		this.generateUtils = generateUtils;
-		this.model = new MetaModel(model);
+		this.model = new CMetaModel(model);
 	}
 
 	private void generate(File destinationDir, String packageName, DocumentationProvider docs, boolean debug) throws IOException {
@@ -35,7 +35,7 @@ public class ModelGenerator {
 		GPackage dnaPackage = new GPackage(destinationDir, packageName + ".dna");
 		GPackage loaderPackage = new GPackage(destinationDir, packageName + "." + PACKAGE_LIB);
 		
-		DNAFacetClassGenerator classgen = new DNAFacetClassGenerator(this, dnaPackage, docs);
+		CFacadeClassGenerator classgen = new CFacadeClassGenerator(this, dnaPackage, docs);
 		MainLibClassGenerator libgen = null;
 		FactoryClassGenerator facgen = null;
 		if (generateUtils) {
@@ -115,7 +115,7 @@ public class ModelGenerator {
 		// gather required resources
 		//
 		BlenderFile blend = new BlenderFile(input);
-		BlendModel model = blend.getBlenderModel();
+		DNAModel model = blend.getBlenderModel();
 		FileVersionInfo versionInfo = blend.readFileGlobal();
 		blend.close();
 		

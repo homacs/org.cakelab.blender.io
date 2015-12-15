@@ -1,7 +1,7 @@
 package org.cakelab.blender.io.alloc;
 
 import org.cakelab.blender.io.block.alloc.Allocator;
-import org.cakelab.blender.model.UnsignedLong;
+import org.cakelab.blender.nio.UnsignedLong;
 
 public class Test {
 	public static void main(String[] args) {

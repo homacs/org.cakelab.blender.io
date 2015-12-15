@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-import org.cakelab.blender.generator.type.MetaModel;
 import org.cakelab.blender.io.FileHeader.Version;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockTable;
-import org.cakelab.blender.io.dna.BlendModel;
+import org.cakelab.blender.io.dna.DNAModel;
 import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.io.util.Identifier;
+import org.cakelab.blender.metac.CMetaModel;
 
 
 /**
@@ -63,7 +63,7 @@ public class BlenderFile implements Closeable {
 	private ArrayList<Block> blocks;
 
 	private StructDNA sdna;
-	private BlendModel model;
+	private DNAModel model;
 
 
 	private BlockTable blockTable;
@@ -194,9 +194,9 @@ public class BlenderFile implements Closeable {
 		io.offset(end);
 	}
 
-	public BlendModel getBlenderModel() throws IOException {
+	public DNAModel getBlenderModel() throws IOException {
 		if (model == null) {
-			model = new BlendModel(sdna);
+			model = new DNAModel(sdna);
 		}
 		return model;
 	}
@@ -301,8 +301,8 @@ public class BlenderFile implements Closeable {
 	}
 
 
-	public MetaModel getMetaModel() throws IOException {
-		return new MetaModel(getBlenderModel());
+	public CMetaModel getMetaModel() throws IOException {
+		return new CMetaModel(getBlenderModel());
 	}
 
 

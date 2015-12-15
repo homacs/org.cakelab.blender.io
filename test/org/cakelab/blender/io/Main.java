@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.cakelab.blender.generator.type.CStruct;
-import org.cakelab.blender.generator.type.MetaModel;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockTable;
-import org.cakelab.blender.io.dna.BlendModel;
+import org.cakelab.blender.io.dna.DNAModel;
+import org.cakelab.blender.metac.CMetaModel;
+import org.cakelab.blender.metac.CStruct;
 
 public class Main {
 	
@@ -19,7 +19,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		BlenderFile blender = new BlenderFile(new File("cube.blend"));
-		BlendModel model = blender.getBlenderModel();
+		DNAModel model = blender.getBlenderModel();
 		ArrayList<Block> blocks = blender.getBlocks();
 		blender.close();
 		
@@ -31,7 +31,7 @@ public class Main {
 		//
 		// retrieve the meta model, which is encoding independent
 		//
-		MetaModel meta = new MetaModel(model);
+		CMetaModel meta = new CMetaModel(model);
 		
 		//
 		// Create a new block to store 1 scene struct

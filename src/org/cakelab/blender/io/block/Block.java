@@ -5,7 +5,7 @@ import java.nio.ByteOrder;
 
 import org.cakelab.blender.io.util.CBufferReadWrite;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
-import org.cakelab.blender.model.UnsignedLong;
+import org.cakelab.blender.nio.UnsignedLong;
 
 
 public class Block implements Comparable<Long> {

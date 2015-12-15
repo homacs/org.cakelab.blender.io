@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 
 import org.cakelab.blender.io.FileHeader.Version;
 import org.cakelab.blender.io.FileVersionInfo;
-import org.cakelab.blender.io.dna.BlendField;
-import org.cakelab.blender.io.dna.BlendStruct;
+import org.cakelab.blender.io.dna.DNAField;
+import org.cakelab.blender.io.dna.DNAStruct;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONException;
 import org.cakelab.json.JSONObject;
@@ -166,11 +166,11 @@ public class Documentation implements DocumentationProvider {
 		return version;
 	}
 
-	public String getStructDoc(BlendStruct struct) {
+	public String getStructDoc(DNAStruct struct) {
 		return getStructDoc(struct.getType().getName());
 	}
 	
-	public String getFieldDoc(BlendStruct struct, BlendField field) {
+	public String getFieldDoc(DNAStruct struct, DNAField field) {
 		return getFieldDoc(struct.getType().getName(), field.getName());
 	}
 	

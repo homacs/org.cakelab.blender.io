@@ -9,7 +9,7 @@ import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.io.block.alloc.Allocator;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.io.util.Identifier;
-import org.cakelab.blender.model.UnsignedLong;
+import org.cakelab.blender.nio.UnsignedLong;
 
 
 public class BlockTable extends Allocator {

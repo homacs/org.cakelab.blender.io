@@ -1,6 +1,6 @@
 package org.cakelab.blender.io.block.alloc;
 
-import org.cakelab.blender.model.UnsignedLong;
+import org.cakelab.blender.nio.UnsignedLong;
 
 
 

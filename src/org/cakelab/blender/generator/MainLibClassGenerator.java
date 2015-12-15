@@ -8,19 +8,19 @@ import java.io.PrintStream;
 import java.util.List;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.generator.code.ClassGenerator;
-import org.cakelab.blender.generator.code.GComment;
-import org.cakelab.blender.generator.code.GComment.Type;
-import org.cakelab.blender.generator.code.GField;
-import org.cakelab.blender.generator.code.GMethod;
-import org.cakelab.blender.generator.code.GPackage;
-import org.cakelab.blender.generator.type.CStruct;
-import org.cakelab.blender.generator.type.Renaming;
+import org.cakelab.blender.generator.typemap.Renaming;
+import org.cakelab.blender.generator.utils.ClassGenerator;
+import org.cakelab.blender.generator.utils.GComment;
+import org.cakelab.blender.generator.utils.GField;
+import org.cakelab.blender.generator.utils.GMethod;
+import org.cakelab.blender.generator.utils.GPackage;
+import org.cakelab.blender.generator.utils.GComment.Type;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.FileVersionInfo;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
-import org.cakelab.blender.model.MainLibBase;
+import org.cakelab.blender.lib.MainLibBase;
+import org.cakelab.blender.metac.CStruct;
 
 public class MainLibClassGenerator extends ClassGenerator {
 

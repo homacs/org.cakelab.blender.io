@@ -2,7 +2,7 @@ package org.cakelab.blender.io.block.alloc;
 
 import java.util.Iterator;
 
-import org.cakelab.blender.model.UnsignedLong;
+import org.cakelab.blender.nio.UnsignedLong;
 
 
 public class ChunkList implements Iterable<Chunk>{

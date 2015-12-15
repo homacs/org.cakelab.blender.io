@@ -7,22 +7,22 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.generator.code.ClassGenerator;
-import org.cakelab.blender.generator.code.GCodeSection;
-import org.cakelab.blender.generator.code.GComment;
-import org.cakelab.blender.generator.code.GComment.Type;
-import org.cakelab.blender.generator.code.GField;
-import org.cakelab.blender.generator.code.GMethod;
-import org.cakelab.blender.generator.code.GPackage;
+import org.cakelab.blender.generator.utils.ClassGenerator;
+import org.cakelab.blender.generator.utils.GCodeSection;
+import org.cakelab.blender.generator.utils.GComment;
+import org.cakelab.blender.generator.utils.GField;
+import org.cakelab.blender.generator.utils.GMethod;
+import org.cakelab.blender.generator.utils.GPackage;
+import org.cakelab.blender.generator.utils.GComment.Type;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.util.BigEndianInputStreamWrapper;
-import org.cakelab.blender.model.BlenderFactoryBase;
+import org.cakelab.blender.lib.BlenderFactoryBase;
 
-public class FactoryClassGenerator extends ClassGenerator implements DNAFacetMembers {
+public class FactoryClassGenerator extends ClassGenerator implements CFacadeMembers {
 
 	private static final String CLASSNAME = "BlenderFactory";
 	private static final String MEMBER_sdna = "sdna";
@@ -90,7 +90,7 @@ public class FactoryClassGenerator extends ClassGenerator implements DNAFacetMem
 		code.indent(+1);
 		code.appendln("super(file, sdna, blenderVersion);");
 		code.appendln("BlockTable blockTable = getBlockTable();");
-		code.appendln("Block block = blockTable.allocate(BlockHeader.CODE_GLOB, FileGlobal.__dna__sizeof(FileGlobal.class, getEncoding().getAddressWidth()), FileGlobal." + __dna__sdnaIndex + ", 1);");
+		code.appendln("Block block = blockTable.allocate(BlockHeader.CODE_GLOB, FileGlobal.__dna__sizeof(FileGlobal.class, getEncoding().getAddressWidth()), FileGlobal." + __DNA__SDNA_INDEX + ", 1);");
 		code.appendln("global = new FileGlobal(block.header.getAddress(), blockTable);");
 		code.appendln("String filename = file.getCanonicalPath();");
 		code.appendln("global.getFilename().fromString(filename);");
