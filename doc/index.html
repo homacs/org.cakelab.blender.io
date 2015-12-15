@@ -16,10 +16,10 @@
 <body>
 <h1 style="text-align: center">Java Blend</h1>
 <br/>
-<p style="text-align: center"><em>Complete Mapping of Blender DNA for Java</em></p>
-<p style="text-align: center"><em>Supports import <b>and</b> export</em></p>
+<p style="text-align: center"><em>Providing Type Safe Random Read/Write File Access to</em></p>
+<p style="text-align: center"><em>the Full Blender DNA Data Model in Java</em></p>
 <br/>
-<p style="text-align: center">-- 2nd tech. demo --</p>
+<p style="text-align: center"><b>-- beta --</b></p>
 <br/>
 <p style="text-align: center">(no decision on type of open source license yet)</p>
 <p style="text-align: center">${system.date}</p>
@@ -51,15 +51,17 @@ a different data format or external processing of data to add features to blende
 The fully generic mapping of the entire Blender DNA core data model combined with 
 both import <b>and</b> export supports e.v.e.r.y.t.h.i.n.g! 
 Another convenient feature of the generic approach is its low maintenance effort 
-on developer side (that's me and eventually you ;). New details in blender's DNA will be instantly 
+on maintainers side (that's me and eventually you ;). New details in blender's DNA will be instantly 
 reflected in the generated data model and implicitly supported during import and export.
 Thus, users don't have to worry how long they can rely on this library, they can even 
 generate new models by themselves without touching the sources.
 </p>
 
 <h2>Concept</h2>
+<p>
 This section gives a brief overview of the general concept behind Java Blend. 
 For further details refer to the <a href="spec.html">system specification</a> (not finished yet).
+</p>
 <h3>Modules</h3>
 <p style="text-align: center"><img src="images/model-generator.png"/></p>
 <p>
@@ -85,7 +87,7 @@ conversion and data access in general.
 
 
 <p style="text-align: center"><img src="images/facade.png"/></p>
-
+<p>
 To summarise: Based on the type information of any reference blender 
 file, the model generator generates a data model in 
 terms of facades which provide type-safe access to native Blender data. 
@@ -94,7 +96,7 @@ is used at runtime to access data of any Blender file of the same version.
 Native Blender data is kept in its format in heap memory and accessed through 
 the facades getter and setter methods. Life cycle of native data is implicitly 
 covered by the Java VMs garbage collection. 
-
+</p>
 <h3>Method</h3>
 <p>
 At development time, the model generator is used to generate a 
@@ -163,15 +165,16 @@ a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
 <p><em>Please note: The <a href="spec.html">documentation</a> is not finished (see roadmap).</em>
 </p>
 
-<h1>Roadmap</h1>
+<h2>Roadmap</h2>
 <ul>
 <li>File compression/decompression (?)</li>
-<li>Documentation and community based documentation system support</li>
+<li>Finishing documentation and adding community based documentation system support</li>
+<li>More examples</li>
 <li>Testing, improving, optimising, polishing</li>
 <li>Release (end of 2015)</li>
 </ul>
 
-<h1>Change Log</h1>
+<h2>Change Log</h2>
 <ul>
 <li>[0.0.2]: Second tech. demo comprising all specified features
 	<ul>

@@ -14,8 +14,7 @@
 </head>
 <body>
 <h1 style="text-align: center">Java Blend</h1>
-<p style="text-align: center"><em>A Generic Blender File Import/Export for Java</em></p>
-<p style="text-align: center"><b>System Specification</b></p>
+<h2 style="text-align: center"><b>System Specification</b></h2>
 <p style="text-align: center">Version ${project.version}</p>
 <p style="text-align: center">${system.date}</p>
 <p style="text-align: center">Holger Machens</p>
@@ -42,8 +41,10 @@ On its lowest level a blender file consists of a header followed
 by a list of blocks of memory. One of the blocks contains the type
 information required to interpret the body of a block.
 <h3>File Header</h3>
+<p>
 The file header (first 12 bytes of every blender file) contains 
 low-level information about the file:
+</p>
 <table border="1">
 <tr>
   <th>name</th><th>type</th><th>description</th>
@@ -52,7 +53,7 @@ low-level information about the file:
   <td>MAGIC</td><td>7 byte ASCII</td><td>Content: "BLENDER". Used to identify blender files</td>
 <tr>
 <tr>
-  <td>pointerSize</td><td>1 byte ASCII</td><td>Indicates the size of a pointer type. '_' means 4 bytes and '-' means 
+  <td>pointerSize</td><td>1 byte ASCII</td><td>Indicates the width of an address (i.e. <code>sizeof(void*)</code> which is the same as <code>sizeof(long)</code>). '_' means 4 bytes and '-' means 
 	 8 bytes.</td>
 <tr>
 <tr>
@@ -62,10 +63,17 @@ low-level information about the file:
   <td>version</td><td>3 byte ASCII</td><td>Blender version the file originated from. "234" means version 2.34 .</td>
 <tr>
 </table>
+<p>
+As you can see, all the data given in the header is represented in single bytes and therefore 
+independent of byte order and address width of the underlying system architecture. All subsequent data 
+following after the file header may require conversion to the data representation of the runtime environment, present.
+</p>
+
+
 <h3>Block Level</h3>
 <p>
-Blocks consist of a header, which describes what kind of data is in the
-body and a body with the actual data. The block header always starts at a file 
+Blocks consist of a header, which describes what type of data is stored in its
+body, and a body with the actual data. The block header always starts at a file 
 position which is 4 byte aligned. The body always contains data of 
 one specific type, which is usually a struct but in some cases even an
 array of a scalar type.
@@ -75,9 +83,10 @@ array of a scalar type.
   <th>name</th><th>type</th><th>description</th>
 <tr>
 <tr>
-  <td>code</td><td>4 byte ASCII</td><td>The gives a rough indication which purpose the data has. 
-  The most important code is "DNA1" which contains the type information required to interpret 
-  any data in all the remaining blocks. </td>
+  <td>code</td><td>4 byte ASCII</td><td>The block code gives a rough indication of 
+  which purpose the data is. The most important code are "DNA1" which contains the 
+  type information required to interpret any data in all the remaining blocks, and "ENDB"
+  which marks the end of the file. </td>
 <tr>
 <tr>
   <td>size</td><td>int32</td><td>Length of the body in bytes.</td>
@@ -101,12 +110,13 @@ pointer addresses memory which is not in the file.
 </p>
 
 <h3>Type Information</h3>
+<p>
 All type information is stored in the block with the code "DNA1". 
 Block DNA1 can be at any position in the file (doesn't have to be at the beginning). 
 DNA1 contains a C structure
 called StructDNA or Structure DNA. This structure contains the
 type information.
-
+</p>
 <table border="1">
 <tr>
   <th>name</th><th>type</th><th>description</th>
@@ -178,15 +188,15 @@ type information.
 
 
 <h2>Type Mapping</h2>
-
+<p>
 This section provides a specification of the type mapping of 
 C types used in Blender files to Java types, as used in Java Blend.
-
+</p>
 <h3>Scalar Types</h3>
-
+<p>
 The following table contains mappings of all scalar types 
 in blender files (C) to Java. 
-
+</p>
 <table border="1">
 <tr>
   <th>C</th><th>native size [bytes]</th><th>Java</th>
@@ -230,35 +240,38 @@ in blender files (C) to Java.
 </table>
 
 <h4>Signed and Unsigned Integer Types</h4>
+<p>
 Java does not support unsigned scalar types. Thus,
 every unsigned type is mapped to its signed counter part. This 
 has to be considered in case of overflows. 
-
+</p>
 <h4>32 and 64 bit Systems</h4>
+<p>
 In C, the size of pointers and the scalar types 
 long and unsigned long depend on the system architecture: 
 8 byte on 64 bit systems and 4 byte on 32 bit systems. 
 Both are mapped to 64 bit in Java.
-
+</p>
 <h3>Structured Types</h3>
 <p>
 Based on the given type information from StructDNA, the model 
-generator maps all structured types to Java facet classes. For 
+generator maps all structured types to Java facade classes. For 
 each field of a struct a getter and setter method is generated
 based on type and name of the field.
 </p>
 
 
 <h4>Embedded Structs</h4>
+<p>
 If a field of a struct is of a structured type (not a pointer)
 then it is embedded in the struct in C. Those fields get 
-represented by a facet of the fields type. The facet returned by
+represented by a facade of the fields type. The facade returned by
 the corresponding getter method provides access to the embedded 
-struct. When assigning another object (i.e. facet) to the field 
+struct. When assigning another object (i.e. facade) to the field 
 through its set method, the value of that object is copied into 
 the memory region of the embedded struct. This is exactly the
 same behaviour as in C.
-
+</p>
 <h3>Pointers</h3>
 <p>
 Pointers in C can refer to different kinds of data which has to
@@ -304,7 +317,7 @@ Another case are type casts applied to pointers. In C it is possible
 to cast memory to any type. Best example are <code>void*</code> pointers
 which have to be casted to a specific type when used.
 Unfortunately, due to historical reasons, some pointers in Blender 
-data that imply a cast to a 
+data imply a cast to a 
 pointer of a structure of entirely different kind then the actual 
 struct at the referenced address. Java supports casts as long as
 the target object contains the class of the reference somewhere in the
@@ -321,17 +334,17 @@ shows that it is not possible to map a pointer type to a particular Java
 builtin type without semantic knowledge about its use case. But the developer
 using the pointer can easily determin its use case and just needs a suitable
 interface which supports all the functions of a C pointer in Java. In order to 
-keep the data model generic Java Blend introduces a <code>DNAPointer&lt;T&gt;</code> 
+keep the data model generic Java Blend introduces a <code>CPointer&lt;T&gt;</code> 
 template class to solve all those issues. A consequence of this design 
 decision is, that a pointer representation needs native data to operate 
 on (e.g. to perform type casts etc.). This also drove the fundamental 
-decision to keep data in memory and use facets instead of converting 
+decision to keep data in memory and use facades instead of converting 
 all data in Java types, once it is read.
 </p>
-<h4>Class <code>DNAPointer&lt;T&gt;</code></h4>
+<h4>Class <code>CPointer&lt;T&gt;</code></h4>
 <p>This class supports all functionalities of a C pointer. The template 
 parameter specifies its target type, which means the type of data the pointer
-refers to. The target type can be either a scalar, an object (i.e. facet)
+refers to. The target type can be either a scalar, an object (i.e. facade)
 or a pointer again (pointer of pointer).
 </p>
 <p>
@@ -351,11 +364,11 @@ The following list gives an overview of its functionalities:
 Driven by the design decision on pointers, all data is kept in its native format
 in heap memory. This means, although we could map arrays of fixed length to 
 their Java counter parts, it would be inconsistent. Instead arrays are represented by
-facets of type <code>DNAArray&lt;T&gt;</code> class templates where the template parameter 
+facades of type <code>CArrayFacade&lt;T&gt;</code> class templates where the template parameter 
 <code>T</code> specifies the type of its components. Multi-dimensional arrays 
 simply have a component type which is an array 
-(e.g. <code>DNAArray&lt;DNAArray&lt;T&gt;&gt;</code>). <code>DNAArray&lt;T&gt;</code> 
-is derived from <code>DNAPointer&lt;T&gt;</code> and inherits all its functionalities. 
+(e.g. <code>CArrayFacade&lt;CArrayFacade&lt;T&gt;&gt;</code>). <code>CArrayFacade&lt;T&gt;</code> 
+is derived from <code>CPointer&lt;T&gt;</code> and inherits all its functionalities. 
 Thus, arrays are pointers too, as in C.
 </p>
 <p>
@@ -363,12 +376,11 @@ The following list gives an overview of its functionalities:
 </p>
 <ul>
 <li>Get or set elements of the array</li>
-<li>Get or set its address</li>
 <li>Iterate over referenced elements</li>
 <li>Pointer arithmetics</li>
-<li>Convert to array of fixed length</li>
-<li>Convert to String</li>
-<li>Type cast to a pointer of a different type</li>
+<li>Type casting</li>
+<li>Conversion filling from and conversion to Java built-in array types</li>
+<li>Conversion between String and array</li>
 </ul>
 
 
