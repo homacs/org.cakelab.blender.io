@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.cakelab.blender.io.block.BlockTable;
-import org.cakelab.blender.nio.CArrayFacade.DNAArrayIterator;
+import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
 
 /**
  * Objects of this class represent a C pointer in Java. It provides
@@ -206,7 +206,7 @@ public class CPointer<T> extends CFacade {
 		} else if (targetTypeList[0].isArray()){
 			throw new ClassCastException("Impossible type declaration containing a pointer on an array (Cannot be declared in C).");
 		} else {
-			return (T) getDNAFacet(address);
+			return (T) getCFacade(address);
 		}
 	}
 	
@@ -369,7 +369,7 @@ public class CPointer<T> extends CFacade {
 	}
 	
 
-	public CArrayFacade<T> toDNAArray(int len) {
+	public CArrayFacade<T> toCArrayFacade(int len) {
 		return new CArrayFacade<T>(__io__address, targetTypeList, new int[]{len}, __io__blockTable);
 	}
 	
@@ -531,7 +531,7 @@ public class CPointer<T> extends CFacade {
 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected T getDNAFacet(long targetAddress) throws IOException {
+	protected T getCFacade(long targetAddress) throws IOException {
 		try {
 			if (targetTypeList[0].equals(CPointer.class)) {
 				long address = __io__block.readLong(targetAddress);
@@ -649,8 +649,8 @@ public class CPointer<T> extends CFacade {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
-		if (obj instanceof DNAArrayIterator) {
-			return __io__address == ((DNAArrayIterator)obj).getCurrentAddress();
+		if (obj instanceof CArrayFacadeIterator) {
+			return __io__address == ((CArrayFacadeIterator)obj).getCurrentAddress();
 		}
 		if (obj instanceof CFacade) {
 			return ((CFacade) obj).__io__address == __io__address;

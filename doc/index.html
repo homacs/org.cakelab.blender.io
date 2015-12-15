@@ -15,16 +15,17 @@
 </head>
 <body>
 <h1 style="text-align: center">Java Blend</h1>
-<p style="text-align: center"><em>A Generic Blender File Import/Export for Java</em></p>
-<p style="text-align: center">-- 1st tech. demo --</p>
+<p style="text-align: center"><em>Complete Mapping of Blender DNA for Java</em></p>
+<p style="text-align: center"><em>Supports import <b>and</b> export</em></p>
+<p style="text-align: center">-- 2nd tech. demo --</p>
 <p style="text-align: center">(no decision on type of open source license yet)</p>
 <p style="text-align: center">${system.date}</p>
 <p style="text-align: center">Holger Machens</p>
 
 <h2>Introduction</h2>
 <p>
-The Blender core is developed in C and blender files 
-are basically dumps of the native memory content (C-structs and scalar types) 
+The Blender core is developed in C and blender files are basically dumps 
+of the native memory content (C structs and scalar types) 
 from heap to disk. The file is organised in blocks of arbitrary length, and 
 the type of data in it is described in a special block, which 
 contains type information (meta data) for all C native and 
@@ -43,7 +44,7 @@ any-version blender file import/export in Java.
 This section gives a brief overview of the general concept behind Java Blend. 
 For further details refer to the <a href="spec.html">system specification</a> (not finished yet).
 <h3>Modules</h3>
-<p align="center"><img src="images/model-generator.png"/></p>
+<p style="text-align: center"><img src="images/model-generator.png"/></p>
 <p>
 Java Blend basically consists of two modules:
 </p>
@@ -66,7 +67,7 @@ conversion and data access in general.
 </dl>
 
 
-<p align="center"><img src="images/facet.png"/></p>
+<p style="text-align: center"><img src="images/facet.png"/></p>
 
 To summarise: Based on the type information of any reference blender 
 file, the model generator generates a data model in 
@@ -92,10 +93,10 @@ multiple projects.
 <b>Example</b>
 </p>
 <pre>
-	java -jar javablend.jar "../myproject/src" "my.package.blender.data" "cube.blend"
+	java -jar javablend.jar "../myproject/src" "my.package.blender" "any-file.blend"
 </pre>
 <p>
-Once the data model is available, it can be used in combination with the 
+Once the data model is generated, it can be used in combination with the 
 runtime data I/O module to access any <code>.blend</code> file of the
 same Blender version. The application opens a Blender file and retrieves
 a <code>Main</code> library. In Blender terminology a 'Library' 
@@ -112,8 +113,8 @@ blender file and retrieves the polygons of a mesh.
 	//
 	// Open file and retrieve main lib
 	//
-	BlendFile f = new BlendFile("cube.blend");
-	Main main = new Main(f);
+	BlenderFile f = new BlenderFile("cube.blend");
+	MainLib main = new MainLib(f);
 	f.close();
 	
 	//
@@ -133,10 +134,10 @@ This is a first tech. demo which demonstrates the data read part based on a gene
 data model. It consists of
 </p>
 <ul>
-<li>the <b><a href="downloads/JavaBlend-src-0.0.1.zip">source code</a></b> of model generator and data I/O and</li>
-<li>a use case <b><a href="downloads/JavaBlendDemo-src-0.0.1.zip">example with generated data model</a></b> for blender v2.69 
+<li>the <b><a href="downloads/JavaBlend-src-0.0.2.zip">source code</a></b> of model generator and data I/O and</li>
+<li>a use case <b><a href="downloads/JavaBlendDemo-src-0.0.2.zip">example with generated data model</a></b> for blender v2.69 
 demonstrating how to read and display a textured cube modelled in blender, and</li>
-<li>a <b><a href="downloads/JavaBlendDemo-0.0.1.zip">binary of 
+<li>a <b><a href="downloads/JavaBlendDemo-0.0.2.zip">binary of 
 the example</a></b> to show that (horribly) textured cube in action. It uses <a href="https://www.lwjgl.org/">LWJGL</a> and requires
 a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
 </li>
@@ -145,14 +146,9 @@ a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
 </p>
 <h1>Roadmap</h1>
 <ul>
-<li>Testing and improving import feature (in progress)</li>
-<li>CustomData: Not sure what it exactly is, but I have the objects .</li>
-<li>Libraries: Support for multiple files and external files.
-<li>Instantiation: allocate memory, append to or create block, assign to facet, link to libraries</li>
-<li>Export: dump memory to file</li>
-<li>File compression/decompression</li>
-<li>Documentation</li>
-<li>Testing, improving, optimising, polishing</li>
+<li>File compression/decompression (?)</li>
+<li>Documentation (!)</li>
+<li>Testing, improving, optimising, polishing (!)</li>
 <li>Release (end of 2015)</li>
 </ul>
 

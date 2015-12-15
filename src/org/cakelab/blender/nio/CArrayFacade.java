@@ -187,7 +187,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 		} else if (isPrimitive(targetTypeList[0])) {
 			return getScalar(address);
 		} else {
-			return getDNAFacet(address);
+			return getCFacade(address);
 		}
 	}
 
@@ -382,14 +382,14 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 */
 	@Override
 	public Iterator<T> iterator() {
-		return new DNAArrayIterator<T>(this);
+		return new CArrayFacadeIterator<T>(this);
 	}
 
-	static class DNAArrayIterator<T> extends CArrayFacade<T> implements Iterator<T> {
+	static class CArrayFacadeIterator<T> extends CArrayFacade<T> implements Iterator<T> {
 
 		private int current;
 
-		public DNAArrayIterator(CArrayFacade<T> dnaArray) {
+		public CArrayFacadeIterator(CArrayFacade<T> dnaArray) {
 			super(dnaArray);
 			current = 0;
 		}

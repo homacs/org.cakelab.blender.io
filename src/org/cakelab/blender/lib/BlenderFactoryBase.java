@@ -67,7 +67,7 @@ public class BlenderFactoryBase {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends CFacade> T newDNAStructBlock(Identifier blockCode, Class<T> facetClass, BlenderFile blend) throws IOException {
+	public static <T extends CFacade> T newCStructBlock(Identifier blockCode, Class<T> facetClass, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
 		try {
 			Field field__dna__sdnaIndex = facetClass.getDeclaredField(__DNA__SDNA_INDEX);
@@ -102,7 +102,7 @@ public class BlenderFactoryBase {
 	 * @return
 	 * @throws IOException
 	 */
-	public static <T extends CFacade> CArrayFacade<T> newDNAStructBlock(Identifier blockCode, Class<T> facetClass, int count, BlenderFile blend) throws IOException {
+	public static <T extends CFacade> CArrayFacade<T> newCStructBlock(Identifier blockCode, Class<T> facetClass, int count, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
 		try {
 			Field field__dna__sdnaIndex = facetClass.getDeclaredField(__DNA__SDNA_INDEX);
@@ -137,7 +137,7 @@ public class BlenderFactoryBase {
 	 * @return CArrayFacade facet to access array data in the new block.
 	 * @throws IOException
 	 */
-	public static <T> CArrayFacade<T> newDNAArrayBlock(Identifier blockCode, Class<T> componentType, int arrayLength, BlenderFile blend) throws IOException {
+	public static <T> CArrayFacade<T> newCArrayBlock(Identifier blockCode, Class<T> componentType, int arrayLength, BlenderFile blend) throws IOException {
 		if (CFacade.__io__subclassof(componentType, CArrayFacade.class)) {
 			throw new IOException("Multi-dimensional arrays have to be instantiated giving all component types of the embedded arrays and their lengths.");
 		} else if (CFacade.__io__subclassof(componentType, CPointer.class)) {
@@ -145,7 +145,7 @@ public class BlenderFactoryBase {
 		} else {
 			int[] dimensions = new int[]{arrayLength};
 			Class<?>[] typeList = new Class<?>[]{componentType};
-			return newDNAArrayBlock(blockCode, typeList, dimensions, blend);
+			return newCArrayBlock(blockCode, typeList, dimensions, blend);
 		}
 	}
 	
@@ -178,7 +178,7 @@ public class BlenderFactoryBase {
 	 * @return
 	 * @throws IOException
 	 */
-	public static <T> CArrayFacade<T> newDNAArrayBlock(Identifier blockCode, Class<?>[] typeList, int[] dimensions, BlenderFile blend) throws IOException {
+	public static <T> CArrayFacade<T> newCArrayBlock(Identifier blockCode, Class<?>[] typeList, int[] dimensions, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
 		// TODO: ZZZ ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
 		int sdnaIndex = 0; // not a struct
@@ -201,7 +201,7 @@ public class BlenderFactoryBase {
 	 * @return a pointer on the pointer stored in the block.
 	 * @throws IOException
 	 */
-	public static <T> CPointer<CPointer<T>> newDNAPointerBlock(Identifier blockCode, Class<?>[] typeList, BlenderFile blend) throws IOException {
+	public static <T> CPointer<CPointer<T>> newCPointerBlock(Identifier blockCode, Class<?>[] typeList, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
 		// TODO: ZZZ ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
 		int sdnaIndex = 0; // not a struct
@@ -228,7 +228,7 @@ public class BlenderFactoryBase {
 	 * @return
 	 * @throws IOException
 	 */
-	public static <T> CArrayFacade<CPointer<T>> newDNAPointerBlock(Identifier blockCode, Class<?>[] typeList, int count, BlenderFile blend) throws IOException {
+	public static <T> CArrayFacade<CPointer<T>> newCPointerBlock(Identifier blockCode, Class<?>[] typeList, int count, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
 		// TODO: ZZZ ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
 		int sdnaIndex = 0; // not a struct
