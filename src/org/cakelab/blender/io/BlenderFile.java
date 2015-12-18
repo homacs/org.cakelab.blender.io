@@ -59,7 +59,7 @@ public class BlenderFile implements Closeable {
 	protected CDataReadWriteAccess io;
 	private long firstBlockOffset;
 
-
+	// TODO: XXX: Need fix: Block table and block list out of sync in case of block deletion
 	private ArrayList<Block> blocks;
 
 	private StructDNA sdna;
