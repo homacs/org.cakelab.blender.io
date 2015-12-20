@@ -9,6 +9,11 @@ import org.cakelab.blender.nio.UnsignedLong;
 
 
 public class Block implements Comparable<Long> {
+	/** link to prev block in file */
+	Block next;
+	/** link to next block in file */
+	Block prev;
+	
 	/** the header as read from the file */
 	public BlockHeader header;
 	
@@ -20,6 +25,10 @@ public class Block implements Comparable<Long> {
 		this.data = data;
 	}
 	
+	
+	Block() {}
+
+
 	@Override
 	public int compareTo(Long address) {
 		return UnsignedLong.compare(header.address, address);

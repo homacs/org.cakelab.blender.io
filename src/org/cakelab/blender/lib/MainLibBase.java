@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.cakelab.blender.generator.typemap.Renaming;
 import org.cakelab.blender.io.BlenderFile;
@@ -38,7 +39,7 @@ public abstract class MainLibBase {
 		this.__dna__blendFile = blend;
 		DNAModel model = blend.getBlenderModel();
 		blockTable = blend.getBlockTable();
-		ArrayList<Block> blocks = blend.getBlocks();
+		List<Block> blocks = blend.getBlocks();
 		for (Block block : blocks) {
 			BlockHeader header = block.header;
 			if (isPossibleLibraryBlock(header.getCode())) {

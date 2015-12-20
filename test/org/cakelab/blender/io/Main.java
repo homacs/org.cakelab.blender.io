@@ -2,10 +2,7 @@ package org.cakelab.blender.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import org.cakelab.blender.io.BlenderFile;
-import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockTable;
@@ -20,13 +17,11 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		BlenderFile blender = new BlenderFile(new File("cube.blend"));
 		DNAModel model = blender.getBlenderModel();
-		ArrayList<Block> blocks = blender.getBlocks();
+		BlockTable blockTable = blender.getBlockTable();
 		blender.close();
-		
+
 		Encoding encoding = blender.getEncoding();
-		
-		BlockTable blockTable = new BlockTable(encoding);
-		blockTable.addAll(blocks);
+
 
 		//
 		// retrieve the meta model, which is encoding independent

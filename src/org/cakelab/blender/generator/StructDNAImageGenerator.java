@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.cakelab.blender.io.BlenderFile;
+import org.cakelab.blender.io.block.BlockList;
 import org.cakelab.blender.io.dna.internal.StructDNA;
 
 public class StructDNAImageGenerator extends BlenderFile {
@@ -18,7 +19,7 @@ public class StructDNAImageGenerator extends BlenderFile {
 	 * @throws IOException
 	 */
 	public void generate() throws IOException {
-		write();
+		write(new BlockList());
 		close();
 	}
 }

@@ -12,13 +12,21 @@ import org.cakelab.blender.io.util.Identifier;
 import org.cakelab.blender.nio.UnsignedLong;
 
 
-public class BlockTable extends Allocator {
+public class BlockTable {
+
 
 	// TODO: ZZZ consider actual heap base?
 	private static final long HEAPBASE = UnsignedLong.plus(UnsignedLong.MIN_VALUE, 4096L);
 	private static final long HEAPSIZE = UnsignedLong.minus(UnsignedLong.MAX_VALUE, HEAPBASE);
-	private List<Block> blocks = new ArrayList<Block>();
+	
+	
+	/** list of blocks sorted by block.header.address */
+	private List<Block> sorted = new ArrayList<Block>();
+
+	/** encoding used by all blocks of this block table. */
 	private Encoding encoding;
+	
+	private Allocator allocator;
 	/** 
 	 * We do lazy initialisation of the allocator. 
 	 * This improves performance for people who don't 
@@ -29,7 +37,7 @@ public class BlockTable extends Allocator {
 	
 	
 	public BlockTable(Encoding encoding) {
-		super(HEAPBASE, HEAPSIZE);
+		allocator = new Allocator(HEAPBASE, HEAPSIZE);
 		allocatorInitialised = false;
 		this.encoding = encoding;
 	}
@@ -37,7 +45,13 @@ public class BlockTable extends Allocator {
 	
 	public BlockTable(Encoding encoding, List<Block> blocks) {
 		this(encoding);
-		addAll(blocks);
+		this.sorted.addAll(blocks);
+		Collections.sort(this.sorted, new Comparator<Block>() {
+			@Override
+			public int compare(Block b1, Block b2) {
+				return b1.compareTo(b2.header.getAddress());
+			}
+		});
 		if (!blocks.isEmpty()) {
 			Block first = blocks.get(0);
 			assert (UnsignedLong.ge(first.header.address, HEAPBASE));
@@ -45,30 +59,21 @@ public class BlockTable extends Allocator {
 	}
 
 
-	public void addAll(List<Block> blocks) {
-		this.blocks.addAll(blocks);
-		Collections.sort(this.blocks, new Comparator<Block>() {
-			@Override
-			public int compare(Block b1, Block b2) {
-				return b1.compareTo(b2.header.getAddress());
-			}
-		});
-	}
 
 	public Block getBlock(long address) {
 		Block block = null;
 		
-		int i = Collections.binarySearch(blocks, address);
+		int i = Collections.binarySearch(sorted, address);
 		if (i >= 0) {
-			block = blocks.get(i);
+			block = sorted.get(i);
 		} else {
-			// if the address lies between two start blocks, then 
+			// if the address lies between two start sorted, then 
 			// -i-1 is the pos of the block with start address larger
 			// than address. But we need the block with a start address
 			// lower than address. Thus, -i-2
 			i = -i-2;
 			if (i >= 0) {
-				Block b = blocks.get(i);
+				Block b = sorted.get(i);
 				if (address < (b.header.getAddress() + b.header.getSize())) {
 					block = b;
 				}
@@ -87,18 +92,18 @@ public class BlockTable extends Allocator {
 	 */
 	public Block allocate(Identifier blockCode, int size) {
 		checkAllocator();
-		long address = alloc(size);
+		long address = allocator.alloc(size);
 
 		
 		CDataReadWriteAccess rwAccess = CDataReadWriteAccess.create(new byte[size], address, encoding);
 		Block block = new Block(new BlockHeader(blockCode, size, address), rwAccess);
+
 		
 		// insert block in list
-		int i = Collections.binarySearch(blocks, address);
+		int i = Collections.binarySearch(sorted, address);
 		assert(i < 0);
 		i = -i -1;
-		blocks.add(i, block);
-		
+		sorted.add(i, block);
 		return block;
 	}
 	
@@ -117,29 +122,29 @@ public class BlockTable extends Allocator {
 	}
 
 	public void free(Block block) {
-		// When the allocator gets initialised, it will receive all blocks
+		// When the allocator gets initialised, it will receive all sorted
 		// that still exist. Thus, we don't need to do anything
 		// if it is not initialised.
 		if (allocatorInitialised) {
-			super.free(block.header.address, block.header.size);
+			allocator.free(block.header.address, block.header.size);
 		}
 		
 		// remove block from table
-		int i = Collections.binarySearch(blocks, block.header.address);
+		int i = Collections.binarySearch(sorted, block.header.address);
 		assert(i >= 0);
-		blocks.remove(i);
+		sorted.remove(i);
 	}
 	
 	/**
 	 * Lazy initialisation of the allocator.
 	 * This method checks whether the allocator has been initialised.
-	 * If not it initialised it by declaring the memory areas of all blocks
+	 * If not it initialised it by declaring the memory areas of all sorted
 	 * as allocated.
 	 */
 	private void checkAllocator() {
 		if (!allocatorInitialised) {
-			for (Block block : blocks) {
-				declareAllocated(block.header.address, block.header.size);
+			for (Block block : sorted) {
+				allocator.declareAllocated(block.header.address, block.header.size);
 			}
 			allocatorInitialised = true;
 		}
@@ -155,16 +160,32 @@ public class BlockTable extends Allocator {
 		return encoding;
 	}
 
-
 	public List<Block> getBlocks(Identifier blockCode) {
 		List<Block> result = new ArrayList<Block>();
-		for (Block block : blocks) {
+		for (Block block : sorted) {
 			if (block.header.code.equals(blockCode)) {
 				result.add(block);
 			}
 		}
 		return result;
 	}
+
+	public Allocator getAllocator() {
+		checkAllocator();
+		return allocator;
+	}
+
+	/**
+	 * Please note, that the list of blocks returned by this method 
+	 * is sorted by block.header.address. If you are looking for the
+	 * list of blocks in their original sequence in the file than refer
+	 * to {@link BlenderFile#getBlocks()}
+	 * @return
+	 */
+	public List<Block> getBlocksSorted() {
+		return sorted;
+	}
+
 
 
 	

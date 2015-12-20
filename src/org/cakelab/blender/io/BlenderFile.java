@@ -4,11 +4,12 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.cakelab.blender.io.FileHeader.Version;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
+import org.cakelab.blender.io.block.BlockList;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.DNAModel;
 import org.cakelab.blender.io.dna.internal.StructDNA;
@@ -18,34 +19,39 @@ import org.cakelab.blender.metac.CMetaModel;
 
 
 /**
- * A blend-file always start with the file-header followed by file-blocks. 
- * The default blend file of Blender 2.48 contains more than 400 of these 
- * file-blocks. Each file-block has a file-block-header and data. 
- * 
+ * Class BlenderFile implements various functionalities to support in
+ * reading or writing blender files. 
+ * <h2>Reading</h2>
  * <p>
- * Saving complex scenes in Blender is done within seconds. Blender achieves 
- * this by saving data in memory to disk without any transformations or 
- * translations. Blender only adds file-block-headers to this data. 
- * A file-block-header contains clues on how to interpret the data. 
- * After the data, all internally Blender structures are stored. These 
- * structures will act as blue-prints when Blender loads the file. 
- * Blend-files can be different when stored on different hardware platforms 
- * or Blender releases. There is no effort taken to make blend-files 
- * binary the same. Blender creates the blend-files in this manner 
- * since release 1.0. Backward and upwards compatibility is not implemented 
- * when saving the file, this is done during loading.
- * </p><p>
- * When Blender loads a blend-file, the DNA-structures are read first. 
- * Blender creates a catalog of these DNA-structures. Blender uses this 
- * catalog together with the data in the file, the internal Blender 
- * structures of the Blender release you're using and a lot of 
- * transformation and translation logic to implement the backward 
- * and upward compatibility. In the source code of blender there is 
- * actually logic which can transform and translate every structure used 
- * by a Blender release to the one of the release you're using (see 
- * <a href="http://download.blender.org/source">blender sources</a>
- * /source/blender/blenloader/intern/readfile.c for reference).
- * The more difference between releases the more logic is executed.
+ * To simply read a blender file you can use the constructor 
+ * {@link #BlenderFile(File)}. If the data model was generated with 
+ * the optional utilities (i.e. with the 'utils' package) then you will 
+ * find a class MainLib in this package. The MainLib provides CFacades to 
+ * all data available in the file. To instantiate the MainLib you need
+ * block table received via {@link #getBlockTable()}. The block table is also
+ * a way to access blocks directly. The block table maps virtual addresses 
+ * to memory in blocks. Internally, it maintains a sorted list of the blocks.
+ * If you prefer or need direct access to blocks in the order given in the 
+ * blender file then you can use the list returned from {@link #getBlocks()} 
+ * instead. 
+ * </p>
+ * <h2>Writing</h2>
+ * <p>Unfortunately, writing a blender file can take a bit more effort, especially 
+ * if you are adding new blocks. First of all, it is important to know, that the
+ * list of blocks you may have received after reading, is not in sync with the block
+ * table. Adding and removing blocks in the block table is not reflected in the list.
+ * </p>
+ * <p>The order of blocks usually doesn't matter except of the ENDB block and some special
+ * cases I saw in blender code. The methods {@link #write()} and {@link #write(List)}
+ * take care of ENDB and DNA1, i.e. they add a StructDNA block and an ENDB block at the end. 
+ * Since those remaining special cases in blender code, where the order of blocks matters, 
+ * are version specific, Java Blend cannot provide a generic solution and instead 
+ * allows the API developer to provide his own block list to method {@link #write(List)}.
+ * </p>
+ * <p>To help maintain a certain order of blocks, Java Blend provides the 
+ * class {@link BlockList} which is a linked list of blocks, and therefore optimised 
+ * for fast adding and removing of blocks. But this list is <b>not</b> automatically updated
+ * if blocks are added to or removed from the block table.
  * </p>
  */
 public class BlenderFile implements Closeable {
@@ -59,22 +65,22 @@ public class BlenderFile implements Closeable {
 	protected CDataReadWriteAccess io;
 	private long firstBlockOffset;
 
-	// TODO: XXX: Need fix: Block table and block list out of sync in case of block deletion
-	private ArrayList<Block> blocks;
-
 	private StructDNA sdna;
 	private DNAModel model;
 
 
 	private BlockTable blockTable;
 
+
+	private BlockList blocks;
+
 	
 	public BlenderFile(File file) throws IOException {
 		this(CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), Encoding.JAVA_NATIVE));
 		// proceed from here with an input stream which decodes data according to its endianess
-		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), getEncoding());
+		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), getEncoding());
 		readStructDNA();
-		readBlocks();
+		blockTable = new BlockTable(getEncoding(), readBlocks());
 	}
 	
 	/**
@@ -116,12 +122,17 @@ public class BlenderFile implements Closeable {
 		//
 		header.write(io);
 		firstBlockOffset = io.offset();
-		
-		blocks = new ArrayList<Block>();
-		blockTable = getBlockTable();
+		blocks = new BlockList();
+		blockTable = new BlockTable(getEncoding(), blocks);
 	}
 	
+	
 	public void write() throws IOException {
+		write(blockTable.getBlocksSorted());
+	}
+	
+	
+	public void write(List<Block> blocks) throws IOException {
 		io.offset(firstBlockOffset);
 		
 		boolean sdnaWritten = false;
@@ -154,12 +165,12 @@ public class BlenderFile implements Closeable {
 		
 	}
 	
-	private void writeEndBlock() throws IOException {
+	protected void writeEndBlock() throws IOException {
 		BlockHeader endb = new BlockHeader(BlockHeader.CODE_ENDB, 0, 0, 0, 0);
 		endb.write(io);
 	}
 
-	private void writeSdnaBlock() throws IOException {
+	protected void writeSdnaBlock() throws IOException {
 		// TODO: ZZZ calculate size of snda block beforehand
 		long headerOffset = io.offset();
 		
@@ -168,13 +179,12 @@ public class BlenderFile implements Closeable {
 		//
 		BlockHeader header = new BlockHeader();
 		header.write(io);
+		long dataOffset = io.offset();
 
 		//
 		// write sdna to disk
 		//
-		long dataOffset = io.offset();
 		sdna.write(io);
-		
 		long end = io.offset();
 		
 		//
@@ -183,7 +193,7 @@ public class BlenderFile implements Closeable {
 		
 		int size = (int) (end - dataOffset);
 		/// receive an address for the block from allocator
-		long address = blockTable.alloc(size);
+		long address = blockTable.getAllocator().alloc(size);
 		int sdnaIndex = 0;
 		int count = 1;
 		header = new BlockHeader(BlockHeader.CODE_DNA1, size, address, sdnaIndex, count);
@@ -246,26 +256,13 @@ public class BlenderFile implements Closeable {
 	}
 
 
-	
-	
-	
-	public ArrayList<Block> getBlocks() throws IOException {
-		if (blocks == null) {
-			readBlocks();
-		}
-		return blocks;
-	}
-
-	public BlockTable getBlockTable () throws IOException {
-		if (blockTable == null) {
-			blockTable = new BlockTable(getEncoding(), getBlocks());
-		}
+	public BlockTable getBlockTable() throws IOException {
 		return blockTable;
 	}
 	
 	
-	private void readBlocks() throws IOException {
-		blocks = new ArrayList<Block>();
+	private BlockList readBlocks() throws IOException {
+		blocks = new BlockList();
 		io.offset(firstBlockOffset);
 		BlockHeader blockHeader = new BlockHeader();
 		blockHeader.read(io);
@@ -278,6 +275,7 @@ public class BlenderFile implements Closeable {
 			blockHeader = new BlockHeader();
 			blockHeader.read(io);
 		}
+		return blocks;
 	}
 
 	private CDataReadWriteAccess readBlockData(BlockHeader blockHeader) throws IOException {
@@ -314,5 +312,7 @@ public class BlenderFile implements Closeable {
 		return sdna;
 	}
 
-
+	public BlockList getBlocks() {
+		return blocks;
+	}
 }

@@ -64,7 +64,7 @@ public class CFacadeFieldDescGenerator extends FieldVisitor {
 		javadoc.appendln("<ul>");
 		javadoc.appendln("<li>Field: '" + field.getName() + "'</li>");
 		javadoc.appendln("<li>Signature: '" + field.getType().getSignature() + "'</li>");
-		javadoc.appendln("<li>Actual Size (32bit/64bit): " + ctype.sizeof(Encoding.ADDR_WIDTH_32BIT) + "/" + ctype.sizeof(Encoding.ADDR_WIDTH_32BIT) + "</li>");
+		javadoc.appendln("<li>Actual Size (32bit/64bit): " + ctype.sizeof(Encoding.ADDR_WIDTH_32BIT) + "/" + ctype.sizeof(Encoding.ADDR_WIDTH_64BIT) + "</li>");
 		javadoc.appendln("</ul>");
 
 		classgen.addConstField("public static final", "long[]", descrname, "new long[]{" + Long.toString(offset32) + ", " + Long.toString(offset64) + "}", javadoc);
