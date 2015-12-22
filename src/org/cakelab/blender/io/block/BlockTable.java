@@ -109,7 +109,7 @@ public class BlockTable {
 	
 	public Block allocate(Identifier blockCode, long size,
 			int sdnaIndex, int count) {
-		Block block = allocate(blockCode, size);
+		Block block = allocate(blockCode, size*count);
 		block.header.sdnaIndex = sdnaIndex;
 		block.header.count = count;
 		return block;

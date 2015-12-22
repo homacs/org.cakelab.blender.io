@@ -67,7 +67,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		method.indent(+1);
 		method.appendln("if (sdna == null) {");
 		method.indent(+1);
-		method.appendln("sdna = createStructDNA(\"" + gpackage.getResourcePath() + "/sdna.blend\");");
+		method.appendln("sdna = createStructDNA(\"" + gpackage.getResourcePath() + "/resources/sdna.blend\");");
 		method.indent(-1);
 		method.appendln("}");
 		method.appendln("return sdna;");
@@ -90,7 +90,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		code.indent(+1);
 		code.appendln("super(file, sdna, blenderVersion);");
 		code.appendln("BlockTable blockTable = getBlockTable();");
-		code.appendln("Block block = blockTable.allocate(BlockHeader.CODE_GLOB, FileGlobal.__dna__sizeof(FileGlobal.class, getEncoding().getAddressWidth()), FileGlobal." + __DNA__SDNA_INDEX + ", 1);");
+		code.appendln("Block block = blockTable.allocate(BlockHeader.CODE_GLOB, FileGlobal." + __io__sizeof + "(FileGlobal.class, getEncoding().getAddressWidth()), FileGlobal." + __DNA__SDNA_INDEX + ", 1);");
 		code.appendln("global = new FileGlobal(block.header.getAddress(), blockTable);");
 		code.appendln("String filename = file.getCanonicalPath();");
 		code.appendln("global.getFilename().fromString(filename);");

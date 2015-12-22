@@ -59,11 +59,11 @@ public class BlenderFile implements Closeable {
 	// TODO: ZZZ improve data management in BlenderFile
 
 
-	private FileHeader header;
+	protected FileHeader header;
 	
 	
 	protected CDataReadWriteAccess io;
-	private long firstBlockOffset;
+	protected long firstBlockOffset;
 
 	private StructDNA sdna;
 	private DNAModel model;
@@ -111,24 +111,29 @@ public class BlenderFile implements Closeable {
 	protected BlenderFile(File file, StructDNA sdna, int blenderVersion) throws IOException {
 		this.sdna = sdna;
 		
-		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), Encoding.JAVA_NATIVE);
+		// Unfortunately, blender has a bug in byte order conversion, so we use the
+		// systems native byte order.
+		Encoding encoding = Encoding.nativeEncoding();
+		
+		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), encoding);
+
 		header = new FileHeader();
 		header.endianess = FileHeader.Endianess.from(io.getByteOrder());
 		header.pointerSize = FileHeader.PointerSize.from(io.getPointerSize());
 		header.version = new Version(blenderVersion);
-		
-		//
-		// determine firstBlockOffset
-		//
 		header.write(io);
+		
 		firstBlockOffset = io.offset();
+		
 		blocks = new BlockList();
 		blockTable = new BlockTable(getEncoding(), blocks);
 	}
 	
 	
+	protected BlenderFile() {}
+
 	public void write() throws IOException {
-		write(blockTable.getBlocksSorted());
+		write(blocks);
 	}
 	
 	
@@ -226,7 +231,7 @@ public class BlenderFile implements Closeable {
 	}
 	
 	
-	private void readStructDNA() throws IOException {
+	protected void readStructDNA() throws IOException {
 		sdna = null;
 		BlockHeader blockHeader = seekFirstBlock(BlockHeader.CODE_DNA1);
 
@@ -314,5 +319,15 @@ public class BlenderFile implements Closeable {
 
 	public BlockList getBlocks() {
 		return blocks;
+	}
+
+	/**
+	 * Adds a block to the end of the file. Please note, that method {@link #write()}
+	 * will rearrange blocks eventually to move ENDB at the end.
+	 * 
+	 * @param block
+	 */
+	public void add(Block block) {
+		blocks.add(block);
 	}
 }

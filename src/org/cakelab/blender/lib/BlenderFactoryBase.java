@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import org.cakelab.blender.io.BlenderFile;
+import org.cakelab.blender.io.FileHeader;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.internal.StructDNA;
@@ -37,17 +38,35 @@ public class BlenderFactoryBase {
 	// TODO: ZZZ merge similar functionalities in factory methods
 	protected static class BlenderFileImplBase extends BlenderFile {
 
-		protected BlenderFileImplBase(BigEndianInputStreamWrapper in) throws IOException {
-			super(in);
-			this.io = in;
-		}
-
 		protected BlenderFileImplBase(File file, StructDNA sdna, int blenderVersion) throws IOException {
 			super(file, sdna, blenderVersion);
 		}
 		
 	}
 
+	protected static class StructDNAImage extends BlenderFile {
+		protected StructDNAImage(BigEndianInputStreamWrapper in) throws IOException {
+			super();
+			this.io = in;
+			header = new FileHeader();
+			try {
+				try {
+					header.read(in);
+					firstBlockOffset = in.offset();
+					readStructDNA();
+					in.close();
+					
+				} catch (IOException e) {
+					throw new IOException("Error reading sdna image file", e);
+				}
+			} finally {
+				try {in.close();} catch (Throwable suppress){}
+			}
+		}
+
+	}
+	
+	
 	/**
 	 * Allocate a new block for one instance of a C struct.
 	 * <p>
@@ -73,6 +92,7 @@ public class BlenderFactoryBase {
 			Field field__dna__sdnaIndex = facetClass.getDeclaredField(__DNA__SDNA_INDEX);
 			int sdnaIndex = field__dna__sdnaIndex.getInt(null);
 			Block block = blockTable.allocate(blockCode, CFacade.__io__sizeof(facetClass, blend.getEncoding().getAddressWidth()), sdnaIndex, 1);
+			blend.add(block);
 			return (T)CFacade.__io__newInstance(facetClass, block.header.getAddress(), blockTable);
 		} catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new IOException(e);
@@ -108,6 +128,7 @@ public class BlenderFactoryBase {
 			Field field__dna__sdnaIndex = facetClass.getDeclaredField(__DNA__SDNA_INDEX);
 			int sdnaIndex = field__dna__sdnaIndex.getInt(null);
 			Block block = blockTable.allocate(blockCode, CFacade.__io__sizeof(facetClass, blend.getEncoding().getAddressWidth()), sdnaIndex, count);
+			blend.add(block);
 			return new CArrayFacade<T>(block.header.getAddress(), new Class[]{facetClass}, new int[]{count}, blockTable);
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
 			throw new IOException(e);
@@ -187,6 +208,7 @@ public class BlenderFactoryBase {
 		Block block = blockTable.allocate(blockCode, size);
 		block.header.setCount(dimensions[0]);
 		block.header.setSdnaIndex(sdnaIndex);
+		blend.add(block);
 		return new CArrayFacade<T>(block.header.getAddress(), typeList, dimensions, blockTable);
 	}
 	
@@ -210,6 +232,7 @@ public class BlenderFactoryBase {
 		Block block = blockTable.allocate(blockCode, size);
 		block.header.setCount(count);
 		block.header.setSdnaIndex(sdnaIndex);
+		blend.add(block);
 		Class<?>[] typeListExtended = new Class<?>[typeList.length+1];
 		System.arraycopy(typeList, 0, typeListExtended, 1, typeList.length);
 		typeListExtended[0] = CPointer.class;
@@ -236,6 +259,7 @@ public class BlenderFactoryBase {
 		Block block = blockTable.allocate(blockCode, size);
 		block.header.setCount(count);
 		block.header.setSdnaIndex(sdnaIndex);
+		blend.add(block);
 		Class<?>[] typeListExtended = new Class<?>[typeList.length+1];
 		System.arraycopy(typeList, 0, typeListExtended, 1, typeList.length);
 		typeListExtended[0] = CPointer.class;
@@ -245,17 +269,17 @@ public class BlenderFactoryBase {
 	/**
 	 * This method provides the StructDNA from a given sdna.blend 
 	 * image resource path. Every generated Java Blend data model
-	 * has such an sdnaImage resource (to be found in "your/package/name/ultils/resources/sdna.blend") 
+	 * has such an sdnaImage resource (to be found in "your/package/name/utils/resources/sdna.blend") 
 	 * which contains just the sdna meta data of the blender version the
 	 * model was generated from.
 	 * 
-	 * @param resourcePathTo_sdna_blend "your/package/name/ultils/resources/sdna.blend"
+	 * @param resourcePathTo_sdna_blend "your/package/name/utils/resources/sdna.blend"
 	 * @return 
 	 * @throws IOException
 	 */
 	protected static StructDNA createStructDNA(String resourcePathTo_sdna_blend) throws IOException {
 		InputStream in = BlenderFactoryBase.class.getClassLoader().getResourceAsStream(resourcePathTo_sdna_blend);
-		BlenderFileImplBase sdnaImage = new BlenderFileImplBase(new BigEndianInputStreamWrapper(in, 8));
+		StructDNAImage sdnaImage = new StructDNAImage(new BigEndianInputStreamWrapper(in, 8));
 		StructDNA sdna = sdnaImage.getStructDNA();
 		sdnaImage.close();
 		return sdna;

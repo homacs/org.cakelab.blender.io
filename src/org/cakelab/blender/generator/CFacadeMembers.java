@@ -17,5 +17,6 @@ public interface CFacadeMembers {
 	public String __io__generic__copy = "__io__generic__copy";
 	public String __io__equals = "__io__equals";
 	public String __io__same__encoding = "__io__same__encoding";
+	public String __io__sizeof = "__io__sizeof";
 	
 }

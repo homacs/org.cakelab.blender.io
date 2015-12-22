@@ -16,6 +16,7 @@ public class Test {
 			"-out", output.getPath(),
 			"-p", javaPackage,
 			"-c", "resources/dnadoc",
+			"-u", "true",
 			"-d", "true"
 		};
 		

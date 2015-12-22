@@ -24,7 +24,7 @@ import org.cakelab.blender.nio.CFacade;
  * all root elements found in a blender file. This is the base class with
  * several helper methods for the actual class <code>Main</code>, which will be generated
  * based on the meta data found in the Blender file. Refer to the generated
- * Main class for more details.
+ * MainLib class for more details.
  * 
  * @author homac
  *
