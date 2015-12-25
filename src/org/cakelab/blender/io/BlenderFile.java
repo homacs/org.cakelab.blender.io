@@ -109,11 +109,12 @@ public class BlenderFile implements Closeable {
 	}
 	
 	protected BlenderFile(File file, StructDNA sdna, int blenderVersion) throws IOException {
-		this.sdna = sdna;
-		
 		// Unfortunately, blender has a bug in byte order conversion, so we use the
-		// systems native byte order.
-		Encoding encoding = Encoding.nativeEncoding();
+		// systems native byte order as default.
+		this(file, sdna, blenderVersion, Encoding.nativeEncoding());
+	}
+	protected BlenderFile(File file, StructDNA sdna, int blenderVersion, Encoding encoding) throws IOException {
+		this.sdna = sdna;
 		
 		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), encoding);
 
@@ -146,6 +147,7 @@ public class BlenderFile implements Closeable {
 		io.offset(firstBlockOffset);
 		// flush all blocks to disk
 		for (Block block : blocks) {
+			System.out.println("writing " + block.header.getCode().toString());
 			if (block.header.getCode().equals(BlockHeader.CODE_ENDB)) {
 				endBlock = block;
 				continue;

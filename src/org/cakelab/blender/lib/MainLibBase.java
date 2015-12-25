@@ -72,7 +72,7 @@ public abstract class MainLibBase {
 	}
 
 	private void addLibraryElement(CFacade libElem) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
+		// TODO: search first element in list
 		String setMethodName = "set" + libElem.getClass().getSimpleName();
 
 		for (Method method : getClass().getDeclaredMethods()) {

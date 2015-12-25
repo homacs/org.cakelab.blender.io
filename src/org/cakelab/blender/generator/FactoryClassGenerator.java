@@ -10,16 +10,15 @@ import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.generator.utils.ClassGenerator;
 import org.cakelab.blender.generator.utils.GCodeSection;
 import org.cakelab.blender.generator.utils.GComment;
+import org.cakelab.blender.generator.utils.GComment.Type;
 import org.cakelab.blender.generator.utils.GField;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.GPackage;
-import org.cakelab.blender.generator.utils.GComment.Type;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.internal.StructDNA;
-import org.cakelab.blender.io.util.BigEndianInputStreamWrapper;
 import org.cakelab.blender.lib.BlenderFactoryBase;
 
 public class FactoryClassGenerator extends ClassGenerator implements CFacadeMembers {
@@ -40,7 +39,6 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		addImport(BlockHeader.class);
 		addImport(BlockTable.class);
 		addImport(StructDNA.class);
-		addImport(BigEndianInputStreamWrapper.class);
 		addImport(BlenderFactoryBase.class);
 		addImport(BlenderFile.class);
 		
@@ -97,13 +95,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		code.appendln("global.setMinsubversion(MainLib.BLENDER_MINSUBVERSION);");
 		code.appendln("global.setMinversion(MainLib.BLENDER_MINVERSION);");
 		code.appendln("global.setSubversion(MainLib.BLENDER_SUBVERSION);");
-		code.indent(-1);
-		code.appendln("}");
-		code.appendln("");
-		code.appendln("protected BlenderFileImpl(BigEndianInputStreamWrapper in) throws IOException {");
-		code.indent(+1);
-		code.appendln("super(in);");
-		code.appendln("this.io = in;");
+		code.appendln("add(block);");
 		code.indent(-1);
 		code.appendln("}");
 		code.appendln();

@@ -72,13 +72,13 @@ public class Encoding {
 	}
 
 	/**
-	 * Determins the encoding used by the current system.
+	 * Determines the encoding used by the current system.
 	 * @return
 	 */
 	public static Encoding nativeEncoding() {
 		// unfortuantely there is no reliable way to detect, whether it is a 
 		// 64 or 32 bit architecture. So, we just assume that the operating system 
-		// actually is 64bit if property "os.arch" tell so, even if we know, that
+		// actually is 64bit if property "os.arch" tells so, even if we know, that
 		// it can even be 64bit if it does not.
 		if (System.getProperty("os.arch").contains("64")) {
 			return get(ByteOrder.nativeOrder(), ADDR_WIDTH_64BIT);

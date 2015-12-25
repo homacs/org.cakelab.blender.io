@@ -74,7 +74,7 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 			offset64 += ctype.sizeof(Encoding.ADDR_WIDTH_64BIT);
 		}
 		
-		createMethod__dna__addressof();
+		createMethod__io__addressof();
 		
 		PrintStream out = new PrintStream(new FileOutputStream(new File(gpackage.getDir(), classname + ".java")));
 		try {
@@ -125,13 +125,13 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 
 
 
-	private void createMethod__dna__addressof() {
+	private void createMethod__io__addressof() {
 		addImport(CPointer.class);
-		// TODO: ZZZ add comment to __dna__addressof()
+		// TODO: ZZZ add comment to __io__addressof()
 		
 		GMethod method = new GMethod(0);
 		String pointerType = "CPointer<" + classname + ">";
-		method.appendln("public " + pointerType + " __dna__addressof() {");
+		method.appendln("public " + pointerType + " " + __io__addressof + "() {");
 		method.indent(+1);
 		
 		method.appendln("return new " + pointerType + "(" + __io__address + ", new Class[]{" + classname + ".class}, " + __io__blockTable + ");");

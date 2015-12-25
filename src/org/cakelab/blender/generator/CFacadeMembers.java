@@ -11,6 +11,7 @@ package org.cakelab.blender.generator;
 public interface CFacadeMembers {
 	public String __DNA__SDNA_INDEX = "__DNA__SDNA_INDEX";
 	public String __io__address = "__io__address";
+	public String __io__addressof = "__io__addressof";
 	public String __io__block = "__io__block";
 	public String __io__blockTable = "__io__blockTable";
 	public String __io__native__copy = "__io__native__copy";
