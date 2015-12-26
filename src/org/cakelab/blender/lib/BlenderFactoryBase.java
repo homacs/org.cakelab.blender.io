@@ -67,12 +67,24 @@ public class BlenderFactoryBase {
 	}
 
 	protected BlenderFile blend;
+	private CPointer<Object> NULL;
 	
 	
-	public BlenderFactoryBase(BlenderFile blend) {
+	public BlenderFactoryBase(BlenderFile blend) throws IOException {
 		this.blend = blend;
+		this.NULL = getNullPointer(blend);
 	}
 
+
+	
+	public static CPointer<Object> getNullPointer(BlenderFile blend) throws IOException {
+		return new CPointer<Object>(0, new Class[]{Object.class}, blend.getBlockTable());
+	}
+	
+	
+	public CPointer<Object> getNullPointer() {
+		return NULL;
+	}
 	/**
 	 * Allocate a new block for one instance of a C struct.
 	 * <p>

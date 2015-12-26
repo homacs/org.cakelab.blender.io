@@ -43,6 +43,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		addImport(BlenderFactoryBase.class);
 		addImport(BlenderFile.class);
 		addImport(List.class);
+		
 		comment = new GComment(Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("Factory class to create blender files and blocks in it.");
@@ -52,7 +53,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		addField("protected static", StructDNA.class.getSimpleName(), MEMBER_sdna, fieldDoc);
 		
 		GMethod method = new GMethod(0);
-		method.appendln("public BlenderFactory(BlenderFile blend) {");
+		method.appendln("public BlenderFactory(BlenderFile blend) throws IOException {");
 		method.indent(+1);
 		method.appendln("super(blend);");
 		method.indent(-1);
