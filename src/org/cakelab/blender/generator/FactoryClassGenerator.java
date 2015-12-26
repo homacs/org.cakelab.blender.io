@@ -59,9 +59,6 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		method.appendln("}");
 		addMethod(method);
 		
-		//
-		// Create constructor
-		//
 		method = new GMethod(0);
 		method.appendln("public static FileGlobal getFileGlobal(" + BlenderFile.class.getSimpleName() + " blend) throws " + IOException.class.getSimpleName() + " {");
 		method.indent(+1);
@@ -77,9 +74,15 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		method.appendln("return fileGlobal;");
 		method.indent(-1);
 		method.appendln("}");
-		method.appendln();
 		addMethod(method);
 
+		method = new GMethod(0);
+		method.appendln("public FileGlobal getFileGlobal() throws " + IOException.class.getSimpleName() + " {");
+		method.indent(+1);
+		method.appendln("return getFileGlobal(blend);");
+		method.indent(-1);
+		method.appendln("}");
+		addMethod(method);
 		
 		method = new GMethod(0);
 		method.appendln("public static BlenderFile newBlenderFile(File file) throws IOException {");
