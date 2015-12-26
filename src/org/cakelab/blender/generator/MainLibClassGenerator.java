@@ -5,28 +5,25 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.generator.typemap.Renaming;
 import org.cakelab.blender.generator.utils.ClassGenerator;
 import org.cakelab.blender.generator.utils.GComment;
+import org.cakelab.blender.generator.utils.GComment.Type;
 import org.cakelab.blender.generator.utils.GField;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.GPackage;
-import org.cakelab.blender.generator.utils.GComment.Type;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.FileVersionInfo;
-import org.cakelab.blender.io.block.Block;
-import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.lib.MainLibBase;
 import org.cakelab.blender.metac.CStruct;
 
 public class MainLibClassGenerator extends ClassGenerator {
 
 	private static final String CLASSNAME = "MainLib";
-	private static final String MEMBER_fileGlobal = "__dna__fileGlobal";
-	private static final String MEMBER_blendFile = "__dna__blendFile";
+	private static final String MEMBER_fileGlobal = "fileGlobal";
+	private static final String MEMBER_blendFile = "blenderFile";
 	private static final String MEMBER_doVersionCheck = "doVersionCheck";
 	
 	private GComment comment;
@@ -41,9 +38,6 @@ public class MainLibClassGenerator extends ClassGenerator {
 		addImport(BlenderFile.class);
 		addImport(MainLibBase.class);
 		addImport(IOException.class);
-		addImport(BlockHeader.class);
-		addImport(Block.class);
-		addImport(List.class);
 		
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
@@ -212,15 +206,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 			indent(+1);
 			out.println(indent + "super(\""  + dnaPackage.getName() + "\", blendFile);");
 			out.println();
-			out.println(indent + "List<Block> globalBlock = blockTable.getBlocks(BlockHeader.CODE_GLOB);");
-			out.println(indent + MEMBER_fileGlobal + " = null;");
-			out.println(indent + "if (globalBlock.size() == 1) {");
-			indent(+1);
-			out.println(indent + "Block b = globalBlock.get(0);");
-			out.println(indent + MEMBER_fileGlobal + " = new FileGlobal(b.header.getAddress(), blockTable);");
-			indent(-1);
-			out.println(indent + "}");
-			out.println();
+			out.println(indent + MEMBER_fileGlobal + " = BlenderFactory.getFileGlobal(blendFile);");
 			indent(-1);
 			out.println(indent + "}");
 			out.println();

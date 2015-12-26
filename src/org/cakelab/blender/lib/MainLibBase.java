@@ -32,11 +32,11 @@ import org.cakelab.blender.nio.CFacade;
 public abstract class MainLibBase {
 	protected BlockTable blockTable;
 	private String packageName;
-	protected BlenderFile __dna__blendFile;
+	protected BlenderFile blenderFile;
 
 	protected MainLibBase(String packageName, BlenderFile blend) throws IOException {
 		this.packageName = packageName;
-		this.__dna__blendFile = blend;
+		this.blenderFile = blend;
 		DNAModel model = blend.getBlenderModel();
 		blockTable = blend.getBlockTable();
 		List<Block> blocks = blend.getBlocks();

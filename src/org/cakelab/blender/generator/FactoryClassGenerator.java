@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.generator.utils.ClassGenerator;
@@ -41,7 +42,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		addImport(StructDNA.class);
 		addImport(BlenderFactoryBase.class);
 		addImport(BlenderFile.class);
-		
+		addImport(List.class);
 		comment = new GComment(Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("Factory class to create blender files and blocks in it.");
@@ -58,7 +59,27 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		method.appendln("}");
 		addMethod(method);
 		
-		
+		//
+		// Create constructor
+		//
+		method = new GMethod(0);
+		method.appendln("public static FileGlobal getFileGlobal(" + BlenderFile.class.getSimpleName() + " blend) throws " + IOException.class.getSimpleName() + " {");
+		method.indent(+1);
+		method.appendln(BlockTable.class.getSimpleName() + " blockTable = blend.getBlockTable();");
+		method.appendln("List<Block> globalBlock = blockTable.getBlocks(BlockHeader.CODE_GLOB);");
+		method.appendln("FileGlobal fileGlobal = null;");
+		method.appendln("if (globalBlock.size() == 1) {");
+		method.indent(+1);
+		method.appendln("Block b = globalBlock.get(0);");
+		method.appendln("fileGlobal = new FileGlobal(b.header.getAddress(), blockTable);");
+		method.indent(-1);
+		method.appendln("}");
+		method.appendln("return fileGlobal;");
+		method.indent(-1);
+		method.appendln("}");
+		method.appendln();
+		addMethod(method);
+
 		
 		method = new GMethod(0);
 		method.appendln("public static BlenderFile newBlenderFile(File file) throws IOException {");

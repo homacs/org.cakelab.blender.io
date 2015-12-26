@@ -66,7 +66,7 @@ public class BlenderFactoryBase {
 
 	}
 
-	private BlenderFile blend;
+	protected BlenderFile blend;
 	
 	
 	public BlenderFactoryBase(BlenderFile blend) {
