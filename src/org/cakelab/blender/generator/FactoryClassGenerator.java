@@ -51,6 +51,16 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		addField("protected static", StructDNA.class.getSimpleName(), MEMBER_sdna, fieldDoc);
 		
 		GMethod method = new GMethod(0);
+		method.appendln("public BlenderFactory(BlenderFile blend) {");
+		method.indent(+1);
+		method.appendln("super(blend);");
+		method.indent(-1);
+		method.appendln("}");
+		addMethod(method);
+		
+		
+		
+		method = new GMethod(0);
 		method.appendln("public static BlenderFile newBlenderFile(File file) throws IOException {");
 		method.indent(+1);
 		method.appendln("StructDNA sdna = getStructDNA();");
