@@ -113,6 +113,7 @@ public class BlenderFile implements Closeable {
 		// systems native byte order as default.
 		this(file, sdna, blenderVersion, Encoding.nativeEncoding());
 	}
+	
 	protected BlenderFile(File file, StructDNA sdna, int blenderVersion, Encoding encoding) throws IOException {
 		this.sdna = sdna;
 		

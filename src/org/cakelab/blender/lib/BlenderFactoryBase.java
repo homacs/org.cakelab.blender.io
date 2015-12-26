@@ -65,8 +65,14 @@ public class BlenderFactoryBase {
 		}
 
 	}
+
+	private BlenderFile blend;
 	
 	
+	public BlenderFactoryBase(BlenderFile blend) {
+		this.blend = blend;
+	}
+
 	/**
 	 * Allocate a new block for one instance of a C struct.
 	 * <p>
@@ -99,6 +105,10 @@ public class BlenderFactoryBase {
 		} catch (NoSuchFieldException e) {
 			throw new IOException("you cannot instantiate pointers or arrays this way. Use the appropriate factory methods for the respective types instead.", e);
 		}
+	}
+	
+	public <T extends CFacade> T newCStructBlock(Identifier blockCode, Class<T> facetClass) throws IOException {
+		return newCStructBlock(blockCode, facetClass, blend);
 	}
 	
 	/**
@@ -137,6 +147,9 @@ public class BlenderFactoryBase {
 		}
 	}
 
+	public <T extends CFacade> CArrayFacade<T> newCStructBlock(Identifier blockCode, Class<T> facetClass, int count) throws IOException {
+		return newCStructBlock(blockCode, facetClass, count, blend);
+	}
 	/**
 	 * Allocate a new block for one instance of a <b>one-dimensional</b> array of 
 	 * any <b>non-pointer</b> component type which is either a scalar or a DNA struct.
@@ -169,7 +182,9 @@ public class BlenderFactoryBase {
 			return newCArrayBlock(blockCode, typeList, dimensions, blend);
 		}
 	}
-	
+	public <T> CArrayFacade<T> newCArrayBlock(Identifier blockCode, Class<T> componentType, int arrayLength) throws IOException {
+		return newCArrayBlock(blockCode, componentType, arrayLength, blend);
+	}
 	/**
 	 * Allocate a new block for one instance of a <b>multi-dimensional</b> array of 
 	 * any component type supported by blender.
@@ -211,7 +226,9 @@ public class BlenderFactoryBase {
 		blend.add(block);
 		return new CArrayFacade<T>(block.header.getAddress(), typeList, dimensions, blockTable);
 	}
-	
+	public <T> CArrayFacade<T> newCArrayBlock(Identifier blockCode, Class<?>[] typeList, int[] dimensions) throws IOException {
+		return newCArrayBlock(blockCode, typeList, dimensions, blend);
+	}
 	/**
 	 * This method creates a block with a single pointer in it. The returned pointer
 	 * is a pointer on this created pointer. To change the value of that pointer use
@@ -238,7 +255,9 @@ public class BlenderFactoryBase {
 		typeListExtended[0] = CPointer.class;
 		return new CPointer<CPointer<T>>(block.header.getAddress(), typeList, blockTable);
 	}
-	
+	public <T> CPointer<CPointer<T>> newCPointerBlock(Identifier blockCode, Class<?>[] typeList) throws IOException {
+		return newCPointerBlock(blockCode, typeList, blend);
+	}
 	/**
 	 * This method creates a block with a set of pointers and returns an array facet to 
 	 * access them. To change the value of the pointers use for example
@@ -266,6 +285,9 @@ public class BlenderFactoryBase {
 		return new CArrayFacade<CPointer<T>>(block.header.getAddress(), typeList, new int[]{count}, blockTable);
 	}
 	
+	public <T> CArrayFacade<CPointer<T>> newCPointerBlock(Identifier blockCode, Class<?>[] typeList, int count) throws IOException {
+		return newCPointerBlock(blockCode, typeList, count, blend);
+	}
 	/**
 	 * This method provides the StructDNA from a given sdna.blend 
 	 * image resource path. Every generated Java Blend data model
