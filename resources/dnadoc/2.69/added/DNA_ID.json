@@ -11,20 +11,45 @@
 			"inherits" : [ 
 				"Link" 
 			],
-			"doc" : "Represents the ID of any named object in DNA which 
+			"doc" : "Represents the ID of any element in DNA which 
 					 is stored in a library (see {@link Library}). Those 
-					 objects are instances of structs which contain an 
-					 embedded member of type ID as their first element.",
+					 elements are instances of structs which contain an 
+					 embedded member of type ID as their first element.<br/>
+					 IDs of the same element type are linked in linked list (see {@link Link})",
 			"fields" : {
 				"newid" : "",
-				"lib" : "reference on the library this object belongs to.",
-				"name" : "The name of the object.",
+				"lib" : "Reference on the library this library element belongs to.",
+				"name" : "The name of the element. Names follow a certain convention:
+					<table>
+					<tr><th>Element type</th><th>Name prefix</th><tr>
+					<tr><td>{@link BlenderObject}</td><td>\"OB\"</td></tr>
+					<tr><td>{@link Mesh}</td><td>\"ME\"</td></tr>
+					<tr><td>{@link Material}</td><td>\"MA\"</td></tr>
+					<tr><td>{@link Tex}</td><td>\"TE\"</td></tr>
+					<tr><td>{@link CustomDataLayer}</td><td>Different names depending on referenced data.</td></tr>
+					</table>",
 				"pad" : "padding for alignment",
-				"us" : "",
-				"flag" : "LIB_... flags report on status of the datablock this ID belongs
-						  to.",
-				"icon_id" : "",
-				"properties" : "list of associated properties."
+				"us" : "Reference counter, counts number of references on the corresponding element. If 0, the element will not be stored in a file.",
+				"flag" : "In files usually 1024. One of: <table>
+					<tr><td>LIB_LOCAL</td><td>0</td><td></td><tr>
+					<tr><td>LIB_EXTERN</td><td>1</td><td></td><tr>
+					<tr><td>LIB_INDIRECT</td><td>2</td><td></td><tr>
+					<tr><td>LIB_NEED_EXPAND</td><td>8</td><td></td><tr>
+					<tr><td>LIB_TESTEXT</td><td>(LIB_NEED_EXPAND | LIB_EXTERN)</td><td></td><tr>
+					<tr><td>LIB_TESTIND</td><td>(LIB_NEED_EXPAND | LIB_INDIRECT)</td><td></td><tr>
+					<tr><td>LIB_READ</td><td>16</td><td></td><tr>
+					<tr><td>LIB_NEED_LINK</td><td>32</td><td></td><tr>
+					<tr><td>LIB_NEW</td><td>256</td><td></td><tr>
+					<tr><td>LIB_FAKEUSER</td><td>512</td><td></td><tr>
+					<tr><td>LIB_DOIT</td><td>1024</td><td>free test flag</td><tr>
+					<tr><td>LIB_PRE_EXISTING</td><td>2048</td><td>tag existing data before linking so we know what is new</td><tr>
+					<tr><td>LIB_ID_RECALC</td><td>4096</td><td>runtime</td><tr>
+					<tr><td>LIB_ID_RECALC_DATA</td><td>8192</td><td>runtime</td><tr>
+					</table>
+				",
+				"icon_id" : "Always 0 in files. Will be recalculated base on the library element type when loaded.",
+				"pad2" : "padding for alignment",
+				"properties" : "List of associated properties."
 			}
 		},
 		"IDProperty" : {
@@ -51,9 +76,9 @@
 							IDP_STRING_SUB_UTF8  0 ( default )
 							IDP_STRING_SUB_BYTE  1 ( arbitrary byte array, _not_ null terminated )
 						</pre>",
-				"name" : "propertie's name",
+				"name" : "properties' name",
 				"saved" : "saved is used to indicate if this struct has been saved yet.",
-				"data" : "propertie's data. note, alignment for 64 bits",
+				"data" : "properties' data. note, alignment for 64 bits",
 				"len" : "array length, also (this is important!) string length + 1.
 	          			the idea is to be able to reuse array realloc functions on strings.",
 	          	"totallen" : "totallen is total length of allocated array/string, including a buffer.

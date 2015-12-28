@@ -13,6 +13,18 @@ import org.cakelab.blender.io.util.CStringUtils;
  * It provides convenient methods to read a code from file
  * and compare it to some code you expect.
  * 
+ * <h3>Note on ID2 Values</h3>
+ * Blender uses a couple of IDs with just two significant 
+ * positions, such as SC.. etc. Those IDs always have 4 bytes 
+ * since they are used as block codes. Since codes are stored
+ * as byte array (ASCII string), byte order of the file will
+ * not influence the order of the bytes in the code.
+ * Internally blender converts codes to system byte order to
+ * allow comparison to globally defined constants. Because we
+ * compare codes based on the bytes given, we don't have to
+ * consider byte order here.
+ * 
+ * 
  * @author homac
  *
  */

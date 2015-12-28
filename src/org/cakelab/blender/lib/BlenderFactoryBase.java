@@ -176,7 +176,7 @@ public class BlenderFactoryBase {
 		CArrayFacade&lt;Float&gt; rgba = BlenderFactory.newDNAArrayBlock(BlockHeader.CODE_DATA, Float.class, 4, blend);
 	 * </pre>
 	 * 
-	 * @param blockCode Code of the new block. Frequently CODE_DATA for arrays.
+	 * @param blockCode Code of the new block. Frequently ID_DATA for arrays.
 	 * @param componentType Component type of the array.
 	 * @param arrayLength length of the array
 	 * @param blend blender file to add block to.
@@ -219,7 +219,7 @@ public class BlenderFactoryBase {
 	 *	dimensions = new int[]{4};
 	 *	CArrayFacade&lt;CPointer&lt;Byte&gt;&gt; fileList = BlenderFactory.newDNAArrayBlock(BlockHeader.CODE_DATA, typeList, dimensions, blend);
 	 * </pre>
-	 * @param blockCode Code of the new block. Frequently CODE_DATA for arrays.
+	 * @param blockCode Code of the new block. Frequently ID_DATA for arrays.
 	 * @param typeList type specification for all referenced types
 	 * @param dimensions length of each array dimension
 	 * @param blend blender file to add block to.
@@ -275,7 +275,7 @@ public class BlenderFactoryBase {
 	 * access them. To change the value of the pointers use for example
 	 * the method {@link CArrayFacade#set(int, Object)} of the pointer on the pointer.
 	 * 
-	 * @param blockCode Usually CODE_DATA for lists of pointers.
+	 * @param blockCode Usually ID_DATA for lists of pointers.
 	 * @param typeList type specification of the pointer.
 	 * @param count number of pointers to fit in block.
 	 * @param blend blender file to add block to.

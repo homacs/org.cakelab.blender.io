@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.cakelab.blender.io.block.Block;
-import org.cakelab.blender.io.block.BlockHeader;
+import org.cakelab.blender.io.block.BlockCodes;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.DNAModel;
 import org.cakelab.blender.metac.CMetaModel;
@@ -33,7 +33,7 @@ public class Main {
 		//
 		CStruct struct = (CStruct) meta.getType("Scene");
 		int size = struct.sizeof(encoding.getAddressWidth());
-		Block block = blockTable.allocate(BlockHeader.CODE_SCE, size);
+		Block block = blockTable.allocate(BlockCodes.ID_SCE, size);
 
 		// 
 		// init the block to retrieve the scene struct

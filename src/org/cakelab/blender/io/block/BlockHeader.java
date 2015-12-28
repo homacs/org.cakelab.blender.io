@@ -20,21 +20,7 @@ import org.cakelab.blender.io.util.Identifier;
  * bytes long.
  * </p>
  * <p>
- * Each block has a block code (see {@link BlockHeader#code}).
- * Block codes associate a block with a certain group of data
- * such as Library, Object, Scene etc. but most of the blocks
- * nowadays have a generic code called 'DATA'. The most 
- * important codes are 'ENDB' and 'DNA1' which are both unique
- * in a Blender file.
- * </p>
- * <b>List of known block codes:</b>
- * <table border="1">
- * <tr><td>code</td><td>description</td></tr>
- * <tr><td>ENDB</td><td>Marks the end of the Blender file.</td></tr>
- * <tr><td>DNA1</td><td>Contains the {@link StructDNA}</td></tr>
- * <tr><td>DATA</td><td>Arbitrary data.</td></tr>
- * </table>
- * <p>
+ * Each block has a block code (see {@link BlockCodes}).
  * The type of data stored in the block is determined by the
  * {@link BlockHeader#sdnaIndex}. This is the index of the type information 
  * stored in {@link StructDNA#structs}. Thus, you always have to
@@ -44,104 +30,6 @@ import org.cakelab.blender.io.util.Identifier;
  * 
  */
 public class BlockHeader {
-
-	/* all known block codes as of v2.69 */
-	
-	/** Scene */
-	public static final Identifier CODE_SCE = new Identifier(new byte[]{'S', 'C', 0, 0});
-	/** Library */
-	public static final Identifier CODE_LI = new Identifier(new byte[]{'L', 'I', 0, 0});
-	/** Object */
-	public static final Identifier CODE_OB = new Identifier(new byte[]{'O', 'B', 0, 0});
-	/** Mesh */
-	public static final Identifier CODE_ME = new Identifier(new byte[]{'M', 'E', 0, 0});
-	/** Curve */
-	public static final Identifier CODE_CU = new Identifier(new byte[]{'C', 'U', 0, 0});
-	/** MetaBall */
-	public static final Identifier CODE_MB = new Identifier(new byte[]{'M', 'B', 0, 0});
-	/** Material */
-	public static final Identifier CODE_MA = new Identifier(new byte[]{'M', 'A', 0, 0});
-	/** Texture */
-	public static final Identifier CODE_TE = new Identifier(new byte[]{'T', 'E', 0, 0});
-	/** Image */
-	public static final Identifier CODE_IM = new Identifier(new byte[]{'I', 'M', 0, 0});
-	/** Lattice */
-	public static final Identifier CODE_LT = new Identifier(new byte[]{'L', 'T', 0, 0});
-	/** Lamp */
-	public static final Identifier CODE_LA = new Identifier(new byte[]{'L', 'A', 0, 0});
-	/** Camera */
-	public static final Identifier CODE_CA = new Identifier(new byte[]{'C', 'A', 0, 0});
-	/** Ipo (depreciated, replaced by FCurves) */
-	public static final Identifier CODE_IP = new Identifier(new byte[]{'I', 'P', 0, 0});
-	/** Key (shape key) */
-	public static final Identifier CODE_KE = new Identifier(new byte[]{'K', 'E', 0, 0});
-	/** World */
-	public static final Identifier CODE_WO = new Identifier(new byte[]{'W', 'O', 0, 0});
-	/** Screen */
-	public static final Identifier CODE_SCR = new Identifier(new byte[]{'S', 'R', 0, 0});
-	/** (depreciated?) */
-	public static final Identifier CODE_SCRN = new Identifier(new byte[]{'S', 'N', 0, 0});
-	/** VectorFont */
-	public static final Identifier CODE_VF = new Identifier(new byte[]{'V', 'F', 0, 0});
-	 /** Text */
-	public static final Identifier CODE_TXT = new Identifier(new byte[]{'T', 'X', 0, 0});
-	/** Speaker */
-	public static final Identifier CODE_SPK = new Identifier(new byte[]{'S', 'K', 0, 0});
-	/** Sound */
-	public static final Identifier CODE_SO = new Identifier(new byte[]{'S', 'O', 0, 0});
-	/** Group */
-	public static final Identifier CODE_GR = new Identifier(new byte[]{'G', 'R', 0, 0});
-	/** (internal use only) */
-	public static final Identifier CODE_ID = new Identifier(new byte[]{'I', 'D', 0, 0});
-	/** Armature */
-	public static final Identifier CODE_AR = new Identifier(new byte[]{'A', 'R', 0, 0});
-	/** Action */
-	public static final Identifier CODE_AC = new Identifier(new byte[]{'A', 'C', 0, 0});
-	/** Script (depreciated) */
-	public static final Identifier CODE_SCRIPT = new Identifier(new byte[]{'P', 'Y', 0, 0});
-	/** NodeTree */
-	public static final Identifier CODE_NT = new Identifier(new byte[]{'N', 'T', 0, 0});
-	/** Brush */
-	public static final Identifier CODE_BR = new Identifier(new byte[]{'B', 'R', 0, 0});
-	/** ParticleSettings */
-	public static final Identifier CODE_PA = new Identifier(new byte[]{'P', 'A', 0, 0});
-	/** GreasePencil */
-	public static final Identifier CODE_GD = new Identifier(new byte[]{'G', 'D', 0, 0});
-	/** WindowManager */
-	public static final Identifier CODE_WM = new Identifier(new byte[]{'W', 'M', 0, 0});
-	/** MovieClip */
-	public static final Identifier CODE_MC = new Identifier(new byte[]{'M', 'C', 0, 0});
-	/** Mask */
-	public static final Identifier CODE_MSK = new Identifier(new byte[]{'M', 'S', 0, 0});
-	/** FreestyleLineStyle */
-	public static final Identifier CODE_LS = new Identifier(new byte[]{'L', 'S', 0, 0}); 
-	/** NOTE! Fake IDs, needed for g.sipo->blocktype or outliner */
-	public static final Identifier CODE_SEQ = new Identifier(new byte[]{'S', 'Q', 0, 0});
-	/** constraint.
-	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner. */
-	public static final Identifier CODE_CO = new Identifier(new byte[]{'C', 'O', 0, 0});
-	/** pose (action channel, used to be ID_AC in code, so we keep code for backwards compat)
-	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner. */
-	public static final Identifier CODE_PO = new Identifier(new byte[]{'A', 'C', 0, 0});
-	/** used in outliner... 
-	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner.*/
-	public static final Identifier CODE_NLA = new Identifier(new byte[]{'N', 'L', 0, 0});
-	/** fluidsim Ipo 
-	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner.*/
-	public static final Identifier CODE_FLUIDSIM = new Identifier(new byte[]{'F', 'S', 0, 0});
-	
-	/** block code of the last block. */
-	public static final Identifier CODE_ENDB = new Identifier("ENDB");
-	/** block code of the block containing the {@link StructDNA} struct. */
-	public static final Identifier CODE_DNA1 = new Identifier("DNA1");
-	/** Block code of a block containing struct {@link Link}. */
-	public static final Identifier CODE_REND = new Identifier("REND");
-	/** Block code of a block containing struct {@link Link}. */
-	public static final Identifier CODE_TEST = new Identifier("TEST");
-	/** Block code of a block containing struct {@link FileGlobal}. */
-	public static final Identifier CODE_GLOB = new Identifier("GLOB");
-	/** Block code of a block containing data related to other blocks. */
-	public static final Identifier CODE_DATA = new Identifier("DATA");
 
 	
 	/* ************************************************ */

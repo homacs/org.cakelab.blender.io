@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.cakelab.blender.io.FileHeader.Version;
 import org.cakelab.blender.io.block.Block;
+import org.cakelab.blender.io.block.BlockCodes;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockList;
 import org.cakelab.blender.io.block.BlockTable;
@@ -16,6 +17,7 @@ import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.io.util.Identifier;
 import org.cakelab.blender.metac.CMetaModel;
+
 
 
 /**
@@ -149,13 +151,13 @@ public class BlenderFile implements Closeable {
 		// flush all blocks to disk
 		for (Block block : blocks) {
 			System.out.println("writing " + block.header.getCode().toString());
-			if (block.header.getCode().equals(BlockHeader.CODE_ENDB)) {
+			if (block.header.getCode().equals(BlockCodes.ID_ENDB)) {
 				endBlock = block;
 				continue;
 			}
 			block.flush(io);
 			
-			if (block.header.getCode().equals(BlockHeader.CODE_DNA1)) {
+			if (block.header.getCode().equals(BlockCodes.ID_DNA1)) {
 				sdnaWritten = true;
 			}
 		}
@@ -174,7 +176,7 @@ public class BlenderFile implements Closeable {
 	}
 	
 	protected void writeEndBlock() throws IOException {
-		BlockHeader endb = new BlockHeader(BlockHeader.CODE_ENDB, 0, 0, 0, 0);
+		BlockHeader endb = new BlockHeader(BlockCodes.ID_ENDB, 0, 0, 0, 0);
 		endb.write(io);
 	}
 
@@ -204,7 +206,7 @@ public class BlenderFile implements Closeable {
 		long address = blockTable.getAllocator().alloc(size);
 		int sdnaIndex = 0;
 		int count = 1;
-		header = new BlockHeader(BlockHeader.CODE_DNA1, size, address, sdnaIndex, count);
+		header = new BlockHeader(BlockCodes.ID_DNA1, size, address, sdnaIndex, count);
 		
 		io.offset(headerOffset);
 		header.write(io);
@@ -221,7 +223,7 @@ public class BlenderFile implements Closeable {
 	
 	public FileVersionInfo readFileGlobal() throws IOException {
 		FileVersionInfo versionInfo = null;
-		BlockHeader blockHeader = seekFirstBlock(BlockHeader.CODE_GLOB);
+		BlockHeader blockHeader = seekFirstBlock(BlockCodes.ID_GLOB);
 
 		if (blockHeader != null) {
 			versionInfo = new FileVersionInfo();
@@ -236,7 +238,7 @@ public class BlenderFile implements Closeable {
 	
 	protected void readStructDNA() throws IOException {
 		sdna = null;
-		BlockHeader blockHeader = seekFirstBlock(BlockHeader.CODE_DNA1);
+		BlockHeader blockHeader = seekFirstBlock(BlockCodes.ID_DNA1);
 
 		if (blockHeader != null) {
 			sdna = new StructDNA();
@@ -252,7 +254,7 @@ public class BlenderFile implements Closeable {
 		io.offset(firstBlockOffset);
 		BlockHeader blockHeader = new BlockHeader();
 		blockHeader.read(io);
-		while (!blockHeader.getCode().equals(BlockHeader.CODE_ENDB)) {
+		while (!blockHeader.getCode().equals(BlockCodes.ID_ENDB)) {
 			if (blockHeader.getCode().equals(code)) {
 				result = blockHeader;
 				break;
@@ -274,7 +276,7 @@ public class BlenderFile implements Closeable {
 		io.offset(firstBlockOffset);
 		BlockHeader blockHeader = new BlockHeader();
 		blockHeader.read(io);
-		while (!blockHeader.getCode().equals(BlockHeader.CODE_ENDB)) {
+		while (!blockHeader.getCode().equals(BlockCodes.ID_ENDB)) {
 			CDataReadWriteAccess data = readBlockData(blockHeader);
 			
 			Block block = new Block(blockHeader, data);

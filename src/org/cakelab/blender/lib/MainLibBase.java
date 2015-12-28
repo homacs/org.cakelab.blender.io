@@ -9,6 +9,7 @@ import java.util.List;
 import org.cakelab.blender.generator.typemap.Renaming;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.block.Block;
+import org.cakelab.blender.io.block.BlockCodes;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.DNAField;
@@ -84,9 +85,9 @@ public abstract class MainLibBase {
 	}
 
 	private boolean isPossibleLibraryBlock(Identifier code) {
-		return !(code.equals(BlockHeader.CODE_DNA1) 
-				|| code.equals(BlockHeader.CODE_ENDB)
-				|| code.equals(BlockHeader.CODE_TEST)
+		return !(code.equals(BlockCodes.ID_DNA1) 
+				|| code.equals(BlockCodes.ID_ENDB)
+				|| code.equals(BlockCodes.ID_TEST)
 				);
 	}
 
