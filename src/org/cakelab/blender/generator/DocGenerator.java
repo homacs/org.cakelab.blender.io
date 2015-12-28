@@ -22,7 +22,6 @@ public class DocGenerator implements DocumentationProvider {
 	@Override
 	public String getStructDoc(String struct) {
 		StringBuffer lines = new StringBuffer();
-		
 		for (Documentation doc : docs) {
 			String docentry = doc.getStructDoc(struct);
 			if (docentry != null && docentry.length() > 0) {

@@ -1427,14 +1427,6 @@
 				"pad" : null
 			}
 		},
-		"BoundBox" : {
-			"doc" : null,
-			"fields" : {
-				"vec" : null,
-				"flag" : null,
-				"pad" : null
-			}
-		},
 		"bParentActuator" : {
 			"doc" : null,
 			"fields" : {

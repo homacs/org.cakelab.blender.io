@@ -19,18 +19,26 @@
 			"fields" : {
 				"newid" : "",
 				"lib" : "Reference on the library this library element belongs to.",
-				"name" : "The name of the element. Names follow a certain convention:
-					<table>
+				"name" : "The name of the element. Names follow a certain convention. 
+				    <p>
+				    Names of library elements which have an specific block code, such as 
+				    Mesh (ME) and Tex (ME), always have the first two ASCII characters of
+				    the block code as its prefix. Data of blocks with unspecified block 
+				    code (i.e. {@link BlockCodes#ID_DATA}) have other names.
+				    </p>
+				    <b>A few examples of names:</b>
+					<table border=\"1\">
 					<tr><th>Element type</th><th>Name prefix</th><tr>
 					<tr><td>{@link BlenderObject}</td><td>\"OB\"</td></tr>
 					<tr><td>{@link Mesh}</td><td>\"ME\"</td></tr>
 					<tr><td>{@link Material}</td><td>\"MA\"</td></tr>
 					<tr><td>{@link Tex}</td><td>\"TE\"</td></tr>
-					<tr><td>{@link CustomDataLayer}</td><td>Different names depending on referenced data.</td></tr>
+					<tr><td>{@link CustomDataLayer} for {@link MPoly}</td><td>\"NGon Face\"</td></tr>
+					<tr><td>{@link CustomDataLayer} for {@link MLoop}</td><td>\"NGon Face-Vertex\"</td></tr>
 					</table>",
 				"pad" : "padding for alignment",
 				"us" : "Reference counter, counts number of references on the corresponding element. If 0, the element will not be stored in a file.",
-				"flag" : "In files usually 1024. One of: <table>
+				"flag" : "In files usually 1024. One of: <table border=\"1\">
 					<tr><td>LIB_LOCAL</td><td>0</td><td></td><tr>
 					<tr><td>LIB_EXTERN</td><td>1</td><td></td><tr>
 					<tr><td>LIB_INDIRECT</td><td>2</td><td></td><tr>

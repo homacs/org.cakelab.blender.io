@@ -1,0 +1,337 @@
+{
+	"system" : "Blender",
+	"module" : "DNA",
+	"version" : "2.69",
+	"authors" : [
+		"Holger Machens"
+	],
+	"includes" : [],
+	"structs" : {
+		"BoundBox" : {
+			"doc" : "
+			 The following illustrates the orientation of the
+			 bounding box in local space.
+			 
+			 <pre>
+			 
+			 Z  Y
+			 | /
+			 |/
+			 .-----X
+			 
+			 
+			     2----------6
+			    /|         /|
+			   / |        / |
+			  1----------5  |
+			  |  |       |  |
+			  |  3-------|--7
+			  | /        | /
+			  |/         |/
+			  0----------4
+			 </pre>
+			",
+			"fields" : {
+				"vec" : "The 8 vectors with 3 components (xyz) (see class documentation).",
+				"flag" : "One of: 	
+				<ul><li>BOUNDBOX_DISABLED</td><td>(1 << 0)</li>
+				<li>BOUNDBOX_DIRTY </td><td>(1 << 1)</li>
+				</ul>
+				",
+				"pad" : null
+			}
+		},
+		"Object" : {
+			"doc" : "An instance of BlenderObject represents an element of a scene
+			such as a graphical object, camera, source of sound or light etc..
+			<p>
+			There are the following types of objects:
+			</p>
+			<table border=\"1\">
+				<tr><th>Name</th><th>type id<br/>(see {@link #getType()})</th><th>Data type<br/>(see {@link #getData()})</th><tr>
+				<tr><td>OB_EMPTY</td><td>0</td><td>--</td></tr>
+				<tr><td>OB_MESH</td><td>1</td><td>{@link Mesh}</td></tr>
+				<tr><td>OB_CURVE</td><td>2</td><td>{@link Curve}</td></tr>
+				<tr><td>OB_SURF</td><td>3</td><td>{@link Curve}</td></tr>
+				<tr><td>OB_FONT</td><td>4</td><td>{@link Curve}</td></tr>
+				<tr><td>OB_MBALL</td><td>5</td><td>{@link MetaBall}</td></tr>
+				<tr><td>OB_LAMP</td><td>10</td><td>{@link Lamp}</td></tr>
+				<tr><td>OB_CAMERA</td><td>11</td><td>{@link Camera}</td></tr>
+				<tr><td>OB_SPEAKER</td><td>12</td><td>{@link Speaker}</td></tr>
+				<tr><td>OB_WAVE</td><td>21</td><td>deprecated?</td></tr>
+				<tr><td>OB_LATTICE</td><td>22</td><td>{@link Lattice}</td></tr>
+				<tr><td>OB_ARMATURE</td><td>25</td><td>{@link bArmature}</td></tr>
+			</table>
+			<p>
+			The type of an object defines what type of data is to be retrieved from {@link #getData()}.			
+			</p>",
+			"fields" : {
+				"id" : "",
+				"adt" : "animation data",
+				"sculpt" : null,
+				"type" : null,
+				"partype" : "parent type: first 4 bits: type.
+				<pre>
+					PARTYPE       = (1 << 4) - 1,
+					PAROBJECT     = 0,
+					PARCURVE      = 1,
+					PARKEY        = 2,
+					PARSKEL       = 4,
+					PARVERT1      = 5,
+					PARVERT3      = 6,
+					PARBONE       = 7,
+					PARSLOW       = 16,
+				</pre>",
+				"par1" : "can be a vertexnr",
+				"par2" : "can be a vertexnr",
+				"par3" : "can be a vertexnr",
+				"parsubstr" : "String describing subobject info, MAX_ID_NAME-2",
+				"parent" : null,
+				"track" : null,
+				"proxy" : "if ob->proxy (or proxy_group), this object is proxy for object ob->proxy",
+				"proxy_group" : "if ob->proxy (or proxy_group), this object is proxy for object ob->proxy",
+				"proxy_from" : "proxy_from is set in target back to the proxy.",
+				"bb" : "Bounding box of the associated mesh/curve/etc. Cache value not necessarily stored in file.",
+				"ipo" : "old animation system, deprecated for 2.5.<br/>@depricated",
+				"action" : "old animation system. @depricated",
+				"poselib" : null,
+				"pose" : "pose data, armature objects only",
+				"data" : "pointer to objects data - an 'ID' or NULL",
+				"gpd" : "Grease Pencil data",
+				"avs" : "settings for visualization of object-transform animation",
+				"mpath" : "motion path cache for this object",
+				"constraintChannels" : "old animation system.<br/>@depricated",
+				"effect" : "<br/>@depricated",
+				"defbase" : "list of bDeformGroup (vertex groups) names and flag only",
+				"modifiers" : "list of ModifierData structures",
+				"mode" : "Local object mode. On of:
+				<pre>
+					OB_MODE_OBJECT        = 0,
+					OB_MODE_EDIT          = 1 << 0,
+					OB_MODE_SCULPT        = 1 << 1,
+					OB_MODE_VERTEX_PAINT  = 1 << 2,
+					OB_MODE_WEIGHT_PAINT  = 1 << 3,
+					OB_MODE_TEXTURE_PAINT = 1 << 4,
+					OB_MODE_PARTICLE_EDIT = 1 << 5,
+					OB_MODE_POSE          = 1 << 6
+				</pre>",
+				"restore_mode" : "Keep track of what mode to return to after toggling a mode",
+				"mat" : "Material slots. Pointer on a list of pointers on instances of {@link Material}.<br/><b>see</b> {@link #getTotcol()}",
+				"matbits" : "a boolean field, with each byte 1 if corresponding material is linked to object",
+				"totcol" : "Number of available material slots (see {@link #getMat()}). Copy of {@link Mesh#getTotcol()}, {@link Curve#getTotcol()} and meta struct member of same name (keep in sync).",
+				"actcol" : "currently selected material slot in the UI",
+				"loc" : "location of the object",
+				"dloc" : "",
+				"orig" : "origin of the object",
+				"size" : "size/scale of the object",
+				"dsize" : "@depricated",
+				"dscale" : null,
+				"rot" : "euler rotation",
+				"drot" : "euler rotation",
+				"quat" : "quaternion rotation",
+				"dquat" : "quaternion rotation",
+				"rotAxis" : "axis angle rotation - axis part",
+				"drotAxis" : "axis angle rotation - axis part",
+				"rotAngle" : "axis angle rotation - angle part",
+				"drotAngle" : "axis angle rotation - angle part",
+				"obmat" : "final worldspace matrix with constraints & animsys applied",
+				"parentinv" : "inverse result of parent, so that object doesn't 'stick' to parent",
+				"constinv" : "inverse result of constraints. doesn't include effect of parent or object local transform",
+				"imat" : "inverse matrix of 'obmat' for any other use than rendering! 
+							note: this isn't assured to be valid as with 'obmat',
+	                     	before using this value you should do...
+	                    	invert_m4_m4(ob->imat, ob->obmat);",
+				"imat_ren" : "Previously 'imat' was used at render time, but as other places use it too
+	 							the interactive ui of 2.5 creates problems. So now only 'imat_ren' should
+								be used when ever the inverse of ob->obmat * re->viewmat is needed!",
+				"lay" : "copy of Base's layer in the scene",
+				"sf" : "sf is time-offset",
+				"flag" : "copy of Base",
+				"colbits" : "@depricated",
+				"transflag" : "transformation settings and transform locks.
+				Flags 1 and 2 were unused or relics from past features.
+				<pre>
+					OB_NEG_SCALE        = 1 << 2,
+					OB_DUPLIFRAMES      = 1 << 3,
+					OB_DUPLIVERTS       = 1 << 4,
+					OB_DUPLIROT         = 1 << 5,
+					OB_DUPLINOSPEED     = 1 << 6,
+					OB_DUPLIGROUP       = 1 << 8,
+					OB_DUPLIFACES       = 1 << 9,
+					OB_DUPLIFACES_SCALE = 1 << 10,
+					OB_DUPLIPARTS       = 1 << 11,
+					OB_RENDER_DUPLI     = 1 << 12,
+					OB_NO_CONSTRAINTS   = 1 << 13,  --> runtime constraints disable
+					OB_NO_PSYS_UPDATE   = 1 << 14,  --> hack to work around particle issue
+					OB_DUPLI            = OB_DUPLIFRAMES | OB_DUPLIVERTS | OB_DUPLIGROUP | OB_DUPLIFACES | OB_DUPLIPARTS,
+				</pre>",
+				"protectflag" : "transformation settings and transform locks",
+				"trackflag" : "transformation settings and transform locks.
+				<pre>
+					OB_POSX = 0,
+					OB_POSY = 1,
+					OB_POSZ = 2,
+					OB_NEGX = 3,
+					OB_NEGY = 4,
+					OB_NEGZ = 5,
+				</pre>",
+				"upflag" : "transformation settings and transform locks.
+				<pre>
+					OB_POSX = 0,
+					OB_POSY = 1,
+					OB_POSZ = 2,
+					OB_NEGX = 3,
+					OB_NEGY = 4,
+					OB_NEGZ = 5,
+				</pre>",
+				"nlaflag" : "used for DopeSheet filtering settings (expanded/collapsed).
+				<pre>
+					-- object-channel expanded status --
+					OB_ADS_COLLAPSED    = 1 << 10,
+					-- object's ipo-block --
+					OB_ADS_SHOWIPO      = 1 << 11,
+					-- object's constraint channels --
+					OB_ADS_SHOWCONS     = 1 << 12,
+					-- object's material channels --
+					OB_ADS_SHOWMATS     = 1 << 13,
+					-- object's marticle channels --
+					OB_ADS_SHOWPARTS    = 1 << 14,
+				</pre>",
+				"ipoflag" : "@depricated",
+				"scaflag" : "ui state for game logic",
+				"scavisflag" : "more display settings for game logic",
+				"depsflag" : null,
+				"dupon" : null,
+				"dupoff" : null,
+				"dupsta" : null,
+				"dupend" : null,
+				"mass" : "during realtime. ",
+				"damping" : "during realtime. ",
+				"inertia" : "during realtime. note that inertia is only called inertia for historical reasons
+	 				and is not changed to avoid DNA surgery. It actually reflects the 
+	 				Size value in the GameButtons (= radius).",
+				"formfactor" : "The form factor k is introduced to give the user more control
+					and to fix incompatibility problems.
+					For rotational symmetric objects, the inertia value can be
+					expressed as: Theta = k * m * r^2
+					where m = Mass, r = Radius
+					For a Sphere, the form factor is by default = 0.4",
+				"rdamping" : null,
+				"sizefac" : null,
+				"margin" : null,
+				"max_vel" : "clamp the maximum velocity 0.0 is disabled",
+				"min_vel" : "clamp the minimum velocity 0.0 is disabled",
+				"m_contactProcessingThreshold" : null,
+				"obstacleRad" : null,
+				"step_height" : "\"Character\" physics properties",
+				"jump_speed" : "\"Character\" physics properties",
+				"fall_speed" : "\"Character\" physics properties",
+				"col_group" : "Collision mask settings",
+				"col_mask" : "Collision mask settings",
+				"rotmode" : "rotation mode - uses defines set out in DNA_action_types.h for PoseChannel rotations...",
+				"boundtype" : "bounding box use for drawing",
+				"collision_boundtype" : "bounding box type used for collision.
+				<pre>
+					OB_BOUND_BOX           = 0,
+					OB_BOUND_SPHERE        = 1,
+					OB_BOUND_CYLINDER      = 2,
+					OB_BOUND_CONE          = 3,
+					OB_BOUND_TRIANGLE_MESH = 4,
+					OB_BOUND_CONVEX_HULL   = 5,
+					OB_BOUND_CAPSULE       = 7,
+				</pre>",
+				"dtx" : "viewport draw extra settings. Flags:
+				<pre>
+					OB_DRAWBOUNDOX    = 1 << 0,
+					OB_AXIS           = 1 << 1,
+					OB_TEXSPACE       = 1 << 2,
+					OB_DRAWNAME       = 1 << 3,
+					OB_DRAWIMAGE      = 1 << 4,
+					-- for solid+wire display --
+					OB_DRAWWIRE       = 1 << 5,
+					-- for overdraw s --
+					OB_DRAWXRAY       = 1 << 6,
+					-- enable transparent draw --
+					OB_DRAWTRANSP     = 1 << 7,
+					OB_DRAW_ALL_EDGES = 1 << 8,  --> only for meshes currently
+				</pre>",
+				"dt" : "viewport draw type.
+				<pre>
+					OB_BOUNDBOX  = 1,
+					OB_WIRE      = 2,
+					OB_SOLID     = 3,
+					OB_MATERIAL  = 4,
+					OB_TEXTURE   = 5,
+					OB_RENDER    = 6,
+					OB_PAINT     = 100,  --> temporary used in draw code 
+				</pre>",
+				"empty_drawtype" : "related to viewport drawing.
+				<pre>
+					OB_ARROWS        = 1,
+					OB_PLAINAXES     = 2,
+					OB_CIRCLE        = 3,
+					OB_SINGLE_ARROW  = 4,
+					OB_CUBE          = 5,
+					OB_EMPTY_SPHERE  = 6,
+					OB_EMPTY_CONE    = 7,
+					OB_EMPTY_IMAGE   = 8,
+				</pre>",
+				"empty_drawsize" : "related to viewport drawing",
+				"dupfacesca" : "dupliface scale",
+				"prop" : "game logic property list (not to be confused with IDProperties)",
+				"sensors" : "game logic sensors",
+				"controllers" : "game logic controllers",
+				"actuators" : "game logic actuators",
+				"bbsize" : "@depricated",
+				"index" : "custom index, for renderpasses",
+				"actdef" : "current deformation group, note: index starts at 1",
+				"col" : "object color",
+				"gameflag" : null,
+				"gameflag2" : null,
+				"bsoft" : "settings for game engine bullet soft body",
+				"restrictflag" : "for restricting view, select, render etc. accessible in outliner",
+				"recalc" : "dependency flag",
+				"softflag" : "softbody settings",
+				"anisotropicFriction" : null,
+				"constraints" : "object constraints",
+				"nlastrips" : "@depricated",
+				"hooks" : "@depricated",
+				"particlesystem" : "particle systems",
+				"pd" : "particle deflector/attractor/collision data",
+				"soft" : "if exists, saved in file",
+				"dup_group" : "object duplicator for group",
+				"body_type" : "for now used to temporarily holds the type of collision object.
+				<pre>
+	OB_BODY_TYPE_NO_COLLISION   = 0,
+	OB_BODY_TYPE_STATIC         = 1,
+	OB_BODY_TYPE_DYNAMIC        = 2,
+	OB_BODY_TYPE_RIGID          = 3,
+	OB_BODY_TYPE_SOFT           = 4,
+	OB_BODY_TYPE_OCCLUDER       = 5,
+	OB_BODY_TYPE_SENSOR         = 6,
+	OB_BODY_TYPE_NAVMESH        = 7,
+	OB_BODY_TYPE_CHARACTER      = 8,
+				</pre>",
+				"shapeflag" : "flag for pinning",
+				"shapenr" : "current shape key for menu or pinned",
+				"smoothresh" : "smoothresh is phong interpolation ray_shadow correction in render",
+				"fluidsimSettings" : "if fluidsim enabled, store additional settings",
+				"derivedDeform" : "this is just a cache which gets initialised by blender on demand",
+				"derivedFinal" : "this is just a cache which gets initialised by blender on demand",
+				"pad" : "padding. Ignore it.",
+				"lastDataMask" : "the custom data layer mask that was last used to calculate derivedDeform and derivedFinal",
+				"customdata_mask" : "(extra) custom data layer mask to use for creating derivedmesh, set by depsgraph. <b>See Also:</n> {@link #getLastDataMask()}",
+				"state" : "bit masks of game controllers that are active",
+				"init_state" : "bit masks of initial state as recorded by the users",
+				"gpulamp" : "runtime, for glsl lamp display only",
+				"pc_ids" : null,
+				"duplilist" : "for temporary dupli list storage, only for use by RNA API",
+				"rigidbody_object" : "settings for Bullet rigid body",
+				"rigidbody_constraint" : "settings for Bullet constraint",
+				"ima_ofs" : "offset for image empties",
+				"curve_cache" : "Runtime valuated curve-specific data, not stored in the file"
+			}
+		}
+	}
+		
+}

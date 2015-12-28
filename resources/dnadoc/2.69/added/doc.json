@@ -8,6 +8,7 @@
 	],
 	"includes" : [ 
 		"DNA_listBase.json",
+		"DNA_object_types.json",
 		"DNA_ID.json" 
 	],
 	"doc" : "
