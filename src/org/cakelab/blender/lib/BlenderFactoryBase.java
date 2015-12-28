@@ -256,7 +256,7 @@ public class BlenderFactoryBase {
 		BlockTable blockTable = blend.getBlockTable();
 		// TODO: ZZZ ist der sdnaIndex bei DATA blocks eventuell der typeIndex?
 		int sdnaIndex = 0; // not a struct
-		int count = 0;
+		int count = 1;
 		int size = blend.getEncoding().getAddressWidth();
 		Block block = blockTable.allocate(blockCode, size);
 		block.header.setCount(count);
