@@ -11,15 +11,26 @@ import org.cakelab.blender.generator.ModelGenerator;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONObject;
 
+/**
+ * Class used to extract Blender's python API documentation received by executing
+ * the rna_info.py script.
+ * 
+ * It is recommended to use the shell script extract-pyapi-docs.sh for this task. 
+ * 
+ * @author homac
+ *
+ */
 public class ExtractPyAPIDoc extends Documentation {
+	
 	private BufferedReader in;
+	
 	public ExtractPyAPIDoc(File file, String version, File out) throws IOException {
 		in = new BufferedReader(new FileReader(file));
 		
 		includePath = null;
 		system = "Blender";
 		module = "DNA";
-		super.source = "Blender Python API";
+		source = "Blender Python API";
 		this.version = version;
 
 		this.structdocs = new JSONObject();
@@ -34,6 +45,7 @@ public class ExtractPyAPIDoc extends Documentation {
 	}
 
 	private void parse(String line) {
+		// An output line of the python script looks like this:
 		//
 		// BaseClass|SubClass.member -> sdnaMember:   type   documentation<NL>
 		//

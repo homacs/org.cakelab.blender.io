@@ -5,6 +5,23 @@ import static org.cakelab.blender.io.block.alloc.Chunk.State.FREE;
 
 import org.cakelab.blender.nio.UnsignedLong;
 
+/**
+ * The allocator manages regions of allocated and free memory (chunks).
+ * <p>
+ * Purpose of the allocator is basically to determine an appropriate 
+ * address for a new block. The allocator will not allocate memory.
+ * </p>
+ * <p>
+ * The allocator implemented here uses a simple algorithm with a single 
+ * linked list of allocated and free chunks. To find free chunks of 
+ * appropriate size it uses the next fit algorithm. Neighbouring chunks
+ * of the same type (either allocated or free) get merged to reduce the
+ * amount of chunks in the list.
+ * </p>
+ * 
+ * @author homac
+ *
+ */
 public class Allocator {
 
 	ChunkList chunks;
@@ -37,10 +54,17 @@ public class Allocator {
 		chunk.state = ALLOCATED;
 	}
 
+	/** 
+	 * Allocate memory of given size and return its address.
+	 * @param size
+	 * @return
+	 */
 	public long alloc(long size) {
 		long address = 0;
 		// Note: we don't need to care about issuing out of memory 
-		// exceptions, because the system will do before we can.
+		// exceptions, because the system will run out of memory 
+		// earlier, since we consider a memory space which is much 
+		// larger than system memory can actually be.
 		
 		do {
 			if (!cursor.hasNext()) {
@@ -57,6 +81,7 @@ public class Allocator {
 		return address;
 	}
 	
+	/** free the given size of memory at the given address */
 	public void free(long address, long size) {
 		assert(address != 0);
 

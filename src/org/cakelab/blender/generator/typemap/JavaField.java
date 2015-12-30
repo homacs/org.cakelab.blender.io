@@ -2,7 +2,12 @@ package org.cakelab.blender.generator.typemap;
 
 import org.cakelab.blender.metac.CField;
 
-
+/**
+ * Represents a field of a struct after mapping according to 
+ * Java .Blend's type mapping rules.
+ * @author homac
+ *
+ */
 public class JavaField {
 
 	private JavaType type;

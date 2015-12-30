@@ -1,5 +1,11 @@
 package org.cakelab.blender.io.dna;
 
+/**
+ * Represents a field (member variable) of a struct.
+ * 
+ * @author homac
+ *
+ */
 public class DNAField {
 
 	int index;

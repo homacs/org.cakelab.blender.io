@@ -1,6 +1,7 @@
 package org.cakelab.blender.io.dna;
 
 /**
+ * Contains information on a type received from StructDNA.
  * 
  * @author homac
  *

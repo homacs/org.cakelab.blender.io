@@ -26,7 +26,7 @@ import org.cakelab.json.Parser;
  * can be manually extended by additional information. Documentation
  * is stored in external documentation files (see "resources/dnadoc").
  * </p><p>
- * This class parses the documentation files and establish lookup 
+ * This class parses the documentation files and establishes lookup 
  * tables for structs and fields of structs. During the generation
  * of the data model, the class and method generators use this 
  * class to lookup available documentation for classes and its members.
@@ -35,12 +35,6 @@ import org.cakelab.json.Parser;
  *
  */
 public class Documentation implements DocumentationProvider {
-	/* TODO: ZZZ merge class documentations from different sources.
-	 * see FileGlobal for an example of a missing class documentation.
-	 * 
-	 */
-	
-	
 	
 	protected JSONObject structdocs;
 	protected String[] authors;
@@ -205,9 +199,6 @@ public class Documentation implements DocumentationProvider {
 
 		}
 	}
-
-	
-	
 	
 	private JSONObject resolveInheritance(String structname) {
 		JSONObject structdoc = (JSONObject) structdocs.get(structname);
@@ -216,19 +207,21 @@ public class Documentation implements DocumentationProvider {
 			if (inherits != null) {
 				for (String base : inherits.toArray(new String[0])) {
 					JSONObject basestructdoc = resolveInheritance(base);
-					if (basestructdoc != null) inheritFields(structdoc, basestructdoc);
+					if (basestructdoc != null) {
+						inheritFields(structdoc, basestructdoc);
+					} else {
+						warn("could not resolve inheritance of " + base + " <-- " + structname + ".");
+						warn("reason: base class " + base + " is not defined");
+					}
 				}
 			}
-		} else {
-			warn("could not resolve inheritance of " + structname + ".");
-			warn("reason: " + structname + " is not defined");
 		}
 		return structdoc;
 	}
 
 	private void warn(String string) {
 		if (debug) {
-			System.err.println("docgen: warn: " + string);
+			System.err.println("docgen [debug]: " + string);
 		}
 	}
 

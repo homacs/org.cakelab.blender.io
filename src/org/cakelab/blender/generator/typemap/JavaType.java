@@ -6,7 +6,13 @@ import org.cakelab.blender.nio.CPointer;
 
 
 
-
+/**
+ * Provides mapping of a given CType instance to a Java type 
+ * according to Java .Blend's type mapping rules.
+ * 
+ * @author homac
+ *
+ */
 public class JavaType {
 
 	public enum JKind {

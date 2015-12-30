@@ -7,7 +7,13 @@ import org.cakelab.blender.io.util.CBufferReadWrite;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.nio.UnsignedLong;
 
-
+/**
+ * An instance of this class provides access to data in a block
+ * of a {@link BlenderFile}.
+ * 
+ * @author homac
+ *
+ */
 public class Block implements Comparable<Long> {
 	/** link to prev block in file */
 	Block next;
@@ -19,6 +25,7 @@ public class Block implements Comparable<Long> {
 	
 	/** raw data in a byte order aware buffer. */
 	public CDataReadWriteAccess data;
+	
 	
 	public Block(BlockHeader header, CDataReadWriteAccess data) {
 		this.header = header;

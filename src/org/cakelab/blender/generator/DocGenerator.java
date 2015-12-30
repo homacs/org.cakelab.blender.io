@@ -7,6 +7,14 @@ import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.json.JSONException;
 
+/**
+ * DocGenerator is basically a hub to multiple documentations 
+ * on the same subject. It searches for documentation in 
+ * all source and combines it to a single documentation.
+ * 
+ * @author homac
+ *
+ */
 public class DocGenerator implements DocumentationProvider {
 	// TODO: ZZZ doc generator needs to HTML encode <pre/> sections
 	private Documentation[] docs;

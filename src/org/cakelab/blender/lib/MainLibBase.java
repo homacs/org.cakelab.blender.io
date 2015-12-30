@@ -23,9 +23,8 @@ import org.cakelab.blender.nio.CFacade;
 /**
  * Blender organises data in so-called libraries. A main library contains
  * all root elements found in a blender file. This is the base class with
- * several helper methods for the actual class <code>Main</code>, which will be generated
- * based on the meta data found in the Blender file. Refer to the generated
- * MainLib class for more details.
+ * several helper methods for the actual class <code>MainLib</code>, which will be generated
+ * based on the meta data found in the Blender file. 
  * 
  * @author homac
  *
@@ -82,7 +81,7 @@ public abstract class MainLibBase {
 		try {
 			getter = getClass().getDeclaredMethod(getMethodName);
 		} catch (NoSuchMethodException e) {
-			// if there is no getter, than this lib elem was not considered 
+			// if there is no getter, than this lib elem was not considered when
 			// main lib was generated. So, just ignore it.
 			return;
 		}
