@@ -15,7 +15,7 @@ import org.cakelab.blender.io.util.CStringUtils;
  * during saving. 
  */
 public class FileHeader {
-	// TODO: ZZZ use java.nio.ByteOrder
+
 	public static enum Endianess {
 		LITTLE_ENDIAN('v'),
 		BIG_ENDIAN('V');

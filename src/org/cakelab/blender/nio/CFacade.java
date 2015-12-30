@@ -232,7 +232,6 @@ public abstract class CFacade {
 	 */
 	public static CFacade __io__newInstance(Class<? extends CFacade> type, long address,
 			BlockTable blockTable) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		// TODO: ZZZ cache constructors?
 		Constructor<?> constructor = type.getDeclaredConstructor(long.class, BlockTable.class);
 		return (CFacade) constructor.newInstance(address, blockTable);
 	}

@@ -127,9 +127,13 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 
 	private void createMethod__io__addressof() {
 		addImport(CPointer.class);
-		// TODO: ZZZ add comment to __io__addressof()
 		
 		GMethod method = new GMethod(0);
+		GComment comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln();
+		comment.appendln("Instantiates a pointer on this instance.");
+		method.setComment(comment);
+		
 		String pointerType = "CPointer<" + classname + ">";
 		method.appendln("public " + pointerType + " " + __io__addressof + "() {");
 		method.indent(+1);

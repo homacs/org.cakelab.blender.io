@@ -16,7 +16,6 @@ import org.cakelab.json.JSONException;
  *
  */
 public class DocGenerator implements DocumentationProvider {
-	// TODO: ZZZ doc generator needs to HTML encode <pre/> sections
 	private Documentation[] docs;
 
 	public DocGenerator(File[] docfiles, boolean debug) throws IOException, JSONException {

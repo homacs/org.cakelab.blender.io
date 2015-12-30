@@ -13,7 +13,7 @@
 		<!-- meta name="robots" content="noindex,nofollow"-->
 </head>
 <body>
-<h1 style="text-align: center">Java Blend</h1>
+<h1 style="text-align: center">Java .Blend</h1>
 <h2 style="text-align: center"><b>System Specification</b></h2>
 <p style="text-align: center">Version ${project.version}</p>
 <p style="text-align: center">${system.date}</p>
@@ -23,7 +23,7 @@
 
 <h2>Introduction</h2>
 <p>
-This is the specification of the Java Blend generic Blender file import/export toolkit for Java.
+This is the specification of the Java .Blend generic Blender file import/export toolkit for Java.
 As of now it is not finished and contains just two sections: 
 (1) A detailed explanation of the Blender file format and 
 (2) the type mapping developed to represent Blender's types in Java 
@@ -190,7 +190,7 @@ type information.
 <h2>Type Mapping</h2>
 <p>
 This section provides a specification of the type mapping of 
-C types used in Blender files to Java types, as used in Java Blend.
+C types used in Blender files to Java types, as used in Java .Blend.
 </p>
 <h3>Scalar Types</h3>
 <p>
@@ -334,7 +334,7 @@ shows that it is not possible to map a pointer type to a particular Java
 builtin type without semantic knowledge about its use case. But the developer
 using the pointer can easily determin its use case and just needs a suitable
 interface which supports all the functions of a C pointer in Java. In order to 
-keep the data model generic Java Blend introduces a <code>CPointer&lt;T&gt;</code> 
+keep the data model generic Java .Blend introduces a <code>CPointer&lt;T&gt;</code> 
 template class to solve all those issues. A consequence of this design 
 decision is, that a pointer representation needs native data to operate 
 on (e.g. to perform type casts etc.). This also drove the fundamental 

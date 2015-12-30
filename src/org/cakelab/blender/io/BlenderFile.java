@@ -58,9 +58,6 @@ import org.cakelab.blender.metac.CMetaModel;
  */
 public class BlenderFile implements Closeable {
 	
-	// TODO: ZZZ improve data management in BlenderFile
-
-
 	protected FileHeader header;
 	
 	
