@@ -27,31 +27,34 @@
 
 <h2>Introduction</h2>
 <p>
-The Blender core is developed in C and blender files are basically dumps 
-of native memory content (C structs and scalar types) 
-from heap to a file on disk. A .blend file is organised in blocks of arbitrary length, and 
-the type of data is described in a special block, which 
+<a href="http://blender.org">Blender's</a> core is written in C and 
+blender files are basically dumps of native memory content (C structs and scalar types) 
+from heap to a file on disk. A <code>.blend</code> file is organised in blocks 
+of arbitrary length, and the type of data is described in a special block, which 
 contains type information (meta data) for all C native and 
 structured types which can exist in a <code>.blend</code> file.
 </p>
 <p>
 Based on the meta data of any blender file, it is possible to 
 generate code for a different language, which is capable to read/write 
-the data in blender files of the same version. Java .Blend 
-is a combination of a code generator and a runtime Blender data access module 
-which provides generation of Java classes at development time and 
-random access to Blender data at runtime. Together, it provides a generic 
-any-version blender file import/export in Java which features all aspects of the
-Blender DNA data model. 
+data in blender files of the same version. Java .Blend 
+is a combination of a code generator and a runtime data I/O module. 
+Together, they provides a generic any-version Blender file import/export 
+in Java which features all aspects of the Blender DNA data model: The 
+code generator is used at development time to generate Java facade 
+classes which provide a type-safe API to Blender data and the I/O 
+module supports in data access at runtime. 
 </p>
 <p>
-This toolkit was designed with the ambitious goal to serve for any kind of interaction 
-with blender. Whether just importing data into another graphics engine, conversion to 
+This toolkit was designed with the ambitious goal to serve for any kind of data exchange 
+with Blender. Whether just importing data into another graphics engine, conversion to 
 a different data format or external processing of data to add features to blender. 
 The fully generic mapping of the entire Blender DNA core data model combined with 
-both import <b>and</b> export supports e.v.e.r.y.t.h.i.n.g! 
-Another convenient feature of the generic approach is its low maintenance effort 
-on maintainers side (that's me and eventually you ;). New details in blender's DNA will be instantly 
+both import <b>and</b> export supports all of it.
+</p>
+<p> 
+A convenient side effect of the generic approach is its low maintenance effort 
+on maintainers side. New details in blender's DNA will be instantly 
 reflected in the generated data model and implicitly supported during import and export.
 Thus, users don't have to worry how long they can rely on this library, they can even 
 generate new models by themselves without touching the sources.
