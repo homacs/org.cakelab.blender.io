@@ -3,6 +3,8 @@ package org.cakelab.blender.nio;
 /**
  * This class provides methods to deal with unsigned long values in Java.
  * 
+ * Please note that it is just a helper class and not an equivalent to {@link Long}.
+ * 
  * @author homac
  *
  */

@@ -1,7 +1,12 @@
 package org.cakelab.blender.metac;
 
 
-
+/**
+ * Stores type information for a field of a struct.
+ * @see CMetaModel
+ * @author homac
+ *
+ */
 public class CField {
 	private String name;
 	private CType ctype;

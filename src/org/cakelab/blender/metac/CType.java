@@ -2,9 +2,20 @@ package org.cakelab.blender.metac;
 
 import org.cakelab.blender.io.Encoding;
 
+/**
+ * Stores type information.
+ * @see CMetaModel
+ * @author homac
+ *
+ */
 public class CType {
 
-	// TODO: ZZZ rename to CKind
+	/**
+	 * Provides information about the kind of type.
+	 * 
+	 * @author homac
+	 *
+	 */
 	public enum CKind {
 		TYPE_POINTER,
 		TYPE_FUNCTION_POINTER,
@@ -14,14 +25,25 @@ public class CType {
 		TYPE_VOID
 	}
 
+	/**
+	 * length of array (if type is an array)
+	 */
 	protected int arrayLength;
 	/** This is the type of component in case of an array or the 
 	 * target type in case of a pointer. */
 	protected CType referencedType;
+	/** Kind of that type. */
 	protected CKind kind;
+	/** full C signature of that type, e.g. int**[12] */
 	protected String signature;
 
+	/**
+	 * Size on 32bit architecture.
+	 */
 	public int size32;
+	/**
+	 * Size on 64bit architecture.
+	 */
 	public int size64;
 	
 	public CType(String typesig, CKind kind) {

@@ -18,6 +18,8 @@ import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.FileVersionInfo;
 import org.cakelab.blender.lib.MainLibBase;
 import org.cakelab.blender.metac.CStruct;
+import org.cakelab.blender.nio.CFacade;
+import org.cakelab.blender.nio.CPointer;
 
 public class MainLibClassGenerator extends ClassGenerator {
 
@@ -35,6 +37,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 		this.dnaPackage = dnaPackage;
 		
 		addImport(dnaPackage);
+		addImport(CPointer.class);
+		addImport(CFacade.class);
 		addImport(BlenderFile.class);
 		addImport(MainLibBase.class);
 		addImport(IOException.class);
@@ -61,6 +65,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 		addVersionSpecifiers(modelgen.getVersionInfo());
 		
 		addVersionCheckMethod();
+		addGetFirstMethod();
 		
 		addField("private", CLASSNAME, "next", "Linkage between main libraries.");
 		addField("private", CLASSNAME, "prev", "Linkage between main libraries.");
@@ -68,7 +73,37 @@ public class MainLibClassGenerator extends ClassGenerator {
 		
 	}
 
+	private void addGetFirstMethod() {
+		/*
+			 * returns the first library element in the list of ids which
+			 * the given libElem is a part of.
+			
+			@Override
+			protected CFacade getFirst(CFacade libElem) throws IOException {
+				CPointer<?> p = CFacade.__io__addressof(libElem);
+				ID id = p.cast(ID.class).get();
+				while(id.getPrev().isValid()) id = id.getPrev().cast(ID.class).get();
+				return id.__io__addressof().cast(libElem.getClass()).get();
+			}
 
+		 */
+		
+		GComment comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln("returns the first library element in the list of ids which the given libElem is a part of.");
+		
+		GMethod method = new GMethod(0);
+		method.setComment(comment);
+		method.appendln("@Override");
+		method.appendln("protected " + CFacade.class.getSimpleName() + " getFirst(" + CFacade.class.getSimpleName() + " libElem) throws IOException {");
+		method.indent(+1);
+		method.appendln(CPointer.class.getSimpleName() + "<?> p = "+ CFacade.class.getSimpleName() + "." + CFacadeMembers.__io__addressof + "(libElem);");
+		method.appendln("ID id = p.cast(ID.class).get();");
+		method.appendln("while(id.getPrev().isValid()) id = id.getPrev().cast(ID.class).get();");
+		method.appendln("return id." + CFacadeMembers.__io__addressof + "().cast(libElem.getClass()).get();");
+		method.indent(-1);
+		method.appendln("}");
+		addMethod(method);
+	}
 
 	private void addVersionCheckMethod() {
 		GComment comment = new GComment(GComment.Type.JavaDoc);
@@ -131,6 +166,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 	}
 
 
+	
+	
 
 	public void visit(CStruct struct) throws FileNotFoundException {
 		if (MainLibBase.isLibraryElement(struct)) {

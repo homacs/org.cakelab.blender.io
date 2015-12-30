@@ -4,6 +4,13 @@ import java.util.ArrayList;
 
 import org.cakelab.blender.io.dna.DNAStruct;
 
+/**
+ * Stores type information of a struct.
+ * 
+ * @see CMetaModel
+ * @author homac
+ *
+ */
 public class CStruct extends CType {
 	int sdnaIndex;
 	

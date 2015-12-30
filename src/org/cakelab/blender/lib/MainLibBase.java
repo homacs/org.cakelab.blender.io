@@ -72,17 +72,31 @@ public abstract class MainLibBase {
 		}
 	}
 
-	private void addLibraryElement(CFacade libElem) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		// TODO: search first element in list
-		String setMethodName = "set" + libElem.getClass().getSimpleName();
+	private void addLibraryElement(CFacade libElem) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
+		
+		String methodName = libElem.getClass().getSimpleName();
+		methodName = Character.toUpperCase(methodName.charAt(0)) + methodName.substring(1);
+		
+		String getMethodName = "get" + methodName;
+		Method getter = null;
+		try {
+			getter = getClass().getDeclaredMethod(getMethodName);
+		} catch (NoSuchMethodException e) {
+			// if there is no getter, than this lib elem was not considered 
+			// main lib was generated. So, just ignore it.
+			return;
+		}
 
-		for (Method method : getClass().getDeclaredMethods()) {
-			if (method.getName().equals(setMethodName)) {
-				method.invoke(this, libElem);
-				return;
-			}
+		CFacade first = (CFacade) getter.invoke(this);
+		
+		if (first == null) {
+			String setMethodName = "set" + methodName;
+			Method setter = getClass().getDeclaredMethod(setMethodName, libElem.getClass());
+			setter.invoke(this, getFirst(libElem));
 		}
 	}
+
+	protected abstract CFacade getFirst(CFacade libElem) throws IOException;
 
 	private boolean isPossibleLibraryBlock(Identifier code) {
 		return !(code.equals(BlockCodes.ID_DNA1) 

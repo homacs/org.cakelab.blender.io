@@ -9,11 +9,12 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used for classes
- * derived from {@link CFacade}. It provides necessary
- * runtime meta data such as the memory footprint of
- * the corresponding C type. This is for example used
- * in the method {@link CFacade#__io__sizeof(Class)}.
- * 
+ * derived from {@link CFacade}. 
+ * <p>
+ * The annotation provides necessary runtime meta data 
+ * such as the memory footprint of the corresponding C type. 
+ * This is for example used in the method {@link CFacade#__io__sizeof(Class)}.
+ * </p>
  * @author homac
  *
  */

@@ -2,10 +2,13 @@ package org.cakelab.blender.nio;
 
 import java.io.IOException;
 /**
+ * This class is the mutable variant of {@link CPointer}.
  * <p>
- * This class is the mutable variant of {@link CPointer}. It allows
- * in-place modification of the pointers address and theirby advanced
- * pointer arithmetics (better runtime performance).
+ * Mutable pointers allow  in-place modification of the pointers 
+ * address and theirby advanced pointer arithmetics 
+ * (better runtime performance). Please note, that modifications 
+ * to the address will not be reflected in the memory region this
+ * pointer originated from.
  * </p>
  * <p>
  * You receive a mutable variant of a pointer either by using 
@@ -41,6 +44,10 @@ import java.io.IOException;
  */
 public class CPointerMutable<T> extends CPointer<T> {
 
+	/**
+	 * Constructor to turn a pointer into a mutable pointer.
+	 * @param pointer
+	 */
 	public CPointerMutable(CPointer<T> pointer) {
 		super(pointer);
 	}

@@ -13,16 +13,19 @@ import org.cakelab.blender.lib.BlenderFactoryBase;
 
 
 /**
- * This is the facet class for fixed length arrays. 
- * <p>
- * Since arrays in C are interchangable with pointers, it inherits 
- * the capabilities of {@link CPointer}. This way, an array can 
- * always be assigned to a pointer variable. 
- * </p>
+ * This is the facade class for fixed length arrays. 
  * <p>
  * Arrays provide common array functionality and conversion between
- * underlying data and corresponding Java arrays (see various toArray and fromArray methods).
+ * underlying data and corresponding Java arrays 
+ * (see various toArray and fromArray methods).
  * </p>
+ * <p>
+ * Since arrays in C are interchangable with pointers, the class inherits 
+ * the capabilities of {@link CPointer}. This way, an array can 
+ * always be assigned to a pointer variable. To turn a pointer in 
+ * an instance of {@link CArrayFacade} use its {@link CPointer#toCArrayFacade(int)}.
+ * </p>
+ * <h3>Array Types</h3>
  * <p>
  * Arrays have a <em>component type</em> and an <em>elementary type</em>. This is important
  * when dealing with multi-dimensional arrays.
@@ -39,7 +42,7 @@ import org.cakelab.blender.lib.BlenderFactoryBase;
  * instanciated with a list of types as type specification, where each element in the type 
  * list corresponds to a component type of the component type.
  * </p>
- * <b>Detailed Example:</b>
+ * <h4>Detailed Example:</h4>
  * The following code snippet denotes an array of arrays of 
  * pointers on integers.
  * <pre>
@@ -49,16 +52,16 @@ import org.cakelab.blender.lib.BlenderFactoryBase;
  * types for each component. 
  * <pre>
  * Class[] typeList = new Class[]{
- * 							CArrayFacade.class,
- * 							CArrayFacade.class,
- * 							CPointer.class,
- * 							Integer.class
- * }
+ * 		CArrayFacade.class,
+ * 		CArrayFacade.class,
+ * 		CPointer.class,
+ * 		Integer.class
+ * };
  * </pre>
  * <p>
  * You will note, that we just read out the template parameters 
  * and put them in an array. The array also needs to know the length 
- * of each dimension beforehand. Thus we create another array which holds
+ * of each dimension beforehand. Thus, we create another array which holds
  * the length for each dimension. Let's say we want an array which 
  * corresponds to the C type declaration <code>int* array[2][8]</code>.
  * </p>
@@ -71,22 +74,23 @@ import org.cakelab.blender.lib.BlenderFactoryBase;
  * </p>
  * <pre>
  * array = new CArrayFacade&lt;CArrayFacade&lt;CPointer&lt;Integer&gt;&gt;&gt;(
- * 				address,
- * 				typeList,
- * 				dimensions,
- * 				blockTable
- * 			);
+ * 		address,
+ * 		typeList,
+ * 		dimensions,
+ * 		blockTable
+ * 	);
  * </pre>
  * <p>
- * Remember, that arrays are just facets and the actual data is stored in
- * a block of the blender file. Thus, the address (first parameter) is
- * either received from {@link CFacade#__io__addressof(long[])} or
+ * Remember, that arrays are just facades and the actual data is stored in
+ * a block of the blender file. Thus, the address (first parameter of 
+ * the constructor) is either received from {@link CFacade#__io__addressof(long[])} or
  * from a pointer or by allocating a new block.
  * </p>
  * <p>
  * To allocate a block for an entirely new array, refer to the block 
  * allocation methods in either {@link BlenderFactoryBase}
- * or the derived class {@link BlenderFactory} in the generated code.
+ * or the derived class {@link BlenderFactory} in the generated code 
+ * or even directly to {@link BlenderFile} and {@link BlockTable}.
  * </p>
  * 
  * @author homac
@@ -122,7 +126,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	}
 	
 	/**
-	 * This is the constructor to attach an array facet to existing 
+	 * This is the constructor to attach an array facade to existing 
 	 * data in a block of a blender file.
 	 * 
 	 * <p>
@@ -158,6 +162,12 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 		return length() * componentSize;
 	}
 
+	/**
+	 * Returns the address of the element at the given index in this array.
+	 * 
+	 * @param index of the element in this array wich address is calculated.
+	 * @return the address of the element at the given index in this array.
+	 */
 	long getAddress(int index) {
 		return __io__address + (index * componentSize);
 	}
@@ -193,7 +203,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 
 	/**
 	 * Set the value of the array element with given 'index'.
-	 * I.e. array[index] = value;
+	 * I.e. <code>array[index] = value;</code>
 	 * @param index index of the array element.
 	 * @param value New value for that element.
 	 * @throws IOException
@@ -220,6 +230,11 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 		return (T[]) array;
 	}
 
+	/**
+	 * Copyies all elements of the given array to this array.
+	 * @param data
+	 * @throws IOException
+	 */
 	public void fromArray(T[] data) throws IOException {
 		for (int i = 0; i < length(); i++) {
 			set(i, data[i]);
@@ -285,34 +300,90 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 		}
 	}
 	
+	/**
+	 * Converts the underlying data into an array of the given native type.
+	 * The created array has the same length as this array.
+	 * @return New Java array with a copy of the elements of this array.
+	 * @throws IOException
+	 */
 	public byte[] toByteArray() throws IOException {
 		return super.toByteArray(length());
 	}
 	
+	/**
+	 * Copies all values of the given Java array to this array.
+	 * <h3>Precoditions</h3>
+	 * <li>Source array 'data' and this array must have 
+	 * equivalent component types. 
+	 * </li>
+	 * Equivalent types means, that the component type of the CArrayFacade
+	 * has the corresponding class type of the native component type of the 
+	 * array 'data'. So, if 'data' is of type short[] than this array must 
+	 * have component type Short.
+	 * 
+	 * @param data Array of data to be copied to this array.
+	 * @throws IOException
+	 */
 	public void fromByteArray(byte[] data) throws IOException {
 		super.fromArray(data);
 	}
 	
+	/**
+	 * Converts the underlying data into an array of the given native type.
+	 * The created array has the same length as this array.
+	 * @return New Java array with a copy of the elements of this array.
+	 * @throws IOException
+	 */
 	public short[] toShortArray() throws IOException {
 		return super.toShortArray(length());
 	}
 	
+	/**
+	 * Converts the underlying data into an array of the given native type.
+	 * The created array has the same length as this array.
+	 * @return New Java array with a copy of the elements of this array.
+	 * @throws IOException
+	 */
 	public int[] toIntArray() throws IOException {
 		return super.toIntArray(length());
 	}
 	
+	/**
+	 * Converts the underlying data into an array of the given native type.
+	 * The created array has the same length as this array.
+	 * @return New Java array with a copy of the elements of this array.
+	 * @throws IOException
+	 */
 	public long[] toLongArray() throws IOException {
 		return super.toLongArray(length());
 	}
 	
+	/**
+	 * Converts the underlying data into an array of the given native type.
+	 * The created array has the same length as this array.
+	 * @return New Java array with a copy of the elements of this array.
+	 * @throws IOException
+	 */
 	public long[] toInt64Array() throws IOException {
 		return super.toInt64Array(length());
 	}
 	
+	/**
+	 * Converts the underlying data into an array of the given native type.
+	 * The created array has the same length as this array.
+	 * @return New Java array with a copy of the elements of this array.
+	 * @throws IOException
+	 */
 	public float[] toFloatArray() throws IOException {
 		return super.toFloatArray(length());
 	}
 	
+	/**
+	 * Converts the underlying data into an array of the given native type.
+	 * The created array has the same length as this array.
+	 * @return New Java array with a copy of the elements of this array.
+	 * @throws IOException
+	 */
 	public double[] toDoubleArray() throws IOException {
 		return super.toDoubleArray(length());
 	}
@@ -338,7 +409,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 * @param encoding
 	 * @return
 	 */
-	public static long __dna__sizeof(Class<?> elementaryType, int[] dimensions, Encoding encoding) {
+	public static long __io__sizeof(Class<?> elementaryType, int[] dimensions, Encoding encoding) {
 		long size = CFacade.__io__sizeof(elementaryType, encoding.getAddressWidth());
 		if (dimensions.length > 0) {
 			// array of arrays
@@ -357,7 +428,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 * This is for arrays only. Behaviour is unspecified 
 	 * if the given parameter source is not an array!
 	 * 
-	 * @param source
+	 * @param sourceArray
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")

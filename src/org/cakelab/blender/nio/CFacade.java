@@ -13,48 +13,100 @@ import org.cakelab.blender.io.block.BlockTable;
 
 /**
  * {@link CFacade} is the base class of all complex types
- * (structs). A facet derived from this class, provides a 
- * type safe interface to access (get/set) data in native 
- * memory. This class holds the actual reference on the 
- * memory region and provides methods to access it as well as
- * helper methods to deal with type casts etc..
+ * (structs). 
+ * <p>
+ * A facade derived from this class, provides a type safe interface 
+ * to access (get/set) data in native memory (associated block). 
+ * This class holds the reference on the associated memory region 
+ * in a block of a blender file and provides methods to access it 
+ * as well as helper methods to deal with type casts etc..
+ * </p>
+ * <h3>Memory Life Cycle</h3>
+ * <p>
+ * Since a facade is just a view on data, its life cycle is not
+ * synchronised with the life cycle of the associated data. That means,
+ * if the facade is garbage collected, the associated data in the block
+ * will still remain in the file. To understand how to remove the data 
+ * from the file refer to {@link BlenderFile} and {@link BlockTable}.
+ * </p>
+ * 
+ * <h3>Facades on Instances of Structs</h3>
+ * <p>
+ * Derived classes of CFacade which represent actual facades on 
+ * struct instances in a blender file, provide getter and setter 
+ * methods to access member variables of the struct in the associated 
+ * block, but do not contain the member variables itself.
+ * </p>
+ * <p>
+ * Every CFacade which represents a struct, contains descriptors for
+ * each of its member variables. Member variable descriptors are used 
+ * to identify member variables for example in {@link #__io__addressof(long[])}
+ * and they are used to provide javadoc documentation for the member variable.
+ * Member variable descriptors always start with the prefix <code>__DNA__FIELD__</code>
+ * followed by the name of the member variable.
+ * </p>
+ * 
  * 
  * @author homac
  *
  */
 public abstract class CFacade {
-	
+	/** Address of the data for this instance in an existing block. */
 	protected long __io__address;
+	
+	/** Block table which contains the block with the data of 
+	 * the associated instance.	 */
 	protected BlockTable __io__blockTable;
+	
+	/** Block, which contains the data of instance. */
 	protected Block __io__block;
+	
+	/** The architecure index is used internally to determine the position 
+	 * of a struct member variable from its descriptor, in respect to the
+	 * encoding of the underlying block. */
 	protected int __io__arch_index;
+	
+	/** This is the address width used by the encoding of the underlying data. */
 	protected int __io__pointersize;
 	
-	public CFacade(long __address, BlockTable __blockTable) {
+	/**
+	 * Common constructor for a facade on an existing instance of a
+	 * DNA struct, a pointer or an array.
+	 * <h3>Preconditions:</h3>
+	 * <ul>
+	 * <li>There must exist a block in the __blockTable which is assigned
+	 * to the given __address</li>
+	 * </ul>
+	 * @param __address 
+	 * @param __blockTable
+	 */
+	protected CFacade(long __address, BlockTable __blockTable) {
 		this.__io__address = __address;
 		this.__io__block = __blockTable.getBlock(__address);
 		this.__io__blockTable = __blockTable;
 		this.__io__pointersize = __blockTable.getEncoding().getAddressWidth();
-		this.__io__arch_index = __blockTable.getEncoding().getAddressWidth() == Encoding.ADDR_WIDTH_32BIT ? 0 : 1;
+		this.__io__arch_index = __io__pointersize == Encoding.ADDR_WIDTH_32BIT ? 0 : 1;
 	}
 	
-	public CFacade(CFacade other, long targetAddress) {
+	/**
+	 * Copy constructor, which assignes the instanciated facade to a
+	 * another address. Useful when iterating over multiple instances
+	 * of the same struct type in a block.
+	 * 
+ 	 * <h3>Preconditions:</h3>
+	 * targetAddress has to be in the block which is currently assigned to 
+	 * the 'other' facade.
+
+	 * @param other
+	 * @param targetAddress
+	 */
+	protected CFacade(CFacade other, long targetAddress) {
 		this.__io__address = targetAddress;
 		this.__io__block = other.__io__block;
 		this.__io__blockTable = other.__io__blockTable;
 		this.__io__arch_index = other.__io__arch_index;
 	}
 
-
-	/**
-	 * @return block associated with the address of the object
-	 * represented by this facet.
-	 */
-	protected Block __io__getBlock() {
-		// TODO: really need to determine block again?
-		return __io__blockTable.getBlock(__io__address);
-	}
-	
 
 	/**
 	 * This method returns the size of the C type which corresponds
@@ -106,7 +158,7 @@ public abstract class CFacade {
 	}
 
 	/**
-	 * This method creates a pointer on the given facet.
+	 * This method creates a pointer on the given facade.
 	 * @param object
 	 * @return
 	 */
@@ -116,7 +168,7 @@ public abstract class CFacade {
 
 	/**
 	 * This method creates a void pointer on the field identified by 
-	 * 'fieldDescriptor' of the struct represented by the facet (see static fields __DNA__FIELD__&lt;fieldname&gt; in the generated facets).
+	 * 'fieldDescriptor' of the struct represented by the facade (see static fields __DNA__FIELD__&lt;fieldname&gt; in the generated facades).
 	 * <p>The returned pointer has to be casted (by means of {@link CPointer#cast(Class)} and similar methods)
 	 * in order to use pointer arithmetics on it. We had the choice 
 	 * here to either carry all type information for every field over
@@ -125,7 +177,7 @@ public abstract class CFacade {
 	 * that pointers on fields are needed, we decided to go with this approach.
 	 * </p>
 	 * <b>This method is highly dangerous</b> because we do not check,
-	 * whether the field descriptor actually belongs to the facet and it is
+	 * whether the field descriptor actually belongs to the facade and it is
 	 * directly interpreted as offset to the structs base address.
 	 * </p>
 	 * @param fieldDescriptor The __DNA__FIELD__&lt;fieldname&gt; descriptor 
@@ -166,11 +218,11 @@ public abstract class CFacade {
 	}
 
 	/**
-	 * Creates a new facet instance of the given type.
-	 * @param type The type of facet to instantiate.
-	 * @param address The associated address for the instantiated facet.
+	 * Creates a new facade instance of the given type.
+	 * @param type The type of facade to instantiate.
+	 * @param address The associated address for the instantiated facade.
 	 * @param blockTable the global block map of the associated file.
-	 * @return new facet instance of the given type
+	 * @return new facade instance of the given type
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
@@ -185,36 +237,14 @@ public abstract class CFacade {
 		return (CFacade) constructor.newInstance(address, blockTable);
 	}
 
-	/** Generates a string representation of the given CFacade considering all getter methods. 
-	 * Mainly for debugging purposes. */
-	public String __io__toString() {
-		StringBuffer result = new StringBuffer();
-		for (Method method : getClass().getDeclaredMethods()) {
-			if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
-				Object obj;
-				try {
-					obj = method.invoke(this);
-					if (obj instanceof CFacade) {
-						obj = ((CFacade)obj).__io__address;
-					}
-					result.append(method.getName()).append(": ").append(obj.toString()).append("\n");
-				} catch (IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException e) {
-					result.append(method.getName()).append(": error: ").append(e.getMessage()).append("\n");
-				}
-			}
-		}
-		return result.toString();
-	}
-
 	/**
-	 * @param facet
+	 * @param facade
 	 * @param address 
 	 * @return address (virtual) of the given object.
 	 */
-	protected boolean __io__equals(CFacade facet, long address) {
-		return facet.__io__block == this.__io__block 
-				&& facet.__io__address == address;
+	protected boolean __io__equals(CFacade facade, long address) {
+		return facade.__io__block == this.__io__block 
+				&& facade.__io__address == address;
 	}
 
 	/**
@@ -226,7 +256,7 @@ public abstract class CFacade {
 	 * @param targetBlock Block, which will receive the written data.
 	 * @param targetAddress Target address where the data will be written to. This address has to be 
 	 *        in range of the given target block.
-	 * @param source facet with the data to be copied to the given address.
+	 * @param source facade with the data to be copied to the given address.
 	 * @throws IOException 
 	 */
 	protected static void __io__native__copy(Block targetBlock, long targetAddress, CFacade source) throws IOException {
@@ -246,8 +276,8 @@ public abstract class CFacade {
 	}
 
 	/**
-	 * <p>
 	 * This method does a highlevel copy of the given source to this object.
+	 * <p>
 	 * The method is used in case a lowlevel copy (see {@link #__io__native__copy(Block, long, CFacade)})
 	 * is not possible due to different encodings of the underlying blocks 
 	 * (see {@link #__io__same__encoding(CFacade, CFacade)}.
@@ -286,10 +316,13 @@ public abstract class CFacade {
 	}
 	
 	/**
+	 * Does a high-level copy (meber by member) from source to target. 
+	 * Same as <code>target.__io__generic__copy(source)</code>.
 	 * 
-	 * @param target
-	 * @param source
+	 * @param target Facade, which gets its data overriden with the values of source.
+	 * @param source Facade, which data gets copied to target.
 	 * @throws IOException
+	 * @see {@link #__io__generic__copy(CFacade)}
 	 */
 	protected static void __io__generic__copy (CFacade target, CFacade source) throws IOException {
 		target.__io__generic__copy(source);
@@ -297,16 +330,17 @@ public abstract class CFacade {
 	
 	
 	/**
-	 * Tests whether the underlying data blocks of both facets use the
+	 * Tests whether the underlying data blocks of both facades use the
 	 * same encoding (byte order and address length).
-	 * @param facetA
-	 * @param facetB
+	 * 
+	 * @param facadeA
+	 * @param facadeB
 	 * @return
 	 */
-	protected boolean __io__same__encoding(CFacade facetA, CFacade facetB) {
-		return facetA.__io__pointersize == facetB.__io__pointersize
+	protected boolean __io__same__encoding(CFacade facadeA, CFacade facadeB) {
+		return facadeA.__io__pointersize == facadeB.__io__pointersize
 											&& 
-				facetA.__io__byteorder() == facetB.__io__byteorder();
+				facadeA.__io__byteorder() == facadeB.__io__byteorder();
 	}
 
 	/**
