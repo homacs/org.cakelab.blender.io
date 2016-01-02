@@ -9,7 +9,6 @@ import java.util.Iterator;
 
 import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.io.block.BlockTable;
-import org.cakelab.blender.lib.BlenderFactoryBase;
 
 
 /**
@@ -88,7 +87,7 @@ import org.cakelab.blender.lib.BlenderFactoryBase;
  * </p>
  * <p>
  * To allocate a block for an entirely new array, refer to the block 
- * allocation methods in either {@link BlenderFactoryBase}
+ * allocation methods in either {@link org.cakelab.blender.utils.BlenderFactoryBase}
  * or the derived class {@link BlenderFactory} in the generated code 
  * or even directly to {@link BlenderFile} and {@link BlockTable}.
  * </p>
@@ -131,7 +130,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 * 
 	 * <p>
 	 * To allocate a block for an entirely new array, refer to the block 
-	 * allocation methods in either {@link BlenderFactoryBase}
+	 * allocation methods in either {@link org.cakelab.blender.utils.BlenderFactoryBase}
 	 * or the derived class {@link BlenderFactory} in the generated code.
 	 * </p>
 	 * 
@@ -147,13 +146,15 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 		this.componentSize = calcComponentSize(targetTypeList[dimensions.length-1]);
 	}
 	
-	
+	/**
+	 * @return Length of the array (number of elements).
+	 */
 	public int length() {
 		return dimensions[0];
 	}
 
 	/**
-	 * delivers the actual native size of this array considering
+	 * Delivers the native size of this array considering
 	 * its architecture specific encoding.
 	 * 
 	 * @return size of this array in bytes
@@ -450,6 +451,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 *   // ..
 	 * }
 	 * </pre>
+	 * Does not support deletion.
 	 */
 	@Override
 	public Iterator<T> iterator() {

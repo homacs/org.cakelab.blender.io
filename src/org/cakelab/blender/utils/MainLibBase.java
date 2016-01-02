@@ -1,4 +1,4 @@
-package org.cakelab.blender.lib;
+package org.cakelab.blender.utils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

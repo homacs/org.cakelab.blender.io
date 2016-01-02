@@ -16,10 +16,10 @@ import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.GPackage;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.FileVersionInfo;
-import org.cakelab.blender.lib.MainLibBase;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.nio.CFacade;
 import org.cakelab.blender.nio.CPointer;
+import org.cakelab.blender.utils.MainLibBase;
 
 public class MainLibClassGenerator extends ClassGenerator {
 

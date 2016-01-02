@@ -1,4 +1,4 @@
-package org.cakelab.blender.lib;
+package org.cakelab.blender.utils;
 
 import static org.cakelab.blender.generator.CFacadeMembers.__DNA__SDNA_INDEX;
 
