@@ -16,12 +16,12 @@
 <body>
 <h1 style="text-align: center">Java .Blend</h1>
 <br/>
-<p style="text-align: center"><em>Providing Type Safe Random Read/Write File Access to</em></p>
-<p style="text-align: center"><em>the Full Blender DNA Data Model in Java</em></p>
+<p style="text-align: center"><em>Providing Type Safe Read/Write File Access to</em></p>
+<p style="text-align: center"><em>the Full Blender DNA in Java</em></p>
 <br/>
 <p style="text-align: center"><b>Version ${project.version}</b></p>
 <br/>
-<p style="text-align: center">(no decision on type of open source license yet)</p>
+<p style="text-align: center">(free and open source)</p>
 <p style="text-align: center">${system.date}</p>
 <p style="text-align: center">Holger Machens</p>
 
@@ -74,22 +74,35 @@ generate new models by themselves without touching the sources.
 
 
 <h2 id="download">Download</h2>
+<h3>Java .Blend SDK</h3>
 <p>
-This is the second tech. demo now comprising all core features of Java .Blend, such as import/export, 
-dealing with facades of a generated data model as well as pointers and arrays. 
-It consists of
+This package contains the code generator and the data I/O submodule.
 </p>
-<ul>
-<li>the <b><a href="downloads/JavaBlend-src-0.0.2.zip">source code</a></b> of model generator and data I/O and</li>
-<li>a use case <b><a href="downloads/JavaBlendDemo-src-0.0.2.zip">example with generated data model</a></b> for blender v2.69 
-demonstrating how to read and display a textured mesh, modelled in blender, and</li>
-<li>a <b><a href="downloads/JavaBlendDemo-0.0.2.zip">binary of 
-the example</a></b> to show that (horribly) textured model in action. It uses <a href="https://www.lwjgl.org/">LWJGL</a> and requires
-a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
-</li>
-</ul>
-<p><em>Please note: The <a href="spec.html">documentation</a> is not finished (see roadmap).</em>
+<table border="1">
+<tr><th>version</th><th></th><th></th></tr>
+<tr><th>1.0.0</th><td><a href="downloads/JavaBlend-SDK-1.0.0.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.0.zip">src</a></td></tr>
+</table>
+
+<h3>Pregenerated Data Models</h3>
+<p>
+These packages contain pregenerated data models including the utilities package and
+the data I/O submodule. The version numbers provided in the table are Blenders 
+version and minimum version the library is compatible with (refer to the Section <a href="spec.html#FileVersion">"Blender Versioning and File Version"</a> in the <a href="spec.html">documentation</a>).
 </p>
+<table border="1">
+<tr><th>version</th><th>min. ver.</th><th></th><th></th></tr>
+<tr><th>2.69</th><th>2.63</th><td><a href="downloads/JavaBlend-1.0.0-DNA-2.69.jar">binary</a></td><td><a href="downloads/JavaBlend-src-1.0.0-DNA-2.69.zip">src</a></td></tr>
+</table>
+
+<h3>Examples</h3>
+<p>
+This package contains various examples for use cases of Java .Blend. Part of this package is a pregenerated Java .Blend data model for Blender v2.69. It uses <a href="https://www.lwjgl.org/">LWJGL</a> and requires
+a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a> (for no particular reason, but you should look at the source code anyway!).
+</p>
+<table border="1">
+<tr><th>version</th><th></th><th></th></tr>
+<tr><th>1.0.0</th><td><a href="downloads/JavaBlendDemo-1.0.0.zip">binary</a></td><td><a href="downloads/JavaBlendDemo-src-1.0.0.zip">src</a></td></tr>
+</table>
 
 
 <h2 id="changelog">Change Log</h2>
@@ -124,8 +137,12 @@ a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
 	<li>add: runtime conversion between Java and native data representations</li>
 	<li>mod: demo application (cube.blend)</li>
 	</ul>
-</li> <!-- 0.0.2 -->
+</li> <!-- 0.0.1 -->
 </ul>
 
+<h2 id="Licensing">Licensing</h2>
+<p>
+Java .Blend is generally free to everybody and any kind of use with 
+</p>
 </body>
 </html>
