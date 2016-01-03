@@ -33,6 +33,9 @@ INPUT="${HOME}/.config/blender/${VERSION}/config/userpref.blend"
 #
 OUTPUT="../JavaBlendDemo/gen"
 
+# DOCPATH
+DOCPATH="../JavaBlendDocs/resources/dnadoc"
+
 #
 # PACKAGE
 # This is the Java package for all generated classes. If you are
@@ -57,7 +60,7 @@ done`
 
 
 
-java -cp ${CLASSPATH} org.cakelab.blender.generator.ModelGenerator -in ${INPUT} -out ${OUTPUT} -p ${PACKAGE}
+java -cp ${CLASSPATH} org.cakelab.blender.generator.ModelGenerator -in ${INPUT} -c ${DOCPATH} -out ${OUTPUT} -p ${PACKAGE}
 
 
 echo "done."
