@@ -57,7 +57,7 @@ done`
 
 
 
-java -cp ${CLASSPATH} org.cakelab.blender.generator.ModelGenerator -in ${INPUT} -out ${OUTPUT} -v ${VERSION} -p ${PACKAGE}
+java -cp ${CLASSPATH} org.cakelab.blender.generator.ModelGenerator -in ${INPUT} -out ${OUTPUT} -p ${PACKAGE}
 
 
 echo "done."

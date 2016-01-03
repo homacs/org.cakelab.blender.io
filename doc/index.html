@@ -19,13 +19,25 @@
 <p style="text-align: center"><em>Providing Type Safe Random Read/Write File Access to</em></p>
 <p style="text-align: center"><em>the Full Blender DNA Data Model in Java</em></p>
 <br/>
-<p style="text-align: center"><b>-- beta --</b></p>
+<p style="text-align: center"><b>Version ${project.version}</b></p>
 <br/>
 <p style="text-align: center">(no decision on type of open source license yet)</p>
 <p style="text-align: center">${system.date}</p>
 <p style="text-align: center">Holger Machens</p>
 
-<h2>Introduction</h2>
+<table border="1">
+<tr><th>Shortcuts</th></tr>
+<tr>
+<td>
+<dl>
+<dt><a href="#about">About</a></dt>
+<dt><a href="spec.html">Documentation</a></dt>
+<dt><a href="#download">Download</a></dt>
+<dt><a href="#changelog">Change Log</a></dt>
+</dl>
+</td></tr>
+</table>
+<h2 id="about">About</h2>
 <p>
 <a href="http://blender.org">Blender's</a> core is written in C and 
 blender files are basically dumps of native memory content (C structs and scalar types) 
@@ -53,104 +65,15 @@ The fully generic mapping of the entire Blender DNA core data model combined wit
 both import <b>and</b> export supports all of it.
 </p>
 <p> 
-A convenient side effect of the generic approach is its low maintenance effort 
+As a side effect of the generic approach Java .Blend has low maintenance effort 
 on maintainers side. New details in blender's DNA will be instantly 
 reflected in the generated data model and implicitly supported during import and export.
-Thus, users don't have to worry how long they can rely on this library, they can even 
+Thus, users don't have to worry about how long they can rely on this library, they can even 
 generate new models by themselves without touching the sources.
 </p>
 
-<h2>Concept</h2>
-<p>
-This section gives a brief overview of the general concept behind Java .Blend. 
-For further details refer to the <a href="spec.html">system specification</a> (not finished yet).
-</p>
-<h3>Modules</h3>
-<p style="text-align: center"><img src="images/model-generator.png"/></p>
-<p>
-Java .Blend basically consists of two modules:
-</p>
-<dl>
-<dt>Model Generator</dt> 
-<dd>The model generator (see image above) is a code generator, 
-which generates Java code according to the meta data found in a 
-reference Blender file. The generated code comprises a data model 
-which reflects the data model (so-called DNA) used in Blender core. This generated 
-data model consists of facades with methods to access native data 
-in heap memory at runtime.
-</dd>
-<dt>Runtime Data I/O</dt> 
-<dd>Random access to native data of a 
-Blender file is provided by the data I/O sub-module (see image below) which is 
-working behind the scenes at runtime. It is responsible to transfer data between file and heap memory and
-supports facades of the data model in address translation, type 
-conversion and data access in general. 
-</dd>
-</dl>
 
-
-<p style="text-align: center"><img src="images/facade.png"/></p>
-<p>
-To summarise: Based on the type information of any reference blender 
-file, the model generator generates a data model in 
-terms of facades which provide type-safe access to native Blender data. 
-The generated data model in combination with the runtime data I/O module 
-is used at runtime to access data of any Blender file of the same version.
-Native Blender data is kept in its format in heap memory and accessed through 
-the facades getter and setter methods. Life cycle of native data is implicitly 
-covered by the Java VMs garbage collection. 
-</p>
-<h3>Method</h3>
-<p>
-At development time, the model generator is used to generate a 
-data model for a particular Blender version, based on any 
-<code>.blend</code> file created by Blender. The Java classes
-of the data model can be generated into a
-source folder of a specific project or compiled and archived in 
-a separate Java library (<code>.jar</code>), to be used in 
-multiple projects.
-</p>
-
-<p>
-<b>Example</b>
-</p>
-<pre>
-	java -jar javablend.jar "../myproject/src" "my.package.blender" "any-file.blend"
-</pre>
-<p>
-Once the data model is generated, it can be used in combination with the 
-runtime data I/O module to access any <code>.blend</code> file of the
-same Blender version. The application opens a Blender file and retrieves
-a <code>Main</code> library. In Blender terminology a 'Library' 
-represents a file (even external non-blender files). A main library 
-provides access to all persistent data in a Blender instance that will be 
-stored in a .blend file (all 3D elements, UI and rendering configurations
-etc.). The example below shows a use case, where an application opens a 
-blender file and retrieves the polygons of a mesh.
-</p>
-<p>
-<b>Example</b>
-</p>
-<pre>
-	//
-	// Open file and retrieve main lib
-	//
-	BlenderFile f = new BlenderFile("cube.blend");
-	MainLib main = new MainLib(f);
-	f.close();
-	
-	//
-	// retrieve the first mesh's polygons
-	//
-	Mesh mesh = lib.getMesh();
-	MPoly[] polygons = mesh.getMpoly().toArray(mesh.getTotpoly());
-</pre>
-<p>
-<em>A more comprehensive example involving materials and textures can be 
-found in the download section below.</em>
-</p>
-
-<h2>Download</h2>
+<h2 id="download">Download</h2>
 <p>
 This is the second tech. demo now comprising all core features of Java .Blend, such as import/export, 
 dealing with facades of a generated data model as well as pointers and arrays. 
@@ -168,16 +91,8 @@ a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a>.
 <p><em>Please note: The <a href="spec.html">documentation</a> is not finished (see roadmap).</em>
 </p>
 
-<h2>Roadmap</h2>
-<ul>
-<li>File compression/decompression (?)</li>
-<li>Finishing documentation and adding community based documentation system support</li>
-<li>More examples</li>
-<li>Testing, improving, optimising, polishing</li>
-<li>Release (end of 2015)</li>
-</ul>
 
-<h2>Change Log</h2>
+<h2 id="changelog">Change Log</h2>
 <ul>
 <li>[0.0.2]: Second tech. demo comprising all specified features
 	<ul>

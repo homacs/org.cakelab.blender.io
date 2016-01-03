@@ -61,9 +61,9 @@ public class ModelGenerator {
 		// TODO: ZZZ use gopt for command line options
 		File input = null;
 		File output = null;
-		String javaPackage = null;
+		String javaPackage = "org.cakelab.blender";
 		String docpath = "resources/dnadoc";
-		boolean generateUtils = false;
+		boolean generateUtils = true;
 		boolean debug = false;
 		
 		for (int i = 0; i < args.length; i++) {
