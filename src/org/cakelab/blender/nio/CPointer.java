@@ -1005,20 +1005,20 @@ public class CPointer<T> extends CFacade {
 	protected void setScalar(long address, T elem) throws IOException {
 		Class<?> type = targetTypeList[0];
 		
-		if (type.equals(Byte.class) || type.equals(byte.class)) {
-			__io__block.writeByte(address, (byte) elem);
-		} else if (type.equals(Short.class) || type.equals(short.class)) {
-			__io__block.writeShort(address, (short) elem);
-		} else if (type.equals(Integer.class) || type.equals(int.class)) {
-			__io__block.writeInt(address, (int) elem);
-		} else if (type.equals(Long.class) || type.equals(long.class)) {
-			__io__block.writeLong(address, (long) elem);
+		if (type.equals(Byte.class)) {
+			__io__block.writeByte(address, (Byte) elem);
+		} else if (type.equals(Short.class)) {
+			__io__block.writeShort(address, (Short) elem);
+		} else if (type.equals(Integer.class)) {
+			__io__block.writeInt(address, (Integer) elem);
+		} else if (type.equals(Long.class)) {
+			__io__block.writeLong(address, (Long) elem);
 		} else if (type.equals(int64.class)) {
-			__io__block.writeInt64(address, (long) elem);
-		} else if (type.equals(Float.class) || type.equals(float.class)) {
-			__io__block.writeFloat(address, (float) elem);
-		} else if (type.equals(Double.class) || type.equals(double.class)) {
-			__io__block.writeDouble(address, (double) elem);
+			__io__block.writeInt64(address, (Long) elem);
+		} else if (type.equals(Float.class)) {
+			__io__block.writeFloat(address, (Float) elem);
+		} else if (type.equals(Double.class)) {
+			__io__block.writeDouble(address, (Double) elem);
 		} else {
 			throw new ClassCastException("unrecognized scalar type: " + type.getName());
 		}

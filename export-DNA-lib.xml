@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="package" name="Generate and Package a Java .Blend Data Model">
+	
+	<target name="init">
+		<property name="version" value="1.0.0"/>
+		<property name="blender.version" value="2.69"/>
+		<property name="blender.cfgdir" value="${user.home}/.config/blender"/>
+		<property name="input" value="${blender.cfgdir}/${blender.version}/config/userpref.blend"/>
+		<property name="blender.java.package" value="org.blender"/>
+		<property name="java.blend.docs" value="../JavaBlendDocs/resources/dnadoc"/>
+		<property name="web.downloads" value="${user.home}/tmp/public_html/projects/JavaBlend/downloads"/>
+		<property name="project.name" value="JavaBlend"/>
+		<property name="package.name" value="${project.name}-${version}-DNA-${blender.version}"/>
+        <property name="workdir" value="${java.io.tmpdir}/${package.name}"/>
+        <property name="srcdir" value="${workdir}/src"/>
+		<property name="jarfile" value="${web.downloads}/${package.name}.jar"/>
+		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.version}.zip"/>
+
+		<delete failonerror="false" includeEmptyDirs="true">
+			<fileset dir="${workdir}"/>
+			<fileset file="${zipfile}"/>
+		</delete>
+        <mkdir dir="${workdir}"/>
+        <mkdir dir="${srcdir}"/>
+	</target>
+	
+	<target name="generate" depends="init">
+		<java classname="org.cakelab.blender.generator.ModelGenerator">
+			<arg value="-in"/><arg file="${input}"/>
+			<arg value="-out"/><arg file="${srcdir}"/>
+			<arg value="-p"/><arg value="${blender.java.package}"/>
+			<arg value="-c"/><arg file="${java.blend.docs}"/>
+			<classpath>
+	      		<pathelement location="bin"/>
+	      		<pathelement location="../org.cakelab.json/bin"/>
+				<fileset dir="lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</java>
+		
+		<copy todir="${srcdir}">
+			<fileset dir="src" casesensitive="yes">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${srcdir}">
+			<fileset dir="../org.cakelab.json/src" casesensitive="yes">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="package.src" depends="generate">
+		<copy todir="${workdir}">
+			<fileset dir="." casesensitive="yes">
+				<include name="doc/**/*"/>
+				<include name="licenses/**/*"/>
+			</fileset>
+		</copy>
+		
+		<zip destfile="${zipfile}" basedir="${java.io.tmpdir}">
+			<include name="${package.name}/**/*"/>
+			<exclude name="${package.name}/bin"/>
+		</zip>
+	</target>
+	
+	<target name="compile" depends="generate">
+		
+		<property name="bindir" value="${workdir}/bin"/>
+        <mkdir dir="${bindir}"/>
+
+		<javac srcdir="${srcdir}"
+			destdir="${bindir}"
+			classpath="${jarfile}"
+			debug="off"
+			includeAntRuntime="false"
+			compiler="modern"
+		/>
+	</target>
+	
+	<target name="package.bin" depends="compile">
+		<jar destfile="${jarfile}" basedir="${bindir}">
+			<include name="**/*"/>
+		</jar>
+	</target>
+	<target name="package" depends="package.bin,package.src">
+		<echo message="done."/>
+	</target>
+	
+</project>
