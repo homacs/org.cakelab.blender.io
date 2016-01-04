@@ -18,8 +18,8 @@ VERSION=`blender -v | grep "Blender" | head -n 1 | awk '{print $2}'`
 
 #
 # INPUT 
-# This is a Blender file (.blend) which was saved by Blender 
-# program in the version you want to support.
+# This is a Blender file (.blend) which was saved by a Blender 
+# process in the version you want to support.
 # We use the file with the user preferences as default but you
 # can use any other .blend file as well.
 #
@@ -33,7 +33,11 @@ INPUT="${HOME}/.config/blender/${VERSION}/config/userpref.blend"
 #
 OUTPUT="../JavaBlendDemo/gen"
 
+#
 # DOCPATH
+# This is the location of the Java .Blend externally maintained
+# source code documentation. 
+#
 DOCPATH="../JavaBlendDocs/resources/dnadoc"
 
 #

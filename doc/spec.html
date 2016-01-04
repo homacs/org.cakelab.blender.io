@@ -24,75 +24,78 @@
 <p>
 This is the documentation of the Java .Blend generic Blender file import/export toolkit for Java.
 Blender is an open source 3D graphic design and rendering environment which supports import and
-export of various file formats such as FBX and Collada. Imports and exports require
-a mapping between different formats which inevitably involves incompatibilities and 
-loss of data. Java .Blend aims to fill the gap for Java programmers, who need access to
-all the data in a Blender file with read and write capabilities. To achive that, Java .Blend
-uses the meta data provided in each Blender file, which describes the entire core data model
-used by Blender. This meta data is fed to a code generator, which generates 
-Java classes for all types in Blenders data model and thereby creates an API to access the raw
-data in the a <code>.blend</code> file. Thus, there are no gaps in the model and every piece of
-it is available to the API programmer. This document contains a system specification of Java .Blend. It describes its functionality
-and specifies its data model. 
+export of various file formats such as FBX and Collada. Imports and exports always require
+a mapping between different formats which inevitably involves compromises resulting in 
+loss of information. Java .Blend aims to fill the gap for Java programmers, who want 
+type-safe access to all the data in a Blender file with read <b>and</b> write capabilities. 
+To achive that, Java .Blend uses meta data which is contained in each Blender file, 
+and describes Blender's entire core data model. This meta data is fed to Java .Blend's 
+code generator, which generates Java classes for all types in Blenders data model and 
+thereby creates a type-safe API to access raw data in a <code>.blend</code> file. Thus, 
+there are no gaps in the model and every piece of a Blender file is available to the 
+API programmer.
 </p>
 <p>
-To understand the system specification and to work with Blender files
-a basic knowledge of Blender's data model and its file format is necessary. Therefore this document
-starts with an introduction to Blender's DNA and its file format. The following section covers 
-the system specification which involves vital information on the type mapping between C native 
-types in Blender and associated Java classes and types in Java .Blend. It also explains main 
-parts of the Java .Blend runtime library which helps in getting started. More detailed 
-information can always be found in the Javadoc documentation (respective the 
-source code documentation). At the end of this document there is a brief getting started guide for
-API programmers, too. Main purpose of this section is to pointer programmers 
-in the right direction. The examples found in the download section of the website are intended
-to help further down the road.
+This document contains a system specification of Java .Blend. 
+It describes its functionality and specifies its data model. 
+To understand the system specification, and to work with Blender files,
+a basic knowledge of Blender's data model and its file format is necessary. Therefore, 
+this document starts with an introduction to Blender's DNA and its file format. The 
+section thereafter covers the system specification which involves vital information 
+on the type mapping between C native types and structs in Blender and Java classes 
+and types in Java .Blend. It also explains main parts of the Java .Blend runtime 
+library (data I/O). More detailed information on parts of the system can be found 
+in the Javadoc documentation (respective the source code documentation). At the 
+end of this document there is a brief getting started guide for API programmers. 
+Main purpose of this section is to point programmers in the right direction. 
+The examples found in the download section of the website are intended to 
+help further down the road.
 </p>
 <h1>Contents</h1>
 <table>
-<tr><td></td><td><a href="#BlenderDNA">Blender DNA</a>
+<tr><td></td><td><b><a href="#BlenderDNA">Blender DNA</a></b>
 	<table>
-	<tr><td></td><td><a href="#DNADataModel">Brief Data Model Overview</a>
+	<tr><td></td><td><b><a href="#DNADataModel">Brief Data Model Overview</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#BlenderFormat">Blender File Format</a>
+	<tr><td></td><td><b><a href="#BlenderFormat">Blender File Format</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#AddressMapping">Address Mapping</a>
+	<tr><td></td><td><b><a href="#AddressMapping">Address Mapping</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#FileVersion">Blender Versioning and File Version</a>
+	<tr><td></td><td><b><a href="#FileVersion">Blender Versioning and File Version</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#BlockOrder">Block Order</a>
+	<tr><td></td><td><b><a href="#BlockOrder">Block Order</a></b>
 	</td></tr>
 	</table>
 </td></tr>
-<tr><td></td><td><a href="#Concept">Concept</a>
+<tr><td></td><td><b><a href="#Concept">Concept</a></b>
 	<table>
-	<tr><td></td><td><a href="#DesignOverview">Design Overview</a>
+	<tr><td></td><td><b><a href="#DesignOverview">Design Overview</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#BlockLevelIO">Block Level I/O</a>
+	<tr><td></td><td><b><a href="#BlockLevelIO">Block Level I/O</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#TypeMapping">Type Mapping</a>
+	<tr><td></td><td><b><a href="#TypeMapping">Type Mapping</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#CodeGenerator">Code Generator</a>
+	<tr><td></td><td><b><a href="#CodeGenerator">Code Generator</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#Facades">Generated Facade Classes</a>
+	<tr><td></td><td><b><a href="#Facades">Generated Facade Classes</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#Utilities">Generated Utilities Package</a>
+	<tr><td></td><td><b><a href="#Utilities">Generated Utilities Package</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#Documentation">Externally Maintained Documentation</a>
+	<tr><td></td><td><b><a href="#Documentation">Externally Maintained Documentation</a></b>
 	</td></tr>
 	</table>
 </td></tr>
-<tr><td></td><td><a href="#GettingStarted">Getting Started</a>
+<tr><td></td><td><b><a href="#GettingStarted">Getting Started</a></b>
 	<table>
-	<tr><td></td><td><a href="#Setup">Setup</a>
+	<tr><td></td><td><b><a href="#Setup">Setup</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#Reading">Reading</a>
+	<tr><td></td><td><b><a href="#Reading">Reading</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#Writing">Writing</a>
+	<tr><td></td><td><b><a href="#Writing">Writing</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#ContributeDoc">Contributing to Documentation</a>
+	<tr><td></td><td><b><a href="#ContributeDoc">Contributing to Documentation</a></b>
 	</td></tr>
-	<tr><td></td><td><a href="#GeneratingCode">Generating Data Model and Utilities</a>
+	<tr><td></td><td><b><a href="#GeneratingCode">Generating Data Model and Utilities</a></b>
 	</td></tr>
 	</table>
 </td></tr>
@@ -358,7 +361,7 @@ but it has to respect the relationship between main library elements and their d
 </ul>
 
 
-<h1>Concept</h1>
+<h1 id="Concept">Concept</h1>
 <h2 id="DesignOverview">Design Overview</h2>
 <p>
 This section gives a brief overview of the general concept behind Java .Blend. 
@@ -808,6 +811,12 @@ files contain a list of structs and their members with associated
 documentation.
 </p>
 <p>
+<em>
+Please note that the externally maintained documentation is kept in a <a href="https://github.com/homacs/JavaBlendDocs.git">separate 
+repository on github</a> and published under 
+GPL v3 (see Section <a href="index.html#Licensing">'Licensing'</a> on the main page for reasons).
+</em>
+<p>
 Currently available documentation is extracted from Blender's source code via doxygen
 and from it's Python API via script <code>rna_info.py</code>. Since this documentation
 is still incomplete for the most parts, users can add more documentation manually in 
@@ -816,12 +825,13 @@ terms of files of the documentation system.
 <p>
 This section will explain the format of the documentation.
 </p>
-
+<!-- TODO: inheritance -->
+<!-- TODO: javadoc/html and NL -->
 <h3 id="DocumentationSystem">Documentation System</h3>
 <p>This section specifies file format and folder layout of the documentation system.</p>
 <h4 id="DocFileFormat">File Format</h4>
 <p>
-Documenation files are written in JSON. The following table will explain its contents.
+Documenation files are written in JSON and contain Javadoc comments. The following table will explain its contents.
 </p>
 <table border="1">
 <tr><th>key</th><th>value</th><th>type</th><th>description</th></tr>
@@ -852,6 +862,11 @@ Documenation files are written in JSON. The following table will explain its con
 </td>
 </tr>
 </table>
+<p>
+All elements which contain Javadoc comments (i.e. all properties with key <code>'doc'</code>) contain text
+only. That means, no slashes or stars like '/**' or '*/'. Since Javadoc accepts HTML complex constructs, 
+like tables or lists can be added with HTML code.
+</p>
 <h4 id="DocFolderLayout">Folder Layout and Versioning</h4>
 A documentation folder consists of the following subfolders:
 <ul>
@@ -1032,6 +1047,23 @@ of Blender while the facade classes will most certainly remain
 compatible and working. Therefore, the generation of the 
 utilities package is optional.
 </p>
+<p>
+In order to generate the facade classes you need a <code>.blend</code>
+file saved with the version of Blender you are aiming to support 
+as reference. This can be any <code>.blend</code>
+file and even the user preferences to be found in 
+<code>$HOME/.config/blender/2.69/config/userpref.blend</code>.
+</p>
+<p>
+In order to incorporate Javadoc comments in the generated 
+facade classes you need to download a set of Java .Blend's 
+external documentation files either directly from the 
+<a href="">github repository</a> or the <a href="http://homac.cakelab.org/projects/JavaBlend#download">download section of Java .Blend's website</a>. 
+Please note, that you have to respect the license of the 
+documentation files if you plan to redistribute derived work. 
+Please refer to Section <a href="index.html#Licensing">'Licensing'</a> 
+on the index page to learn more about the reasons.
+</p>
 <h3>Command Line Parameters</h3>
 <p>
 The code generator gets started from command line.
@@ -1055,8 +1087,7 @@ The code generator gets started from command line.
 	> java -jar JavaBlend.jar -in "$HOME/.config/blender/2.69/config/userpref.blend" -out "../MyProject/src"
 </pre>
 <p>
-As you see, you can even use the user preferences file (which is a .blend file too) 
-as reference <code>.blend</code> file to provide the type information needed to 
+As you see, you can even use the user preferences file as reference <code>.blend</code> file to provide the type information needed to 
 generate the code.
 </p>
 
