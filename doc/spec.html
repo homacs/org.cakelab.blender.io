@@ -107,7 +107,7 @@ Blender's core data model is called its DNA. It covers all relevant, persistent 
 running Blender process which will be stored in a file. Data is stored in a <code>.blend</code> file 
 as plain images of the data structures in heap memory. Thus, the data model in the file is exactly the 
 same as in heap memory. Therefore, understanding Blender's DNA is the first part of 
-understanding the blender file format. The following section is intended to provide a brief 
+understanding the Blender file format. The following section is intended to provide a brief 
 introduction to the fundamental design principles of the Blender DNA but it does not
 cover the whole data model.
 </p>
@@ -134,14 +134,14 @@ to establish a scene graph (see Figure below).
 
 <h2 id="BlenderFormat">Blender File Format</h2>
 <p>
-On its lowest level a blender file consists of a header followed 
+On its lowest level a Blender file consists of a header followed 
 by a list of blocks of memory. Each block holds data of a specific type
 such as a struct an array of structs or single data elements. 
 One of the blocks contains the type information required to interpret 
 the body of a block.
 <h3 id="FileHeader">File Header</h3>
 <p>
-The file header (first 12 bytes of every blender file) contains 
+The file header (first 12 bytes of every Blender file) contains 
 low-level information about the file:
 </p>
 <table border="1">
@@ -149,7 +149,7 @@ low-level information about the file:
   <th>name</th><th>type</th><th>description</th>
 <tr>
 <tr>
-  <td>MAGIC</td><td>7 byte ASCII</td><td>Content: "BLENDER". Used to identify blender files</td>
+  <td>MAGIC</td><td>7 byte ASCII</td><td>Content: "BLENDER". Used to identify Blender files</td>
 <tr>
 <tr>
   <td>pointerSize</td><td>1 byte ASCII</td><td>Indicates the width of an address (i.e. <code>sizeof(void*)</code> which is the same as <code>sizeof(long)</code>). '_' means 4 bytes and '-' means 
@@ -241,7 +241,7 @@ type information.
   <td>types_len</td><td>int32</td><td>Array length of the following field 'types'.</td>
 <tr>
 <tr>
-  <td>types</td><td>Array of null terminated ASCII strings</td><td>This array contains the names of all types (scalar and structured) possibly used in any blender file of that version. A type name contains the basic type only, such as <code>int</code>, <code>char</code> or <code>LinkBase</code>, <code>Object</code>, etc.</td>
+  <td>types</td><td>Array of null terminated ASCII strings</td><td>This array contains the names of all types (scalar and structured) possibly used in any Blender file of that version. A type name contains the basic type only, such as <code>int</code>, <code>char</code> or <code>LinkBase</code>, <code>Object</code>, etc.</td>
 <tr>
 <tr>
   <td>TLEN</td><td>4 byte ASCII</td><td>Content: "TLEN". Indicates start of the type length section (see below).</td>
@@ -256,7 +256,7 @@ type information.
   <td>structs_len</td><td>int32</td><td>Length of the following array field 'structs'</td>
 <tr>
 <tr>
-  <td>structs</td><td>Array of Struct instances</td><td>This is the array which contains the type information for any struct possibly used in a blender file of the given version. Each element of the array contains an instances of a struct with the type information for a given struct. For each struct:
+  <td>structs</td><td>Array of Struct instances</td><td>This is the array which contains the type information for any struct possibly used in a Blender file of the given version. Each element of the array contains an instances of a struct with the type information for a given struct. For each struct:
   <table border="1">
 	<tr>
 	  <th>name</th><th>type</th><th>description</th>
@@ -301,9 +301,9 @@ address of data can be mapped to data in the block, which contains the data.
 
 <h2 id="FileVersion">Blender Versioning and File Version</h2>
 <p>
-A new blender version can contain modifications in Blender DNA, but it doesn't have to.
-The version specifier given in the file header of a blender file always refers to the
-version of the blender instance which created the file. Besides this information a blender
+A new Blender version can contain modifications in Blender DNA, but it doesn't have to.
+The version specifier given in the file header of a Blender file always refers to the
+version of the Blender instance which created the file. Besides this information a Blender
 file contains a block called <code>GLOB</code> which contains more detailed information 
 in respect to DNA model compatibility based on additional version specifiers.
 This block contains the struct <code>FileGlobal</code>.
@@ -313,11 +313,11 @@ A full version check has to consider theses four version specifiers:
 </p>
 <dl>
 <dt>VERSION (file header)</dt>
-<dd>This is the version of the blender instance, which created the file. This 
+<dd>This is the version of the Blender instance, which created the file. This 
 version specifier contains the major and the minor version number.</dd>
 <dt>SUBVERSION (FileGlobal)</dt>
 <dd>This is a version extension to the <code>VERSION</code> which corresponds 
-to a build number. Thus the full version specifier of the blender instance 
+to a build number. Thus the full version specifier of the Blender instance 
 would be <code>VERSION</code> (which contains major and minor) followed by
 <code>SUBVERSION</code> (the build number).</dd>
 <dt>MINVERSION (FileGlobal)</dt>
@@ -337,7 +337,7 @@ in a version starting from <code>MINVERSION, MINSUBVERSION</code> up to <code>VE
 <h2 id="BlockOrder">Block Order</h2>
 <p>
 Blocks stored in a Bender file follow a specific order. 
-The common rule for blocks stored in a blender file is, that 
+The common rule for blocks stored in a Blender file is, that 
 referenced <code>DATA</code> blocks, always have to be placed behind the 
 specified block of a main library element which references it, and before the next 
 main library element.
@@ -394,7 +394,7 @@ conversion and data access in general.
 <p style="text-align: center"><img src="images/facade.png"/></p>
 <p>
 To summarise: Based on the type information (see <a href="#DNATypeInformation">Type Information</a>) 
-of any reference blender file, the model generator generates a data model in 
+of any reference Blender file, the model generator generates a data model in 
 terms of facades which provide type-safe access to native Blender data. 
 The generated data model in combination with the runtime data I/O module 
 is used at runtime to access data of any Blender file of the same version.
@@ -428,7 +428,7 @@ represents a file (even external non-blender files). A main library
 provides access to all persistent data in a Blender instance that will be 
 stored in a .blend file (all 3D elements, UI and rendering configurations
 etc.). The example below shows a use case, where an application opens a 
-blender file and retrieves the polygons of a mesh.
+Blender file and retrieves the polygons of a mesh.
 </p>
 <p>
 <b>Example</b>
@@ -457,14 +457,14 @@ found in the <a href="http://homac.cakelab.org/projects/JavaBlend/index.html#dow
 On the lowest level the runtime I/O package has to deal with 
 blocks and mapping of addresses to offsets in blocks 
 (see package <code>org.cakelab.blender.io</code>). All data of a 
-model stored in a blender file is kept in its native 
+model stored in a Blender file is kept in its native 
 format and converted on demand. 
 </p>
 
 <h3 id="BlenderFile">Class BlenderFile</h3>
 <p>
-Blender file is the main class to start working with a blender file.
-It controls reading and writing of blender files and keeps 
+Blender file is the main class to start working with a Blender file.
+It controls reading and writing of Blender files and keeps 
 references on essential objects such as block table and 
 block list below.
 </p>
@@ -477,7 +477,7 @@ create the required <code>StructDNA</code> on its own.
 Please refer to the <a href="#BlenderFactory">Blender Factory</a> to retrieve a generated <code>StructDNA</code>.
 </p>
 <p>
-When writing a blender file, this class adds the fundamental blocks <code>DNA1</code>,
+When writing a Blender file, this class adds the fundamental blocks <code>DNA1</code>,
 <code>GLOB</code> and <code>ENDB</code> at proper locations (see <a href="#BlockOrder">Block Order</a>).
 </p>
 <h3 id="BlockTable">Block Table</h3>
@@ -500,16 +500,16 @@ in blocks with block code <code>DATA</code>.
 </p>
 <p>
 Since the block table reorders blocks according to their base address, 
-the <em>block list</em> was added to keep track of the blender file 
+the <em>block list</em> was added to keep track of the Blender file 
 related order. Block list establishes a linked list of blocks to allow
 fast insertion or remove of blocks. 
 </p>
 
 <h3 id="Allocator">Allocator</h3>
 <p>
-Blocks of one blender file establish a virtual memory space based on
+Blocks of one Blender file establish a virtual memory space based on
 blocks original address and size (cf. <a href="#AddressMapping">Address Mapping</a>). Especially when adding content to 
-an existing blender file, low level I/O has to keep track of allocated
+an existing Blender file, low level I/O has to keep track of allocated
 and free memory in respect to the existing blocks. When inserting new
 blocks or extending existing blocks, the lowlevel I/O has to check where
 this new block can be placed in this virtual memory space.
@@ -523,7 +523,7 @@ a new block or removes address space from its internal list of allocated
 regions.
 </p>
 <h3 id="MetaData">Meta Data Representation</h3>
-Meta data (type information) of a blender file is available in 
+Meta data (type information) of a Blender file is available in 
 three different formats: StructDNA, BlendModel and CMetaModel.
 
 <h4 id="StructDNA">StructDNA</h4>
@@ -546,7 +546,7 @@ C types used in Blender files to Java types, as used in Java .Blend.
 <h3>Scalar Types</h3>
 <p>
 The following table contains mappings of all scalar types 
-in blender files (C) to Java. 
+in Blender files (C) to Java. 
 </p>
 <table border="1">
 <tr>
@@ -673,7 +673,7 @@ pointer of a structure of entirely different kind then the actual
 struct at the referenced address. Java supports casts as long as
 the target object contains the class of the reference somewhere in the
 inheritance hierarchy and the reference points to the base of the 
-object (not somewhere inside). But in some of those cases in blender files, the
+object (not somewhere inside). But in some of those cases in Blender files, the
 members (fields) of the struct which is referenced by a pointer of different 
 type are also different. This results in the fact, that we can't just 
 map those pointers to base classes or interfaces of the target class. 
@@ -747,7 +747,7 @@ Main class of the code generator is the class <code>ModelGenerator</code>.
 </p>
 <p>
 Basic procedure of the code generator is to enumerate all structs specified in
-the meta data received from a blender file and forward it to a facade class generator. 
+the meta data received from a Blender file and forward it to a facade class generator. 
 The code generator uses the documentation provider to retrieve JavaDoc 
 documentation for members of generated facade classes.
 </p>
@@ -774,19 +774,19 @@ in Java. This conversion is handled transparently on demand by the data I/O subs
 <h2 id="Utilities">Generated Utilities Package</h2>
 <p>
 The optional utilities package contains code generated by 
-the <a href="#CodeGenerator">code generator</a>. It contains blender version 
+the <a href="#CodeGenerator">code generator</a>. It contains Blender version 
 specific code which helps in lookup (see <a href="#MainLib"><code>MainLib</code></a>) 
-of specific data in a blender file and creation of blocks (see <a href="#BlenderFactory"><code>BlenderFactory</code></a>).
+of specific data in a Blender file and creation of blocks (see <a href="#BlenderFactory"><code>BlenderFactory</code></a>).
 </p>
 <h3 id="MainLib">Main Library</h3>
 <p>
-Data in a blender file is subdivided in main library elements, such as scenes, configuration data,
+Data in a Blender file is subdivided in main library elements, such as scenes, configuration data,
 objects, meshes, material, etc., and data associated to them such as vertices, loops, edges, normals, etc.
 The class <code>MainLib</code> provides references to all main library elements.
 </p>
 <h3 id="BlenderFactory">Blender Factory</h3>
 <p>
-Adding data to blender files is not an easy task. The class <code>BlenderFactory</code> helps in this task in various ways. 
+Adding data to Blender files is not an easy task. The class <code>BlenderFactory</code> helps in this task in various ways. 
 </p>
 <ul>
 <li>
@@ -905,7 +905,7 @@ A documentation folder consists of the following subfolders:
 Documentation provider is an interface providing lookup of 
 documentation stored in files of the documentation system.
 The documentation provider automatically searches the most 
-appropriate documentation for a given blender file version
+appropriate documentation for a given Blender file version
 combination (i.e. <code>MINVERSION</code> and <code>VERSION</code> 
 and their respective extensions (subversions)). 
 </p>
@@ -947,7 +947,7 @@ To get running add the following jars to your project:
 
 <h2 id="Reading">Reading</h2>
 <p>
-There is an easy way and a more complex but even more flexible way to read blender files.
+There is an easy way and a more complex but even more flexible way to read Blender files.
 The easiest way is to use the class <code>MainLib</code> and the more complex involves 
 direct access to blocks.
 </p>
@@ -970,22 +970,22 @@ to the remaining raw data through its getter methods.
 </pre>
 <h3>Reading with Direct Block Access</h3>
 <p>
-Reading with direct block access basically involves opening a blender file, retrieve/search blocks, 
+Reading with direct block access basically involves opening a Blender file, retrieve/search blocks, 
 instantiate appropriate facade classes based on the type information (sdnaIndex) given in the 
 block and finally access it. See example <code>ExampleConvert2Json</code> for a comprehensive 
 example on direct block access including meta data lookup etc.
 </p>
 
 <h2 id="Writing">Writing</h2>
-<p>Creating or extending blender files requires a lot of knowledge on the 
-blender data model. Unfortunately, the data model is quite huge and contains lots of
+<p>Creating or extending Blender files requires a lot of knowledge on the 
+Blender data model. Unfortunately, the data model is quite huge and contains lots of
 references between elements and redundant information too. The best way to 
-gather information on how to write a blender file, is to study one first and use it as template.
+gather information on how to write a Blender file, is to study one first and use it as template.
 </p>
 <p>
 As part of the examples you will find a class called ExampleConvert2Json which creates a JSON
-file with all information of a blender file in the given block order. This file 
-is quite easy to read and a good start to study the blender DNA.
+file with all information of a Blender file in the given block order. This file 
+is quite easy to read and a good start to study the Blender DNA.
 </p>
 <p>
 Additionally you will need to download the Blender sources and open the folder 
@@ -999,7 +999,7 @@ then use it to find contexts in which this member variable is used.
 </p>
 <p>
 The example <code>CopybufferExchange</code> provides a full example on how to create 
-a blender file for exchange via the clipboard functionality of Blender.
+a Blender file for exchange via the clipboard functionality of Blender.
 </p>
 
 <h2 id="ContributeDoc">Contributing to Documentation</h2>
@@ -1030,7 +1030,7 @@ Please check your modifications by performing a code generation run (see Section
 <h2 id="GeneratingCode">Generating Data Model and Utilities</h2>
 <p>
 This section explains how to generate Java .Blend
-facade classes and utilities for a given blender version.
+facade classes and utilities for a given Blender version.
 </p>
 <p>
 The generated code is subdivided into two packages:

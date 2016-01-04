@@ -21,7 +21,7 @@
 <br/>
 <p style="text-align: center"><b>Version ${project.version}</b></p>
 <br/>
-<p style="text-align: center">Apache License V2.0</p>
+<p style="text-align: center">(open source and free)</p>
 <p style="text-align: center">${system.date}</p>
 <p style="text-align: center">Holger Machens</p>
 
@@ -41,16 +41,16 @@
 <h2 id="about">About</h2>
 <p>
 <a href="http://blender.org">Blender's</a> core is written in C and 
-blender files are basically dumps of native memory content (C structs and scalar types) 
+Blender files are basically dumps of native memory content (C structs and scalar types) 
 from heap to a file on disk. A <code>.blend</code> file is organised in blocks 
 of arbitrary length, and the type of data is described in a special block, which 
 contains type information (meta data) for all C native and 
 structured types which can exist in a <code>.blend</code> file.
 </p>
 <p>
-Based on the meta data of any blender file, it is possible to 
+Based on the meta data of any Blender file, it is possible to 
 generate code for a different language, which is capable to read/write 
-data in blender files of the same version. Java .Blend 
+data in Blender files of the same version. Java .Blend 
 is a combination of a code generator and a runtime data I/O module. 
 Together, they provides a generic any-version Blender file import/export 
 in Java which features all aspects of the Blender DNA data model: The 
@@ -61,12 +61,12 @@ module transparently supports in data access at runtime.
 <p>
 This toolkit was designed with the ambitious goal to serve for any kind of data exchange 
 with Blender. Whether just importing data into another graphics engine, conversion to 
-a different data format or external processing of data to add features to blender. 
+a different data format or external processing of data to add features to Blender. 
 The fully generic mapping of the entire Blender DNA core data model combined with 
 both import <b>and</b> export supports all of it.
 </p>
 <p>
-Working with Blender files requires knowledge about its data model. Java .Blends
+Working with Blender files requires knowledge about its data model. Java .Blend's
 documentation provides just a high level overview of the data model and the Javadoc 
 documentation incorporated in the generated facade classes is still incomplete.
 Therefore, the Javadoc source code documentation on generated classes is kept 
@@ -75,7 +75,7 @@ on github</a> and everybody is encouraged to contribute to it.
 </p>
 <p> 
 As a side effect of the generic approach Java .Blend has low maintenance effort 
-on maintainers side. New details in blender's DNA will be instantly 
+on maintainers side. New details in Blender's DNA will be instantly 
 reflected in the generated data model and implicitly supported during import and export.
 Thus, users don't have to worry about how long they can rely on this library, they can just 
 generate new models by themselves without touching the sources.
@@ -86,7 +86,7 @@ generate new models by themselves without touching the sources.
 <h3>Pregenerated Data Model Packages</h3>
 <p>
 These packages contain pregenerated data models including the utilities package and
-the data I/O submodule. The version numbers provided in the table are Blender's version and minimum version 
+the data I/O submodule. The version numbers provided in the table below are Blender's version and minimum version 
 the library is compatible with (refer to the Section <a href="spec.html#FileVersion">"Blender Versioning and File Version"</a> in the <a href="spec.html">documentation</a>).
 </p>
 <p><b>Note: </b>Binaries here are under Apache License v2.0. Source code packages contain source 
@@ -136,10 +136,10 @@ Source code documentation for generated facade classes is maintained in a separa
 <li>[1.0.0][r702]: 1st release.
 	<ul>
 	<li>Added licenses for all packages.</li>
-	<li>Added documentation with an introduction to Blender DNA, Java .Blends system specification and a getting started guide.</li>
+	<li>Added documentation with an introduction to Blender DNA, Java .Blend's system specification and a getting started guide.</li>
 	<li>Moved documentation files for generated classes in a separate project.</li>
 	<li>Reorganised the website.</li>
-	<li>Finished Java .Blends own source code documentation.</li>
+	<li>Finished Java .Blend's own source code documentation.</li>
 	<li>Finished utilities package with MainLib and Factory class.</li>
 	<li>Added example to write a .blend file compatible with Blender's clipboard functionality.</li>
 	<li>Added example to convert a .blend file into a JSON representation.</li>
@@ -151,15 +151,15 @@ Source code documentation for generated facade classes is maintained in a separa
 	<li>Refactored the hell out of it!</li>
 	<li>Fixed several bugs</li>
 	<li>Improved source code documentation all over the place</li>
-	<li>Added support for blender <b>version compatibility checks</b> against data model version</li>
-	<li>Introduced blender file <b>write access</b></li>
-	<li>Introduced blender <b>file creation</b> and initialisation (with StructDNA and FileGlobal)</li>
+	<li>Added support for Blender <b>version compatibility checks</b> against data model version</li>
+	<li>Introduced Blender file <b>write access</b></li>
+	<li>Introduced Blender <b>file creation</b> and initialisation (with StructDNA and FileGlobal)</li>
 	<li>Added creation of StructDNA to support initialisation of .blend files.</li>
-	<li>Added blender <b>factory class</b> supporting allocation of blocks and implicit assignment to facades</li>
-	<li>Made generation of blender version specific utilities optional, since those are not fully generic.</li>
+	<li>Added Blender <b>factory class</b> supporting allocation of blocks and implicit assignment to facades</li>
+	<li>Made generation of Blender version specific utilities optional, since those are not fully generic.</li>
 	<li>Introduced <b>allocator to manage virtual addresses</b> of a block table for block allocation</li>
 	<li>Introduced <b>documentation system</b> to provide more information to generated classes</li>
-	<li>Added script to extract documentation from blender python api</li>
+	<li>Added script to extract documentation from Blender python api</li>
 	<li>Documentation system considers file version to retrieve appropriate version of available documentation</li>
 	<li>Added several methods to convert between strings, arrays, pointers considering null termination and charsets.</li>
 	<li>Added conversion of pointers or array facades to Java native scalar type arrays</li>
