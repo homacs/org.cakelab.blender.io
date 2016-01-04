@@ -83,20 +83,18 @@ generate new models by themselves without touching the sources.
 
 
 <h2 id="download">Download</h2>
-<h3>Java .Blend SDK</h3>
-<p>
-This package contains the code generator and the data I/O submodule.
-</p>
-<table border="1">
-<tr><th>version</th><th></th><th></th></tr>
-<tr><th>1.0.0</th><td><a href="downloads/JavaBlend-SDK-1.0.0.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.0.zip">src</a></td></tr>
-</table>
-
 <h3>Pregenerated Data Models</h3>
 <p>
 These packages contain pregenerated data models including the utilities package and
-the data I/O submodule. The version numbers provided in the table are Blenders 
-version and minimum version the library is compatible with (refer to the Section <a href="spec.html#FileVersion">"Blender Versioning and File Version"</a> in the <a href="spec.html">documentation</a>).
+the data I/O submodule. The version numbers provided in the table are Blender's version and minimum version 
+the library is compatible with (refer to the Section <a href="spec.html#FileVersion">"Blender Versioning and File Version"</a> in the <a href="spec.html">documentation</a>).
+</p>
+<p><b>Note: </b>Binaries here are under Apache License v2.0. Source code packages contain source 
+code documentation of Java .Blend's externally maintained documentation. Thus, the 
+source code packages are under GPLv3 (see <a href="#Licensing">Licensing</a>).
+</p>
+<p>
+If you need support for a different Blender version or do not want the dependency on GPL then refer to Section <a href="spec.html#GeneratingCode">Generating Data Model and Utilities</a> in the <a href="spec.html">documentation</a>.
 </p>
 <table border="1">
 <tr><th>version</th><th>min. ver.</th><th></th><th></th></tr>
@@ -113,9 +111,26 @@ a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a> 
 <tr><th>1.0.0</th><td><a href="downloads/JavaBlendDemo-1.0.0.zip">binary</a></td><td><a href="downloads/JavaBlendDemo-src-1.0.0.zip">src</a></td></tr>
 </table>
 
+<h3>Java .Blend SDK</h3>
+<p>
+This package contains the code generator and the data I/O submodule.
+</p>
+<table border="1">
+<tr><th>version</th><th></th><th></th></tr>
+<tr><th>1.0.0</th><td><a href="downloads/JavaBlend-SDK-1.0.0.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.0.zip">src</a></td></tr>
+</table>
+
+<h3>Java .Blend's Externally Maintained Documentation</h3>
+<p>
+Source code documentation for generated facade classes is maintained in a separate repository on github.
+</p>
+<p>
+<b>Link: </b><a href="https://github.com/homacs/JavaBlendDocs">https://github.com/homacs/JavaBlendDocs</a>
+</p>
 
 <h2 id="changelog">Change Log</h2>
 <ul>
+<li>[1.0.0]: 1st release. <!-- TODO --></li>
 <li>[0.0.2]: Second tech. demo comprising all specified features
 	<ul>
 	<li>Refactored the hell out of it!</li>
