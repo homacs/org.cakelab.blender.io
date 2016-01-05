@@ -49,10 +49,10 @@ contains type information (meta data) for all C native and
 structured types which can exist in a <code>.blend</code> file.
 </p>
 <p>
-Based on the meta data of any Blender file, it is possible to 
-generate code for a different language, which is capable to read/write 
-data in Blender files of the same version. Java .Blend 
-is a combination of a code generator and a runtime data I/O module. 
+Based on the meta data of any Blender file, it is theoretically possible to 
+generate code, which is capable to read/write 
+data in Blender files of the same version in any programming language. Java .Blend 
+is a combination of a code generator which does exactly this and a runtime data I/O module. 
 Together, they provides a generic any-version Blender file import/export 
 in Java which features all aspects of the Blender DNA data model: The 
 code generator is used at development time to generate Java facade 
@@ -64,18 +64,19 @@ This toolkit was designed with the ambitious goal to serve for any kind of data 
 with Blender. Whether just importing data into another graphics engine, conversion to 
 a different data format or external processing of data to add features to Blender. 
 The fully generic mapping of the entire Blender DNA core data model combined with 
-both import <b>and</b> export supports all of it.
+both, import <b>and</b> export, supports all of it.
 </p>
 <p>
-Working with Blender files requires knowledge about its data model. Java .Blend's
+Working with Blender files requires in-depth knowledge about its data model. Java .Blend's
 documentation provides just a high level overview of the data model and the Javadoc 
-documentation incorporated in the generated facade classes is still incomplete.
-Therefore, the Javadoc source code documentation on generated classes is kept 
-in a <a href="https://github.com/homacs/JavaBlendDocs.git">separate repository 
-on github</a> and everybody is encouraged to contribute to it.
+documentation incorporated in generated facade classes is still incomplete. Instead 
+of forcing everybody to study Blender's source code on his own, everybody is encouraged 
+to contribute to the Javadoc source code documentation on generated classes, which is 
+kept in a <a href="https://github.com/homacs/JavaBlendDocs.git">separate repository 
+on github</a>.
 </p>
 <p> 
-As a side effect of the generic approach Java .Blend has low maintenance effort 
+As a side effect of the generic approach Java .Blend, has low maintenance effort 
 on maintainers side. New details in Blender's DNA will be instantly 
 reflected in the generated data model and implicitly supported during import and export.
 Thus, users don't have to worry about how long they can rely on this library, they can just 
@@ -87,15 +88,19 @@ generate new models by themselves without touching the sources.
 <h3>Pregenerated Data Model Packages</h3>
 <p>
 These packages contain pregenerated data models including the utilities package and
-the data I/O submodule. The version numbers provided in the table below are Blender's version and minimum version 
-the library is compatible with (refer to the Section <a href="spec.html#FileVersion">"Blender Versioning and File Version"</a> in the <a href="spec.html">documentation</a>).
+the data I/O submodule. The version numbers provided in the table below are Blender's 
+version and minimum version the library is compatible with (see also Section 
+<a href="spec.html#FileVersion">"Blender Versioning and File Version"</a> in the 
+<a href="spec.html">documentation</a>).
 </p>
-<p><b>Note: </b>Binaries here are under Apache License v2.0. Source code packages contain source 
+<p><b>Note: </b>Binaries here are under Apache License v2.0, but source code packages contain source 
 code documentation of Java .Blend's externally maintained documentation. Thus, the 
 source code packages are under GPLv3 (see <a href="#Licensing">Licensing</a>).
 </p>
 <p>
-If you need support for a different Blender version or do not want the dependency on GPL then refer to Section <a href="spec.html#GeneratingCode">Generating Data Model and Utilities</a> in the <a href="spec.html">documentation</a>.
+If you need support for a different Blender version or do not want the dependency on GPL 
+then refer to Section <a href="spec.html#GeneratingCode">Generating Data Model and Utilities</a> 
+in the <a href="spec.html">documentation</a>.
 </p>
 <table border="1">
 <tr><th>version</th><th>min. ver.</th><th></th><th></th></tr>
@@ -104,7 +109,8 @@ If you need support for a different Blender version or do not want the dependenc
 
 <h3>Examples</h3>
 <p>
-This package contains various examples for use cases of Java .Blend. Part of this package is a pregenerated Java .Blend data model for Blender v2.69. It uses <a href="https://www.lwjgl.org/">LWJGL</a> and requires
+This package contains various examples for use cases of Java .Blend. Part of this package 
+is a pregenerated Java .Blend data model for Blender v2.69. It uses <a href="https://www.lwjgl.org/">LWJGL</a> and requires
 a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a> (for no particular reason, but you should look at the source code anyway!).
 </p>
 <p>
