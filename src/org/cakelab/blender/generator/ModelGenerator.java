@@ -120,6 +120,14 @@ public class ModelGenerator {
 		blend.close();
 		
 		//
+		// Be verbose
+		//
+		System.out.println("VERSION: " + blend.getVersion().toString());
+		System.out.println("SUBVERSION: " + versionInfo.getSubversion());
+		System.out.println("MINVERSION: " + versionInfo.getMinversion());
+		System.out.println("MINSUBVERSION: " + versionInfo.getMinsubversion());
+		
+		//
 		// load source code documentation
 		//
 		File docfolder = new File(docpath);
