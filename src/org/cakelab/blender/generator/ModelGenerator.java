@@ -122,10 +122,11 @@ public class ModelGenerator {
 		//
 		// Be verbose
 		//
-		System.out.println("VERSION: " + blend.getVersion().toString());
-		System.out.println("SUBVERSION: " + versionInfo.getSubversion());
-		System.out.println("MINVERSION: " + versionInfo.getMinversion());
-		System.out.println("MINSUBVERSION: " + versionInfo.getMinsubversion());
+		System.out.println("Info: Blender version and file version:");
+		System.out.println("\tVERSION: " + blend.getVersion().toString());
+		System.out.println("\tSUBVERSION: " + versionInfo.getSubversion());
+		System.out.println("\tMINVERSION: " + versionInfo.getMinversion());
+		System.out.println("\tMINSUBVERSION: " + versionInfo.getMinsubversion());
 		
 		//
 		// load source code documentation
@@ -137,6 +138,7 @@ public class ModelGenerator {
 			System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo + "'");
 			docfiles = new File[0];
 		} else {
+			System.out.println("Info: doc folder location: " + docfolder.getPath());
 			docfiles = new File[] {
 					new File(docfolder, "/added/doc.json"),
 					new File(docfolder, "/pyapi/doc.json"),

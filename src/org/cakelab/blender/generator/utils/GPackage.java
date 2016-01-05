@@ -11,7 +11,7 @@ public class GPackage {
 	
 	public GPackage(File parentDir, String packageName) {
 		name = packageName;
-		resourcePath = packageName.replace('.', File.separatorChar);
+		resourcePath = packageName.replace('.', '/');
 		dir = new File(parentDir, resourcePath);
 		dir.mkdirs();
 	}
