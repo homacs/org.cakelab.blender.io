@@ -150,19 +150,19 @@ public class MainLibClassGenerator extends ClassGenerator {
 		comment.appendln();
 		comment.appendln("This is the subversion of blender, the data model was generated from.");
 		comment.appendln("Implicitly, it is the maximum subversion the generated import code can understand.");
-		addConstField("public static final", "short", "BLENDER_SUBVERSION", Short.toString(versionInfo.getSubversion()), comment);
+		addConstField("public static final", "short", "BLENDER_SUBVERSION", Integer.toString(versionInfo.getSubversion()), comment);
 
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
 		comment.appendln("Every file with a version lower than this needs conversion.");
-		addConstField("public static final", "short", "BLENDER_MINVERSION", Short.toString(versionInfo.getMinversion()), comment);
+		addConstField("public static final", "short", "BLENDER_MINVERSION", Integer.toString(versionInfo.getMinversion()), comment);
 
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
 		comment.appendln("Every file with a version lower than this needs conversion.");
-		addConstField("public static final", "short", "BLENDER_MINSUBVERSION", Short.toString(versionInfo.getMinsubversion()), comment);
+		addConstField("public static final", "short", "BLENDER_MINSUBVERSION", Integer.toString(versionInfo.getMinsubversion()), comment);
 	}
 
 

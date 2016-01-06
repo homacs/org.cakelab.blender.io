@@ -17,6 +17,7 @@ import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.io.util.Identifier;
 import org.cakelab.blender.metac.CMetaModel;
+import org.cakelab.blender.metac.CStruct;
 
 
 
@@ -219,12 +220,15 @@ public class BlenderFile implements Closeable {
 	}
 	
 	public FileVersionInfo readFileGlobal() throws IOException {
+		CMetaModel meta = getMetaModel();
+		
 		FileVersionInfo versionInfo = null;
 		BlockHeader blockHeader = seekFirstBlock(BlockCodes.ID_GLOB);
 
 		if (blockHeader != null) {
+			CStruct struct = (CStruct) meta.getType("FileGlobal");
 			versionInfo = new FileVersionInfo();
-			versionInfo.read(io);
+			versionInfo.read(struct, io);
 		} else {
 			throw new IOException("Can't find block GLOB (file global version info)");
 		}

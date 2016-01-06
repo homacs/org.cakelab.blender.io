@@ -1,16 +1,18 @@
 package org.cakelab.blender.io;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 import org.cakelab.blender.io.FileHeader.Version;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
-import org.cakelab.blender.io.util.CStringUtils;
+import org.cakelab.blender.metac.CField;
+import org.cakelab.blender.metac.CStruct;
+import org.cakelab.blender.metac.CType;
+import org.cakelab.blender.metac.CType.CKind;
 
 
 /**
- * This class corresponds to struct FileGlobal in DNA.
- * It is stored in a block with code "GLOB".
+ * This class reads the version specifiers from struct FileGlobal
+ * which is stored in block "GLOB".
  * 
  * We need this information here to determine the minimum
  * and maximum blender version, the generated import/export 
@@ -25,67 +27,17 @@ import org.cakelab.blender.io.util.CStringUtils;
  */
 public class FileVersionInfo {
 	/**
-	 * char subvstr[4];
+	 * subversion;
 	 */
-	String subvstr;
+	int subversion;
 	/**
-	 * short subversion;
+	 * minversion;
 	 */
-	short subversion;
+	int minversion;
 	/**
-	 * short pads;
+	 * minsubversion;
 	 */
-	short pads;
-	/**
-	 * short minversion;
-	 */
-	short minversion;
-	/**
-	 * short minsubversion;
-	 */
-	short minsubversion;
-	/**
-	 * short displaymode;
-	 */
-	short displaymode;
-	/**
-	 * short winpos;
-	 */
-	short winpos;
-	/**
-	 * struct bScreen *curscreen;
-	 */
-	long bScreen;
-	/**
-	 * struct Scene *curscene;
-	 */
-	long curscreen;
-	/**
-	 * int fileflags;
-	 */
-	int minflags;
-	/**
-	 * int globalf;
-	 */
-	int globalf;
-	/**
-	 * svn revision from buildinfo 
-	 * 
-	 * int revision;
-	 */
-	int revision;
-	/**
-	 * int pad;
-	 */
-	int pad;
-	/**
-	 * file path where this was saved, for recover
-	 * 
-	 * char filename[1024]; 1024 = FILE_MAX
-	 */
-	String filename;
-	
-
+	int minsubversion;
 	
 	/**
 	 * This is NOT a member of FileGlobal. Its value is received from FileHeader.
@@ -95,73 +47,68 @@ public class FileVersionInfo {
 	
 	/**
 	 * 
+	 * @param struct type info for FileGlobal
 	 * @param cin
 	 * @throws IOException
 	 */
-	public void read(CDataReadWriteAccess cin) throws IOException {
-		byte[] buf = new byte[4];
-		cin.readFully(buf);
-		subvstr = CStringUtils.toString(buf, true);
+	public void read(CStruct struct, CDataReadWriteAccess cin) throws IOException {
+		// need to find 3 fields in the struct
+		int remaining = 3;
+		for (CField field : struct.getFields()) {
+			if (field.getName().equals("subversion")) {
+				subversion = getIntegerValue(field, cin);
+				remaining--;
+			} else if (field.getName().equals("minversion")) {
+				minversion = getIntegerValue(field, cin);
+				remaining--;
+			} else if (field.getName().equals("minsubversion")) {
+				minsubversion = getIntegerValue(field, cin);
+				remaining--;
+			} else {
+				skipField(field, cin);
+			}
+			if (remaining == 0) {
+				// all necessary fields read -> leave
+				break;
+			}
+		}
 		
-		subversion = cin.readShort();
-		
-		pads = cin.readShort();
-		
-		minversion = cin.readShort();
-		
-		minsubversion = cin.readShort();
-		
-		displaymode = cin.readShort();
-		
-		winpos = cin.readShort();
-		
-		bScreen = cin.readLong();
-		
-		curscreen = cin.readLong();
-		
-		minflags = cin.readInt();
-		
-		globalf = cin.readInt();
-		
-		revision = cin.readInt();
-		
-		pad = cin.readInt();
-		
-		buf = new byte[1024];
-		cin.readFully(buf);
-		filename = CStringUtils.toNullTerminatedString(buf, Charset.forName("UTF-8"));
+		if (remaining != 0) {
+			throw new IOException("didn't found all required version specifiers in FileGlobal");
+		}
 	}
 
-	public String getSubvstr() {
-		return subvstr;
+	private void skipField(CField field, CDataReadWriteAccess cin) throws IOException {
+		cin.skip(field.getType().sizeof(cin.getPointerSize()));
 	}
 
-	public short getSubversion() {
+	private int getIntegerValue(CField field, CDataReadWriteAccess cin) throws IOException {
+		CType type = field.getType();
+		if (type.getKind().equals(CKind.TYPE_SCALAR)) {
+			String typeName = type.getSignature();
+			if (typeName.contains("short")) {
+				return cin.readShort();
+			} else if (typeName.contains("int")) {
+				return cin.readInt();
+			} else if (typeName.contains("int64")) {
+				return (int) cin.readInt64();
+			} else if (typeName.contains("long")) {
+				return (int) cin.readLong();
+			}
+		}
+		throw new IOException("version specifier field not an integer value");
+	}
+
+	public int getSubversion() {
 		return subversion;
 	}
 
-	public short getMinversion() {
+	public int getMinversion() {
 		return minversion;
 	}
 
-	public short getMinsubversion() {
+	public int getMinsubversion() {
 		return minsubversion;
-	}
-
-	public int getMinflags() {
-		return minflags;
-	}
-
-	public int getGlobalf() {
-		return globalf;
-	}
-
-	public int getRevision() {
-		return revision;
-	}
-
-	public String getFilename() {
-		return filename;
 	}
 
 	public Version getVersion() {

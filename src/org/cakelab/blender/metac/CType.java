@@ -11,7 +11,7 @@ import org.cakelab.blender.io.Encoding;
 public class CType {
 
 	/**
-	 * Provides information about the kind of type.
+	 * Provides information about the kind of data type.
 	 * 
 	 * @author homac
 	 *
@@ -58,10 +58,26 @@ public class CType {
 		this.size64 = size64;
 	}
 
+	/**
+	 * In case of a multidimensional array, this will 
+	 * return the length of the array of the first 
+	 * dimension. The length of the array of the next 
+	 * dimension can be determined by 
+	 * getReferencedType().getArrayLength()
+	 * and so forth.
+	 * @return
+	 */
 	public int getArrayLength() {
 		return arrayLength;
 	}
 
+	/** 
+	 * In case of a pointer, this will return the type of
+	 * elements, the pointer points to.
+	 * In case of an array, this will return the arrays 
+	 * component type.
+	 * @return referenced type.
+	 */
 	public CType getReferencedType() {
 		return referencedType;
 	}
@@ -87,6 +103,11 @@ public class CType {
 		return totalLength;
 	}
 
+	/**
+	 * Returns the overall size of this type considering specifica such as array lengths.
+	 * @param addressWidth
+	 * @return
+	 */
 	public int sizeof(int addressWidth) {
 		switch(addressWidth) {
 		case Encoding.ADDR_WIDTH_32BIT:

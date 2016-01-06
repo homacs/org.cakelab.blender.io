@@ -7,10 +7,11 @@ import org.cakelab.json.JSONException;
 
 public class Test {
 	public static void main(String[] args) throws IOException, JSONException {
-		String home = System.getProperty("user.home");
-		String version = "2.69";
-		String blender_prefs = home + "/.config/blender/" + version + "/config/userpref.blend";
-		File input = new File(blender_prefs);
+//		String home = System.getProperty("user.home");
+//		String version = "2.69";
+//		String blender_file = home + "/.config/blender/" + version + "/config/userpref.blend";
+		String blender_file = "versions/2.76.0-2.70.5.blend";
+		File input = new File(blender_file);
 		File output = new File("../JavaBlendDemo/gen");
 		String javaPackage = "org.blender";
 

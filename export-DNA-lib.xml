@@ -6,7 +6,7 @@
 		<property name="blender.version" value="2.76"/>
 		<property name="blender.cfgdir" value="${user.home}/.config/blender"/>
 		<!--property name="input" value="${blender.cfgdir}/${blender.version}/config/userpref.blend"/-->
-		<property name="input" value="versions/2.76.blend"/>
+		<property name="input" value="versions/2.76.0-2.70.5.blend"/>
 		<property name="blender.java.package" value="org.blender"/>
 		<property name="java.blend.docs" value="../JavaBlendDocs/resources/dnadoc"/>
 		<!--property name="web.downloads" value="${user.home}/tmp/public_html/projects/JavaBlend/downloads"/-->
