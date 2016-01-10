@@ -42,6 +42,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 		addImport(BlenderFile.class);
 		addImport(MainLibBase.class);
 		addImport(IOException.class);
+		addImport(FileVersionInfo.class);
 		
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
@@ -107,17 +108,17 @@ public class MainLibClassGenerator extends ClassGenerator {
 
 	private void addVersionCheckMethod() {
 		GComment comment = new GComment(GComment.Type.JavaDoc);
-		comment.appendln("\n"
-				+ "This method checks whether the given file is supported by the");
+		comment.appendln("\n");
+		comment.appendln("This method checks whether the given file is supported by");
 		comment.appendln("the generated data model.");
+		comment.appendln("You can get file version info from {@link BlenderFile#readFileGlobal}.");
+		
 		GMethod method = new GMethod(0);
 		method.setComment(comment);
-		method.appendln("public boolean "+ MEMBER_doVersionCheck + "() throws IOException {");
+		method.appendln("public static boolean "+ MEMBER_doVersionCheck + "(FileVersionInfo fileVersionInfo) throws IOException {");
 		method.indent(+1);
-		method.appendln("int version = " + MEMBER_blendFile + ".getVersion().getCode();");
-		method.appendln("if (" + MEMBER_fileGlobal + " != null) {");
-		method.indent(+1);
-		method.appendln("short subversion = " + MEMBER_fileGlobal + ".getSubversion();");
+		method.appendln("int version = fileVersionInfo.getVersion().getCode();");
+		method.appendln("int subversion = fileVersionInfo.getSubversion();");
 		method.appendln("return (version > BLENDER_MINVERSION ");
 		method.indent(+2);
 		method.appendln("|| (version == BLENDER_MINVERSION && subversion >= BLENDER_MINSUBVERSION))");
@@ -126,12 +127,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 		method.indent(+1);
 		method.appendln("(version < BLENDER_VERSION ");
 		method.appendln("|| (version == BLENDER_VERSION && subversion <= BLENDER_SUBVERSION));");
-		method.indent(-3);
-		method.appendln("} else {");
-		method.indent(+1);
-		method.appendln("return version > BLENDER_MINVERSION && version <= BLENDER_VERSION;");
-		method.indent(-1);
-		method.appendln("}");
+		method.indent(-2);
 		method.indent(-1);
 		method.appendln("}");
 		addMethod(method);
