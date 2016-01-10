@@ -25,7 +25,6 @@ public class MainLibClassGenerator extends ClassGenerator {
 
 	private static final String CLASSNAME = "MainLib";
 	private static final String MEMBER_fileGlobal = "fileGlobal";
-	private static final String MEMBER_blendFile = "blenderFile";
 	private static final String MEMBER_doVersionCheck = "doVersionCheck";
 	
 	private GComment comment;
