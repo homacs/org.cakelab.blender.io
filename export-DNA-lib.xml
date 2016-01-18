@@ -2,7 +2,7 @@
 <project default="package" name="Generate and Package a Java .Blend Data Model">
 	
 	<target name="init">
-		<property name="version" value="1.0.3"/>
+		<property name="version" value="1.0.4"/>
 		<!-- TODO: enumerate .blend versions -->
 		
 		<property name="blender.version" value="2.76"/>
