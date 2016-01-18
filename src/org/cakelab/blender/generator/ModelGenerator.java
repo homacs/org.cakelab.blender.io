@@ -138,7 +138,7 @@ public class ModelGenerator {
 			System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo + "'");
 			docfiles = new File[0];
 		} else {
-			System.out.println("Info: doc folder location: " + docfolder.getPath());
+			System.out.println("Info: selected documentation: " + docfolder.getPath());
 			docfiles = new File[] {
 					new File(docfolder, "/added/doc.json"),
 					new File(docfolder, "/pyapi/doc.json"),
@@ -150,6 +150,10 @@ public class ModelGenerator {
 		//
 		// generate model
 		//
+		System.out.println("Info: generating source code. ");
+		System.out.println("\tOutput folder:    " + output);
+		System.out.println("\tPackage:          " + javaPackage);
+		System.out.println("\tUtils generation: " + (generateUtils ? "enabled" : "disabled"));
 		ModelGenerator generator = new ModelGenerator(model, versionInfo, generateUtils);
 		generator.generate(output, javaPackage, docs, debug);
 		
@@ -159,6 +163,7 @@ public class ModelGenerator {
 		File resourcesDir = new File(output, javaPackage.replace('.', File.separatorChar) + File.separator + PACKAGE_LIB + File.separator + "resources");
 		resourcesDir.mkdirs();
 		File sdnaImageFile = new File(resourcesDir, "sdna.blend");
+		System.out.println("Info: creating sdna image at: " + sdnaImageFile.getAbsolutePath());
 		sdnaImageFile.delete();
 		sdnaImageFile.createNewFile();
 		@SuppressWarnings("resource")

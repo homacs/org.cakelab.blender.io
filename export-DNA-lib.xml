@@ -2,7 +2,7 @@
 <project default="package" name="Generate and Package a Java .Blend Data Model">
 	
 	<target name="init">
-		<property name="version" value="1.0.2"/>
+		<property name="version" value="1.0.3"/>
 		<!-- TODO: enumerate .blend versions -->
 		
 		<property name="blender.version" value="2.76"/>
@@ -18,12 +18,14 @@
 		
 		<property name="blender.cfgdir" value="${user.home}/.config/blender"/>
 		<property name="blender.java.package" value="org.blender"/>
+		<property name="blender.java.package.dir" value="org.blender"/>
 		<property name="java.blend.docs" value="../JavaBlendDocs/resources/dnadoc"/>
 		<property name="web.downloads" value="${user.home}/tmp/public_html/projects/JavaBlend/downloads"/>
 		<property name="project.name" value="JavaBlend"/>
 		<property name="package.name" value="${project.name}-${version}-DNA-${blender.version}"/>
         <property name="workdir" value="${java.io.tmpdir}/${package.name}"/>
         <property name="srcdir" value="${workdir}/src"/>
+		<property name="bindir" value="${workdir}/bin"/>
 		<property name="jarfile" value="${web.downloads}/${package.name}.jar"/>
 		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.version}.zip"/>
 
@@ -33,14 +35,17 @@
 		</delete>
         <mkdir dir="${workdir}"/>
         <mkdir dir="${srcdir}"/>
+        <mkdir dir="${bindir}"/>
 	</target>
 	
 	<target name="generate" depends="init">
+		<echo message="generating source code"/>
 		<java classname="org.cakelab.blender.generator.ModelGenerator">
 			<arg value="-in"/><arg file="${input}"/>
 			<arg value="-out"/><arg file="${srcdir}"/>
 			<arg value="-p"/><arg value="${blender.java.package}"/>
 			<arg value="-c"/><arg file="${java.blend.docs}"/>
+			<arg value="-u"/><arg value="true"/>
 			<classpath>
 	      		<pathelement location="bin"/>
 	      		<pathelement location="../org.cakelab.json/bin"/>
@@ -63,10 +68,13 @@
 	</target>
 
 	<target name="package.src" depends="generate">
+		<echo message="creating source code package"/>
 		<copy todir="${workdir}">
 			<fileset dir="." casesensitive="yes">
 				<include name="doc/**/*"/>
 				<include name="licenses/**/*"/>
+				<include name="export-DNA-lib.xml"/>
+				<include name="generate.sh"/>
 			</fileset>
 		</copy>
 		
@@ -77,10 +85,7 @@
 	</target>
 	
 	<target name="compile" depends="generate">
-		
-		<property name="bindir" value="${workdir}/bin"/>
-        <mkdir dir="${bindir}"/>
-
+		<echo message="compiling"/>
 		<javac srcdir="${srcdir}"
 			destdir="${bindir}"
 			classpath="${jarfile}"
@@ -88,9 +93,18 @@
 			includeAntRuntime="false"
 			compiler="modern"
 		/>
+		<echo message="copying resources"/>
+		<copy todir="${bindir}">
+			<fileset dir="${srcdir}" casesensitive="yes">
+				<include name="**/*"/>
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
 	</target>
 	
 	<target name="package.bin" depends="compile">
+		<echo message="creating binary package"/>
+		
 		<jar destfile="${jarfile}" basedir="${bindir}">
 			<include name="**/*"/>
 		</jar>

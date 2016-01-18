@@ -16,7 +16,7 @@
 <body>
 <h1 style="text-align: center">Java .Blend</h1>
 <br/>
-<p style="text-align: center"><em>Providing Type Safe Read/Write File Access to</em></p>
+<p style="text-align: center"><em>Providing Type-Safe Read/Write File Access to</em></p>
 <p style="text-align: center"><em>the Full Blender DNA in Java</em></p>
 <br/>
 <p style="text-align: center"><b>Version ${project.version}</b></p>
@@ -93,6 +93,12 @@ version and minimum version the library is compatible with (see also Section
 <a href="spec.html#FileVersion">"Blender Versioning and File Version"</a> in the 
 <a href="spec.html">documentation</a>).
 </p>
+<p>
+<b style="text-align: center"><em>Attention: Just found a compatibility issue. Currently, generated libraries 
+		can only read files of the same Blender version!<br/>
+		I'm going to fix that as soon as possible!</em></b>
+
+</p>
 <p><b>Note: </b>Binaries here are under Apache License v2.0, but source code packages contain source 
 code documentation of Java .Blend's externally maintained documentation. Thus, the 
 source code packages are under GPLv3 (see <a href="#Licensing">Licensing</a>).
@@ -104,9 +110,9 @@ in the <a href="spec.html">documentation</a>.
 </p>
 <table border="1">
 <tr><th>version</th><th>minversion</th><th></th><th></th></tr>
-<tr><th>2.76-0</th><th>2.70-5</th><td><a href="downloads/JavaBlend-1.0.2-DNA-2.76.jar">binary</a></td><td><a href="downloads/JavaBlend-src-1.0.2-DNA-2.76.zip">src</a></td></tr>
-<tr><th>2.72-2</th><th>2.70-5</th><td><a href="downloads/JavaBlend-1.0.2-DNA-2.72.jar">binary</a></td><td><a href="downloads/JavaBlend-src-1.0.2-DNA-2.72.zip">src</a></td></tr>
-<tr><th>2.69-0</th><th>2.62-0</th><td><a href="downloads/JavaBlend-1.0.2-DNA-2.69.jar">binary</a></td><td><a href="downloads/JavaBlend-src-1.0.2-DNA-2.69.zip">src</a></td></tr>
+<tr><th>2.76-0</th><th>2.70-5</th><td><a href="downloads/JavaBlend-1.0.3-DNA-2.76.jar">binary</a></td><td><a href="downloads/JavaBlend-src-1.0.3-DNA-2.76.zip">src</a></td></tr>
+<tr><th>2.72-2</th><th>2.70-5</th><td><a href="downloads/JavaBlend-1.0.3-DNA-2.72.jar">binary</a></td><td><a href="downloads/JavaBlend-src-1.0.3-DNA-2.72.zip">src</a></td></tr>
+<tr><th>2.69-0</th><th>2.62-0</th><td><a href="downloads/JavaBlend-1.0.3-DNA-2.69.jar">binary</a></td><td><a href="downloads/JavaBlend-src-1.0.3-DNA-2.69.zip">src</a></td></tr>
 </table>
 
 <h3>Examples</h3>
@@ -120,8 +126,8 @@ An overview of the contents of the examples package is given <a href="demo/index
 </p>
 <table border="1">
 <tr><th>version</th><th></th><th></th></tr>
+<tr><th>1.0.3</th><td><a href="demo/downloads/JavaBlendDemo-1.0.3.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-1.0.3.zip">src</a></td></tr>
 <tr><th>1.0.2</th><td><a href="demo/downloads/JavaBlendDemo-1.0.2.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-1.0.2.zip">src</a></td></tr>
-<tr><th>1.0.1</th><td><a href="demo/downloads/JavaBlendDemo-1.0.1.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-1.0.1.zip">src</a></td></tr>
 </table>
 
 <h3>Java .Blend SDK</h3>
@@ -133,8 +139,8 @@ below, if you want source code documentation in generated facade classes.
 </p>
 <table border="1">
 <tr><th>version</th><th></th><th></th></tr>
+<tr><th>1.0.3</th><td><a href="downloads/JavaBlend-SDK-1.0.3.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.3.zip">src</a></td></tr>
 <tr><th>1.0.2</th><td><a href="downloads/JavaBlend-SDK-1.0.2.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.2.zip">src</a></td></tr>
-<tr><th>1.0.1</th><td><a href="downloads/JavaBlend-SDK-1.0.1.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.1.zip">src</a></td></tr>
 </table>
 
 <h3>Java .Blend's Externally Maintained Documentation</h3>
@@ -147,6 +153,11 @@ Source code documentation for generated facade classes is maintained in a separa
 
 <h2 id="changelog">Change Log</h2>
 <ul>
+<li>[1.0.3-r738][18/01/2016]: fixed build issue
+	<ul>
+	<li>Fixed missing sdna image.</li>
+	</ul>
+</li>
 <li>[1.0.2-r738][10/01/2016]: minor improvement
 	<ul>
 	<li>Added static method to check file before instantiating MainLib.</li>
