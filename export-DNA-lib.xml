@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="package" name="Generate and Package a Java .Blend Data Model">
+<project default="package.all" name="Generate and Package a Java .Blend Data Model">
 	
 	<target name="init">
 		<property name="version" value="1.0.4"/>
-		<!-- TODO: enumerate .blend versions -->
-		
-		<property name="blender.version" value="2.76"/>
-		<property name="input" value="versions/2.76.0-2.70.5.blend"/>
-		<!--
-		<property name="blender.version" value="2.72"/>
-		<property name="input" value="versions/2.72.2-2.70.5.blend"/>
-		-->
-		<!--
-		<property name="blender.version" value="2.69"/>
-		<property name="input" value="versions/2.69.0-2.62.0.blend"/>
-		-->
 		
 		<property name="blender.cfgdir" value="${user.home}/.config/blender"/>
 		<property name="blender.java.package" value="org.blender"/>
@@ -111,6 +99,21 @@
 	</target>
 	<target name="package" depends="package.bin,package.src">
 		<echo message="done."/>
+	</target>
+	
+	<target name="package.all">
+		<antcall target="package">
+			<param name="blender.version" value="2.76"/>
+			<param name="input" value="versions/2.76.0-2.70.5.blend"/>
+		</antcall>
+		<antcall target="package">
+			<param name="blender.version" value="2.72"/>
+			<param name="input" value="versions/2.72.2-2.70.5.blend"/>
+		</antcall>
+		<antcall target="package">
+			<param name="blender.version" value="2.69"/>
+			<param name="input" value="versions/2.69.0-2.62.0.blend"/>
+		</antcall>
 	</target>
 	
 </project>
