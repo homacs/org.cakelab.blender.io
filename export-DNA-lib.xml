@@ -17,7 +17,7 @@
 		<property name="jarfile" value="${web.downloads}/${package.name}.jar"/>
 		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.version}.zip"/>
 
-		<delete failonerror="false" includeEmptyDirs="true">
+		<delete failonerror="true" includeEmptyDirs="true">
 			<fileset dir="${workdir}"/>
 			<fileset file="${zipfile}"/>
 		</delete>
