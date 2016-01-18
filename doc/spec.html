@@ -22,8 +22,9 @@
 
 
 <p>
-This is the documentation of the <a href="index.html">Java .Blend</a> generic Blender file import/export toolkit for Java.
-Blender is an open source 3D graphic design and rendering environment which supports import and
+This is the documentation of the <a href="index.html">Java .Blend</a> generic Blender 
+file import/export toolkit for Java.
+Blender is an open source 3D graphics modelling and rendering environment which supports import and
 export of various file formats such as FBX and Collada. Imports and exports always require
 a mapping between different formats which inevitably involves compromises, resulting in 
 loss of information. Java .Blend aims to fill the gap for Java programmers, who want 
@@ -327,7 +328,7 @@ in respect to DNA model compatibility, based on additional version specifiers.
 This block contains the struct <code>FileGlobal</code>.
 </p>
 <p>
-A full version check has to consider theses four version specifiers:
+A full version check in Blender considers theses four version specifiers:
 </p>
 <dl>
 <dt>VERSION (file header)</dt>
@@ -340,8 +341,10 @@ the Blender instance would be a concatenation of <code>VERSION</code> and
 <code>SUBVERSION</code>.</dd>
 <dt>MINVERSION (FileGlobal)</dt>
 <dd>This version specifier refers to the minimal version, this file will 
-be model-equivalent to. Which means, that the Blender DNA was the same,
-starting from <code>MINVERSION</code> up to <code>VERSION</code>.</dd>
+be model-equivalent to. Which means, that the Blender DNA in version <code>VERSION</code>
+still contains all structs and member variables of structs to cover all data given in
+<code>.blend</code> files starting from <code>MINVERSION</code> up to <code>VERSION</code>.
+</dd>
 <dt>MINSUBVERSION (FileGlobal)</dt>
 <dd>This is a version extension similar to <code>SUBVERSION</code> (i.e. 
 build number of the first version, which had the same DNA). </dd>
@@ -349,7 +352,16 @@ build number of the first version, which had the same DNA). </dd>
 
 <p>
 Based on this information a system can consider a given file to be compatible with Blender 
-in a version starting from <code>MINVERSION, MINSUBVERSION</code> up to <code>VERSION, SUBVERSION</code>.
+in a version starting from <code>MINVERSION, MINSUBVERSION</code> up to 
+<code>VERSION, SUBVERSION</code>. This does not mean, that the DNA has not changed 
+during this period. It just means that all structs and member variables present at 
+<code>MINVERSION</code> are still available in version <code>VERSION</code>. Structs 
+can be added, member variables can be added to existing structs, types of member variables
+can change and even the semantic of data can change. Thus, reading a file of one version
+which is considered compatible, but not of the same version as the current DNA, is subject to
+several conversion procedures before it is available to the system. Those conversion procedures
+can be found in blenders source code in files 
+<code>source/blender/blenloader/intern/versioning_*.c</code>. 
 </p>
 
 <h2 id="BlockOrder">Block Order</h2>
@@ -403,7 +415,8 @@ in heap memory at runtime.
 Blender file is provided by the data I/O sub-module (see image below) which is 
 working behind the scenes at runtime. It is responsible to transfer data between file and heap memory and
 supports facades of the data model in address translation, type 
-conversion and data access in general. 
+conversion and data access in general. Please note, that Java .Blend 
+does not include code for conversion between different DNA versions. 
 </dd>
 </dl>
 

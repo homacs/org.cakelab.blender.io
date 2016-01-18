@@ -74,9 +74,13 @@ public class BlenderFile implements Closeable {
 
 	private BlockList blocks;
 
+
+	private File file;
+
 	
 	public BlenderFile(File file) throws IOException {
 		this(CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), Encoding.JAVA_NATIVE));
+		this.file = file;
 		// proceed from here with an input stream which decodes data according to its endianess
 		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), getEncoding());
 		readStructDNA();
@@ -335,5 +339,9 @@ public class BlenderFile implements Closeable {
 	 */
 	public void add(Block block) {
 		blocks.add(block);
+	}
+
+	public File getFile() {
+		return file;
 	}
 }

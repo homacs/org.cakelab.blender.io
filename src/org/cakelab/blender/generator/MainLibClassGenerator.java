@@ -26,6 +26,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 	private static final String CLASSNAME = "MainLib";
 	private static final String MEMBER_fileGlobal = "fileGlobal";
 	private static final String MEMBER_doVersionCheck = "doVersionCheck";
+	private static final String MEMBER_doCompatibilityCheck = "doCompatibilityCheck";
 	
 	private GComment comment;
 	private GPackage dnaPackage;
@@ -65,6 +66,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 		addVersionSpecifiers(modelgen.getVersionInfo());
 		
 		addVersionCheckMethod();
+		addCompatibilityCheckMethod();
 		addGetFirstMethod();
 		
 		addField("private", CLASSNAME, "next", "Linkage between main libraries.");
@@ -108,13 +110,40 @@ public class MainLibClassGenerator extends ClassGenerator {
 	private void addVersionCheckMethod() {
 		GComment comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln("\n");
-		comment.appendln("This method checks whether the given file is supported by");
-		comment.appendln("the generated data model.");
+		comment.appendln("This method checks whether the given file is of the same version");
+		comment.appendln("as the generated data model.");
 		comment.appendln("You can get file version info from {@link BlenderFile#readFileGlobal}.");
 		
 		GMethod method = new GMethod(0);
 		method.setComment(comment);
 		method.appendln("public static boolean "+ MEMBER_doVersionCheck + "(FileVersionInfo fileVersionInfo) throws IOException {");
+		method.indent(+1);
+		method.appendln("int version = fileVersionInfo.getVersion().getCode();");
+		method.appendln("int subversion = fileVersionInfo.getSubversion();");
+		method.appendln("return (version == BLENDER_VERSION && subversion == BLENDER_SUBVERSION);");
+		method.indent(-1);
+		method.appendln("}");
+		addMethod(method);
+	}
+
+	private void addCompatibilityCheckMethod() {
+		GComment comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln("\n");
+		comment.appendln("This method checks whether the given file contains data that can be converted");
+		comment.appendln("into the generated data model. This means, that the data model contains all");
+		comment.appendln("required structs and structs have all required member variables to");
+		comment.appendln("hold all information given in the file but it has to be converted.");
+		comment.appendln("");
+		comment.appendln("<em>Please note that conversion requires to take into account all semantic ");
+		comment.appendln("reinterpretation to be found in Blender's source code in files ");
+		comment.appendln("<code>source/blender/blenloader/intern/versioning_*.c</code>. Thus, it is ");
+		comment.appendln("not enough to just apply type conversions on raw data.</em>");
+		comment.appendln();
+		comment.appendln("You can get file version info from {@link BlenderFile#readFileGlobal}.");
+		
+		GMethod method = new GMethod(0);
+		method.setComment(comment);
+		method.appendln("public static boolean "+ MEMBER_doCompatibilityCheck + "(FileVersionInfo fileVersionInfo) throws IOException {");
 		method.indent(+1);
 		method.appendln("int version = fileVersionInfo.getVersion().getCode();");
 		method.appendln("int subversion = fileVersionInfo.getSubversion();");
