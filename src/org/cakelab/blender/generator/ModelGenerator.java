@@ -127,6 +127,7 @@ public class ModelGenerator {
 		System.out.println("\tSUBVERSION: " + versionInfo.getSubversion());
 		System.out.println("\tMINVERSION: " + versionInfo.getMinversion());
 		System.out.println("\tMINSUBVERSION: " + versionInfo.getMinsubversion());
+		System.out.println("Info: working directory: " + System.getProperty("user.dir"));
 		
 		//
 		// load source code documentation
@@ -135,7 +136,7 @@ public class ModelGenerator {
 		File[] docfiles = null;
 		docfolder = Documentation.getDocFolder(docfolder, versionInfo);
 		if (docfolder == null) {
-			System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo + "'");
+			System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo.getVersion() + "' in doc folder '" + docpath.toString() + "'");
 			docfiles = new File[0];
 		} else {
 			System.out.println("Info: selected documentation: " + docfolder.getPath());

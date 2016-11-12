@@ -1,12 +1,41 @@
 #!/bin/bash
 #
 # This is a script to generate Java classes from a .blend file.
+# By default, it uses information gathered from the installed 
+# blender version.
 #
 # -homac
 #
 
 
 ################# CONFIGURATION SECTION ################
+# use this switch to 
+DEVEL_VERSION=false
+
+if $DEVEL_VERSION ; then
+	# BLENDER_DEV_PATH
+	# Path to .
+	BUILD_PATH="/home/homac/repos/git/blender.org/blender/build"
+	
+	# BLENDER_SYSTEM_DATAFILES
+	BLENDER_SYSTEM_DATAFILES="$BUILD_PATH/release/datafiles"
+	
+	# BLENDER_SYSTEM_SCRIPTS
+	BLENDER_SYSTEM_SCRIPTS="$BUILD_PATH/../release/scripts"
+	
+	# LD_LIBRARY_PATH
+	LD_LIBRARY_PATH="$BUILD_PATH/lib"
+	
+	# BLENDER
+	# Command line to execute blender binary.
+	BLENDER="$BLENDER_PATH/bin/blender"
+else
+	# BLENDER
+	# Command line to execute blender binary.
+	BLENDER=blender
+fi
+
+
 
 #
 # VERSION
@@ -14,7 +43,7 @@
 # (see INPUT below). We receive the version from the Blender process
 # but you can even set a fixed version number.
 #
-VERSION=`blender -v | grep "Blender" | head -n 1 | awk '{print $2}'`
+VERSION=`$BLENDER -v | grep "Blender" | head -n 1 | awk '{print $2}'`
 
 #
 # INPUT 

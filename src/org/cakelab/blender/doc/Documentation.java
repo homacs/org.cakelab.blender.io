@@ -270,7 +270,7 @@ public class Documentation implements DocumentationProvider {
 			}
 		});
 		File subfolder = null;
-		if (folders.length > 0) {
+		if (folders != null && folders.length > 0) {
 			int maxVersion = versionInfo.getVersion().getCode();
 			int minVersion = versionInfo.getMinversion();
 			int subfolderVer = -1;
