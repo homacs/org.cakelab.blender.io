@@ -107,7 +107,7 @@ public class BlockTable {
 		if (i >= 0) {
 			block = sorted.get(i);
 		} else {
-			// if the address lies between two block starts addresses, then 
+			// if the address lies between two block start addresses, then 
 			// -i-1 is the pos of the block with start address larger
 			// than address. But we need the block with a start address
 			// lower than address. Thus, -i-2
@@ -178,7 +178,7 @@ public class BlockTable {
 	}
 
 	/** This method removes the given block from the block list, and releases
-	 * the its allocated memory region (to be available for allocation again).
+	 * its allocated memory region (to be available for allocation again).
 	 * @param block
 	 */
 	public void free(Block block) {
@@ -261,8 +261,6 @@ public class BlockTable {
 	public List<Block> getBlocksSorted() {
 		return sorted;
 	}
-
-
 
 	
 }

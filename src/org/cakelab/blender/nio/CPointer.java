@@ -452,7 +452,7 @@ public class CPointer<T> extends CFacade {
 	}
 	
 	/**
-	 * Copyies 'len' bytes from the memory referenced by this pointer 
+	 * Copies 'len' bytes from the memory referenced by this pointer 
 	 * to the given 'data' array starting at index 'off'.
 	 * 
 	 * @param data Array, to copy the data to.
@@ -469,7 +469,7 @@ public class CPointer<T> extends CFacade {
 	}
 
 	/**
-	 * Copyies 'len' elements from from the given 'data' array starting at index 'off'
+	 * Copies 'len' elements from from the given 'data' array starting at index 'off'
 	 * to the memory referenced by this pointer.
 	 * 
 	 * @param data Array, to copy the data from.
