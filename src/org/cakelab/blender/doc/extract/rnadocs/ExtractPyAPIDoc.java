@@ -1,4 +1,4 @@
-package org.cakelab.blender.doc.extract;
+package org.cakelab.blender.doc.extract.rnadocs;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.cakelab.blender.doc.Documentation;
-import org.cakelab.blender.generator.ModelGenerator;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONObject;
 
@@ -39,7 +38,10 @@ public class ExtractPyAPIDoc extends Documentation {
 		while (null != (line = in.readLine())) {
 			parse(line);
 		}
-		out = new File(out, version + "/pyapi/doc.json");
+		out = new File(out, version);
+		out = new File(out, "pyapi");
+		out.mkdirs();
+		out = new File(out, "doc.json");
 		super.write(out);
 		
 	}
@@ -169,7 +171,7 @@ public class ExtractPyAPIDoc extends Documentation {
 	}
 
 	private static void synopsis() {
-		Class<?> clazz = ModelGenerator.class;
+		Class<?> clazz = ExtractPyAPIDoc.class;
 		System.err.println("Synopsis: java " + clazz.getName() + " -in docTextFile -out outputFolder -v blenderVersionStr");
 		System.err.println("Example: java " + clazz.getName() + " -in pyapi.txt -out ./resources/dnadoc -v 2.69");
 		System.err.println("\t\treads documentation text file pyapi.txt retreived from blender\n"

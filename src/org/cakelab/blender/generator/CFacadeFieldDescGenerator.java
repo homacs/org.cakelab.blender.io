@@ -43,10 +43,7 @@ public class CFacadeFieldDescGenerator extends FieldVisitor {
 		String typeList = getTypeList(jtype, ctype);
 		javadoc.appendln();
 		javadoc.appendln("Field descriptor (offset) for struct member '" + field.getName() + "'.");
-		if (getFieldDoc() != null) {
-			javadoc.appendln("<h3>Field Documentation</h3>");
-			javadoc.appendln(getFieldDoc());
-		}
+		appendFieldDoc(javadoc);
 		javadoc.appendln("<h3>Pointer Arithmetics</h3>");
 		javadoc.appendln("<p>");
 		javadoc.appendln("This is how you get a reference on the corresponding field in the struct:");

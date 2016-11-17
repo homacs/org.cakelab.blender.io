@@ -31,7 +31,7 @@ public class ModelGenerator {
 	}
 
 	private void generate(File destinationDir, String packageName, DocumentationProvider docs, boolean debug) throws IOException {
-		if(!destinationDir.exists()) throw new IOException("Directory " + destinationDir + "does not exist");
+		if(!destinationDir.exists()) throw new IOException("Directory " + destinationDir + " does not exist");
 		GPackage dnaPackage = new GPackage(destinationDir, packageName + ".dna");
 		GPackage loaderPackage = new GPackage(destinationDir, packageName + "." + PACKAGE_LIB);
 		

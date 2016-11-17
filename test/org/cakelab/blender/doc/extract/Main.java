@@ -3,6 +3,8 @@ package org.cakelab.blender.doc.extract;
 import java.io.File;
 import java.io.IOException;
 
+import org.cakelab.blender.doc.extract.rnadocs.ExtractPyAPIDoc;
+
 public class Main {
 	public static void main(String[] args) throws IOException {
 

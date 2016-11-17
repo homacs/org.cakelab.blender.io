@@ -180,6 +180,7 @@ public class CFacadeGetMethodGenerator extends MethodGenerator implements CFacad
 
 		javadoc.appendln();
 		javadoc.appendln("Get method for struct member '" + field.getName() + "'.");
+		appendFieldDoc(javadoc);
 		javadoc.appendln("@see #" + super.getFieldDescriptorName(field.getName()));
 		
 		

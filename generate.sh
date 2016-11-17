@@ -10,31 +10,25 @@
 
 ################# CONFIGURATION SECTION ################
 # use this switch to 
-DEVEL_VERSION=false
+BLENDER_DEVEL_ENV=false
 
-if $DEVEL_VERSION ; then
+
+BLENDER=$HOME/opt/blender-2.78a-linux-glibc211-x86_64/blender
+
+if $BLENDER_DEVEL_ENV ; then
 	# BLENDER_DEV_PATH
 	# Path to .
 	BUILD_PATH="/home/homac/repos/git/blender.org/blender/build"
 	
 	# BLENDER_SYSTEM_DATAFILES
-	BLENDER_SYSTEM_DATAFILES="$BUILD_PATH/release/datafiles"
+	export BLENDER_SYSTEM_DATAFILES="$BUILD_PATH/release/datafiles"
 	
 	# BLENDER_SYSTEM_SCRIPTS
-	BLENDER_SYSTEM_SCRIPTS="$BUILD_PATH/../release/scripts"
+	export BLENDER_SYSTEM_SCRIPTS="$BUILD_PATH/../release/scripts"
 	
 	# LD_LIBRARY_PATH
-	LD_LIBRARY_PATH="$BUILD_PATH/lib"
-	
-	# BLENDER
-	# Command line to execute blender binary.
-	BLENDER="$BLENDER_PATH/bin/blender"
-else
-	# BLENDER
-	# Command line to execute blender binary.
-	BLENDER=blender
+	export LD_LIBRARY_PATH="$BUILD_PATH/lib"
 fi
-
 
 
 #
@@ -52,7 +46,8 @@ VERSION=`$BLENDER -v | grep "Blender" | head -n 1 | awk '{print $2}'`
 # We use the file with the user preferences as default but you
 # can use any other .blend file as well.
 #
-INPUT="${HOME}/.config/blender/${VERSION}/config/userpref.blend"
+#INPUT="${HOME}/.config/blender/${VERSION}/config/userpref.blend"
+INPUT="./versions/2.78.0-2.70.6.blend"
 
 #
 # OUTPUT
@@ -67,7 +62,7 @@ OUTPUT="../JavaBlendDemo/gen"
 # This is the location of the Java .Blend externally maintained
 # source code documentation. 
 #
-DOCPATH="../JavaBlendDocs/resources/dnadoc"
+DOCPATH="$HOME/repos/git/github/homacs/JavaBlendDocs/resources/dnadoc"
 
 #
 # PACKAGE

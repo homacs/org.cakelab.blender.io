@@ -28,7 +28,7 @@ public abstract class FieldVisitor extends CodeGenerator {
 	
 	public void visitField(long offset32, long offset64, CStruct struct, CField field, JavaType jtype) throws IOException {
 		reset();
-		fielddoc = docs.getFieldDoc(struct.getSignature(), field.getName());
+		fielddoc = docs.getFieldDoc(struct.getSignature(), field.getName()).trim();
 		switch(field.getType().getKind()) {
 		case TYPE_ARRAY:
 			visitArray(offset32, offset64, field, jtype);
@@ -69,6 +69,14 @@ public abstract class FieldVisitor extends CodeGenerator {
 		return fielddoc;
 	}
 	
+	protected void appendFieldDoc(GComment javadoc) {
+		String doc = getFieldDoc();
+		if (doc != null && !doc.isEmpty()) {
+			javadoc.appendln("<h3>Field Documentation</h3>");
+			javadoc.appendln(getFieldDoc());
+		}
+
+	}
 
 	protected String getFieldType(CType ctype,
 			JavaType jtype) throws IOException {
