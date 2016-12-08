@@ -44,7 +44,7 @@ public class OffheapAreas {
 		// All entries have to be sorted in ascending order!
 		//
 		map.add(new Entry(  0, new String[]{"FileGlobal"}));
-		map.add(new Entry(250, new String[]{"FileGlobal", "TreeStoreElem"}));
+		map.add(new Entry(276, new String[]{"FileGlobal", "TreeStoreElem"}));
 	}
 	
 	private static final Comparator<Entry> COMPARATOR = new Comparator<Entry>() {

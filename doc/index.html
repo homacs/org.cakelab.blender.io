@@ -125,8 +125,7 @@ An overview of the contents of the examples package is given <a href="demo/index
 <table border="1">
 <tr><th>version</th><th></th><th></th></tr>
 <tr><th>${project.version}</th><td><a href="demo/downloads/JavaBlendDemo-${project.version}.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-${project.version}.zip">src</a></td></tr>
-<tr><th>1.0.3</th><td><a href="demo/downloads/JavaBlendDemo-1.0.3.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-1.0.3.zip">src</a></td></tr>
-<tr><th>1.0.2</th><td><a href="demo/downloads/JavaBlendDemo-1.0.2.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-1.0.2.zip">src</a></td></tr>
+<tr><th>1.0.4</th><td><a href="demo/downloads/JavaBlendDemo-1.0.4.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-1.0.4.zip">src</a></td></tr>
 </table>
 
 <h3>Java .Blend SDK</h3>
@@ -139,8 +138,7 @@ below, if you want source code documentation in generated facade classes.
 <table border="1">
 <tr><th>version</th><th></th><th></th></tr>
 <tr><th>${project.version}</th><td><a href="downloads/JavaBlend-SDK-${project.version}.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-${project.version}.zip">src</a></td></tr>
-<tr><th>1.0.3</th><td><a href="downloads/JavaBlend-SDK-1.0.3.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.3.zip">src</a></td></tr>
-<tr><th>1.0.2</th><td><a href="downloads/JavaBlend-SDK-1.0.2.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.2.zip">src</a></td></tr>
+<tr><th>1.0.4</th><td><a href="downloads/JavaBlend-SDK-1.0.4.jar">binary</a></td><td><a href="downloads/JavaBlend-SDK-src-1.0.4.zip">src</a></td></tr>
 </table>
 
 <h3>Java .Blend's Externally Maintained Documentation</h3>
@@ -153,6 +151,13 @@ Source code documentation for generated facade classes is maintained in a separa
 
 <h2 id="changelog">Change Log</h2>
 <ul>
+<li>[1.1.0-r1117][18/01/2016]: fixed bugs due to overlapping blocks since 2.76 and even more source code documentation 
+	<ul>
+	<li>Added support for offheap areas (see documentation).</li>
+	<li>Fixed issue with TreeStoreElem (since 2.76) due to overlapping address areas in blocks (offheap).</li>
+	<li>Added tools to extract source code documentation from blender source code using doxygen.</li>
+	</ul>
+</li>
 <li>[1.0.4-r759][18/01/2016]: clarified versioning and conversion between DNA versions 
 	<ul>
 	<li>Added compatibility check.</li>

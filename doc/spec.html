@@ -60,7 +60,7 @@ help further down the road.
 	</td></tr>
 	<tr><td></td><td><b><a href="#BlenderFormat">Blender File Format</a></b>
 	</td></tr>
-	<tr><td></td><td><b><a href="#AddressMapping">Address Mapping</a></b>
+	<tr><td></td><td><b><a href="#AddressMapping">Blender Address Mapping</a></b>
 	</td></tr>
 	<tr><td></td><td><b><a href="#FileVersion">Blender Versioning and File Version</a></b>
 	</td></tr>
@@ -194,11 +194,11 @@ single scalar elements.
   <td>size</td><td>int32</td><td>Length of the body in bytes.</td>
 <tr>
 <tr>
-  <td>address</td><td><em>&lt;pointerSize&gt;</em></td><td><em>&lt;pointerSize&gt;</em> 
-  refers to the pointer size given in the file header. 
+  <td>address</td><td><em>&lt;pointerSize&gt;</em></td><td> 
   This is the address, the data was found in memory, when it 
   was stored to disk. This information is required to restore 
-  pointers on data in this block.</td>
+  pointers on data in this block. Please note: <em>&lt;pointerSize&gt;</em> 
+  refers to the pointer size given in the file header.</td>
 <tr>
 <tr>
   <td>sdnaIndex</td><td>int32</td><td>This is an index into the 'struct' array in 
@@ -304,18 +304,28 @@ type information.
   </td>
 <tr>
 </table>
-<h2 id="AddressMapping">Address Mapping</h2>
+<h2 id="AddressMapping">Blender Address Mapping</h2>
 <p>
 Since all data of a Blender process is stored without any conversion, all pointers in 
 structs will still reference addresses in the memory of the original process. When 
 Blender loads a file, data will get a different address in the new process and 
-all pointers in that data have to be adjusted to point to the new location.
+all pointers in that data have to be adjusted to point to the new location. 
+For the most part, blender uses a so-called <code>oldnewmap</code> which 
+maps old start addresses to new start address.
 </p>
-<p>
-The address given in the block header of each block provides the original start address 
-of the data contained in its body. Based on this information, pointers on the original 
-address of data can be mapped to data in the block, which contains the 
-originally referenced data.
+<p>Please note, that the start address of a block is guaranteed to be unique but 
+the content may or may not overlap the address space of following blocks. 
+As explained, most of the blocks contain data which originates from the heap
+of the blender process which created the file. In a healthy application, memory 
+areas on heap do not overlap each other. Accordingly, all addresses referring to data 
+inside of any of those areas stored in a block are unique as well. However, there 
+are a few exceptions since not all of the blocks existed in heap memory in the 
+form they are written to the file. One example is a tree structure which is 
+written to the file as a list to get a more compact format. The start address of the block
+which contains the tree elements is artificial and does not correspond to an actual address
+on heap. Blender guarantees that the start address is unique, but the address range
+represented by the data in this block (i.e. the range <code>]start, start+length]</code>) 
+may or may not overlap the address range of other blocks.
 </p>
 
 <h2 id="FileVersion">Blender Versioning and File Version</h2>
@@ -488,6 +498,56 @@ blocks and mapping of addresses to offsets in blocks
 model stored in a Blender file is kept in its native 
 format and converted on demand. 
 </p>
+<h3 id="AddressResolution">Address Resolution Concept</h3>
+<p>
+For all blocks which contain data originating from heap, 
+address mapping is straight forward: Lookup the block with 
+a start address less or equal to the address which has to 
+be resolved and whose length is large enough to contain the address.
+</p>
+<h4 id="OffheapAreas">Offheap Areas</h4>
+<p>
+As explained in Section <a href="#AddressMapping">Blender Address Mapping</a> a .blend file can contain blocks
+whose address range may or may not overlap the address range of other blocks. 
+Since the data did not originate from its original location on the heap of the blender process which created the file,
+we call the corresponding memory area <em>Offheap Areas</em>. 
+The general rule for blocks in offheap areas is, that only their start address
+is guaranteed to be unique. Luckily, only certain types of data are stored in offheap 
+areas. Thus, we can differentiate between on-heap and offheap areas based on the 
+type of data which is referenced (also stored in the block header) 
+and apply the proper address resolution routine.
+</p>
+<p>
+The types of blocks, which originated from offheap areas may change with different 
+versions of blender. Thus, the I/O subsystem contains a lookup table with lists of 
+struct names to be found in offheap areas for different blender versions (see package <code>org.cakelab.blender.versions.OffheapAreas</code>).
+</p>
+<p>
+In case a .blend file contains blocks which overlap each other and whose struct 
+types are not listed in the offheap areas, the block table will throw an exception
+during initialisation. This exception provides a list of the overlapping blocks and
+their struct types. This information is needed to fix the issue.
+</p>
+<p>To fix an issue with overlapping blocks, you need to adapt the list of types 
+from offheap areas to the given blender version. Simply add a new entry in class 
+<code>org.cakelab.blender.versions.OffheapAreas</code> and run the code generation again.
+Entries for offheap areas consist of a blender version number followed by a list of 
+struct type names of blocks, which have been found to overlap other blocks in the given blender version.
+</p>
+<pre>
+		map.add(new Entry(280, new String[]{"FileGlobal", "TreeStoreElem"}));
+</pre>
+<p>
+To identify the type of data which should be moved to an offheap area, you can use the information 
+given by the OverlappingBlocksException you have received. Try to identify the type which solves 
+the most overlap conflicts at once when moved off heap and add it to the list of your new offheap area entry.
+<b>Important:</b> Offheap areas cannot contain the type <code>LinkBase</code> (sdna index: 0) 
+because it is used for raw data as well (i.e. untyped). 
+</p>
+<p>Afterwards, run the code generation again, add the new code to your project 
+and read the file again to test it. Another approach is off course to study the blender source 
+code and identify the actual structure, which causes the issue ;) </p>
+
 
 <h3 id="BlenderFile">Class BlenderFile</h3>
 <p>
@@ -511,11 +571,11 @@ When finally writing a created Blender file, this class adds the fundamental blo
 </p>
 <h3 id="BlockTable">Block Table</h3>
 <p>
-Every block has its original base address, the address 
-stored data was originally located in heap memory. The component called <em>block table</em> is 
-responsible to map addresses to blocks (cf. <a href="#AddressMapping">Address Mapping</a>). 
+The component called <em>block table</em> is 
+responsible to map addresses to blocks according to the concept explained in Section <a href="#AddressResolution">Address Resolution</a>). 
 Internally, the block table sorts all blocks by their base address to 
-optimise lookup performance.
+optimise lookup performance. To handle offheap areas transparently, the block table references 
+a set of block tables, which contain the blocks of those offheap areas.
 </p>
 
 <h3 id="BlockList">Block List</h3>
@@ -1008,7 +1068,7 @@ gather information on how to write a Blender file, is to study one first and use
 <p>
 As part of the examples, you will find a class called <code>ExampleConvert2Json</code>, which creates a JSON
 file with all information of a Blender file in the given block order. This file 
-is quite easy to read and a helps a lot in studying the Blender DNA.
+is quite easy to read and helps a lot in studying the Blender DNA.
 </p>
 <p>
 Additionally, you will need to download the Blender sources and open the folder 
@@ -1056,7 +1116,9 @@ Please check your modifications by performing a code generation run (see Section
 <h2 id="GeneratingCode">Generating Data Model and Utilities</h2>
 <p>
 This section explains how to generate Java .Blend
-facade classes and utilities for a given Blender version.
+facade classes and utilities for a given Blender version. 
+This procedure is 'almost' generic. In case you experience issues, 
+then read the Section <a href="#Troubleshooting">Troubleshooting</a> below. 
 </p>
 <p>
 The generated code is subdivided into two packages:
@@ -1120,6 +1182,13 @@ adjust it to your environment.
 As you see, you can even use the user preferences file as reference <code>.blend</code> file to provide the type information needed to 
 generate the code.
 </p>
-
+<h3 id="Troubleshooting">Troubleshooting</h3>
+<dl>
+<dt>Exception due to Overlapping Blocks</dt>
+<dd>Overlapping blocks occur if the generated data model does not have a full list of possibly existing 
+	<a href="#OffheapAreas">offheap areas</a>. To fix this issue on your own, you need add an 
+	entry to the list of offheap areas and rerun the data model generator (API will be the same as before). 
+	However, it would be nice, if you can tell me about the issue, so I can fix it for everybody.</dd>
+</dl>
 </body>
 </html>
