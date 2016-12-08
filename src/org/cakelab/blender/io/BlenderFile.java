@@ -13,6 +13,7 @@ import org.cakelab.blender.io.block.BlockCodes;
 import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockList;
 import org.cakelab.blender.io.block.BlockTable;
+import org.cakelab.blender.io.block.OverlappingBlocksException;
 import org.cakelab.blender.io.dna.DNAModel;
 import org.cakelab.blender.io.dna.DNAStruct;
 import org.cakelab.blender.io.dna.internal.StructDNA;
@@ -88,7 +89,7 @@ public class BlenderFile implements Closeable {
 		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), getEncoding());
 		readStructDNA();
 		String[] offheapAreas = OffheapAreas.get(header.version.getCode());
-		blockTable = new BlockTable(getEncoding(), readBlocks(), getSdnaIndices(offheapAreas));
+		initBlockTable(getEncoding(), readBlocks(), getSdnaIndices(offheapAreas));
 	}
 
 	protected BlenderFile(File file, StructDNA sdna, int blenderVersion, String[] offheapAreas) throws IOException {
@@ -113,10 +114,21 @@ public class BlenderFile implements Closeable {
 		blocks = new BlockList();
 		
 		
-		blockTable = new BlockTable(getEncoding(), blocks, getSdnaIndices(offheapAreas));
+		initBlockTable(getEncoding(), blocks, getSdnaIndices(offheapAreas));
+		
 	}
 	
 	
+	private void initBlockTable(Encoding encoding, BlockList blocks, int[] sdnaIndices) throws IOException {
+		try {
+			
+			blockTable = new BlockTable(encoding, blocks, sdnaIndices);
+		} catch (OverlappingBlocksException e) {
+			e.addDetailedInfo(model);
+			throw new IOException(e);
+		}
+	}
+
 	protected BlenderFile() {}
 
 	

@@ -161,19 +161,24 @@ public class BlockTable {
 	 */
 	private void checkBlockOverlaps() {
 		boolean valid = true;
+		
+		OverlappingBlocksException overlapping = new OverlappingBlocksException();
+		
 		for (int i = 0; i < sorted.size(); i++) {
 			Block cur = sorted.get(i);
 			for (int j=i+1; j < sorted.size(); j++) {
 				Block b = sorted.get(j);
 				if (cur.contains(b.header.address)) {
-					System.err.printf("error: block (sdna %d) overlaps block (sdna %d)\n", cur.header.sdnaIndex, b.header.sdnaIndex);
+					overlapping.add(cur, b);
 					valid = false;
 				} else {
 					break;
 				}
 			}
 		}
-		if (!valid) throw new RuntimeException("File contains overlapping blocks which are not properly handled by this version of Java .Blend (see error messages above). Please refer to section Offheap Areas in Java .Blend's documentation.");
+		if (!valid) {
+			throw overlapping;
+		}
 	}
 
 	/**

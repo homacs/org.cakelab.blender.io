@@ -2,7 +2,7 @@
 <project default="package.all" name="Generate and Package a Java .Blend Data Model">
 	
 	<target name="init">
-		<property name="version" value="1.0.4"/>
+		<property name="version" value="1.1.0"/>
 		
 		<property name="blender.cfgdir" value="${user.home}/.config/blender"/>
 		<property name="blender.java.package" value="org.blender"/>
@@ -17,7 +17,7 @@
 		<property name="jarfile" value="${web.downloads}/${package.name}.jar"/>
 		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.version}.zip"/>
 
-		<delete failonerror="true" includeEmptyDirs="true">
+		<delete failonerror="false" includeEmptyDirs="true">
 			<fileset dir="${workdir}"/>
 			<fileset file="${zipfile}"/>
 		</delete>
@@ -37,6 +37,7 @@
 			<classpath>
 	      		<pathelement location="bin"/>
 	      		<pathelement location="../org.cakelab.json/bin"/>
+	      		<pathelement location="../org.cakelab.jdoxml/bin"/>
 				<fileset dir="lib">
 					<include name="**/*.jar"/>
 				</fileset>
@@ -50,6 +51,11 @@
 		</copy>
 		<copy todir="${srcdir}">
 			<fileset dir="../org.cakelab.json/src" casesensitive="yes">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${srcdir}">
+			<fileset dir="../org.cakelab.jdoxml/src" casesensitive="yes">
 				<include name="**/*"/>
 			</fileset>
 		</copy>
@@ -102,6 +108,10 @@
 	</target>
 	
 	<target name="package.all">
+		<antcall target="package">
+			<param name="blender.version" value="2.78"/>
+			<param name="input" value="versions/2.78.0-2.70.6.blend"/>
+		</antcall>
 		<antcall target="package">
 			<param name="blender.version" value="2.76"/>
 			<param name="input" value="versions/2.76.0-2.70.5.blend"/>
