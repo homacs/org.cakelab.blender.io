@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockTable;
 
 
@@ -139,8 +140,8 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 * @param dimensions Length of each dimension (see class documentation)
 	 * @param __blockTable Block table of the associated blender file.
 	 */
-	public CArrayFacade(long baseAddress, Class<?>[] targetTypeList, int[] dimensions, BlockTable __blockTable) {
-		super(baseAddress, Arrays.copyOfRange(targetTypeList, dimensions.length-1, targetTypeList.length), __blockTable);
+	public CArrayFacade(long baseAddress, Class<?>[] targetTypeList, int[] dimensions, Block block, BlockTable __blockTable) {
+		super(baseAddress, Arrays.copyOfRange(targetTypeList, dimensions.length-1, targetTypeList.length), block, __blockTable);
 		this.targetTypeList = targetTypeList;
 		this.dimensions = dimensions;
 		this.componentSize = calcComponentSize(targetTypeList[dimensions.length-1]);
@@ -185,16 +186,19 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 		long address = getAddress(index);
 		if (dimensions.length > 1) {
 			// array of arrays
-			assert(targetTypeList[0].isArray());
+			assert(targetTypeList[0].equals(CArrayFacade.class));
 			return (T) new CArrayFacade<T>(
 					address,
 					Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), 
 					Arrays.copyOfRange(dimensions, 1, dimensions.length), 
+					__io__block,
 					__io__blockTable);
 		} else if (targetTypeList[0].equals(CPointer.class)) {
 			// array of pointers
 			long pointerAddress = __io__block.readLong(address);
-			return (T) new CPointer(pointerAddress, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __io__blockTable);
+			Class<?>[] type = Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length);
+			Block block = __io__blockTable.getBlock(pointerAddress, type);
+			return (T) new CPointer(pointerAddress, type, block, __io__blockTable);
 		} else if (isPrimitive(targetTypeList[0])) {
 			return getScalar(address);
 		} else {
@@ -390,6 +394,11 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	}
 	
 
+	/**
+	 * Calculates the number of elements contained in the array over all dimensions (in case of multi-dimensional arrays).
+	 * @param elementaryType
+	 * @return
+	 */
 	private long calcComponentSize(Class<?> elementaryType) {
 		long size = __io__sizeof(elementaryType);
 		if (dimensions.length > 1) {
@@ -405,6 +414,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 
 	/** 
 	 * Calculates the total size of an array based on the given parameters.
+	 * Considers multi-dimensional arrays.
 	 * @param elementaryType The elementary type, i.e. the scalar type.
 	 * @param dimensions
 	 * @param encoding

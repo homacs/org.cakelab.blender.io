@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
  */
 public class Converter extends Documentation {
 
+	// XXX: losing notes during conversion!
 	private File input;
 	private File out;
 	private IDoxygen dox;

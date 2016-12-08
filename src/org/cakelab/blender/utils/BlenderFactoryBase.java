@@ -37,7 +37,7 @@ public class BlenderFactoryBase {
 	protected static class BlenderFileImplBase extends BlenderFile {
 
 		protected BlenderFileImplBase(File file, StructDNA sdna, int blenderVersion) throws IOException {
-			super(file, sdna, blenderVersion);
+			super(file, sdna, blenderVersion, null);
 		}
 		
 	}
@@ -99,7 +99,8 @@ public class BlenderFactoryBase {
 	 * @return Null pointer object.
 	 */
 	public static CPointer<Object> getNullPointer(BlenderFile blend) throws IOException {
-		return new CPointer<Object>(0, new Class[]{Object.class}, blend.getBlockTable());
+		// XXX: null pointer initialising with null block?
+		return new CPointer<Object>(0, new Class[]{Object.class}, null, blend.getBlockTable());
 	}
 	
 	/**
@@ -137,7 +138,7 @@ public class BlenderFactoryBase {
 			int sdnaIndex = field__dna__sdnaIndex.getInt(null);
 			Block block = blockTable.allocate(blockCode, CFacade.__io__sizeof(facetClass, blend.getEncoding().getAddressWidth()), sdnaIndex, 1);
 			blend.add(block);
-			return (T)CFacade.__io__newInstance(facetClass, block.header.getAddress(), blockTable);
+			return (T)CFacade.__io__newInstance(facetClass, block.header.getAddress(), block, blockTable);
 		} catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new IOException(e);
 		} catch (NoSuchFieldException e) {
@@ -180,7 +181,7 @@ public class BlenderFactoryBase {
 			int sdnaIndex = field__dna__sdnaIndex.getInt(null);
 			Block block = blockTable.allocate(blockCode, CFacade.__io__sizeof(facetClass, blend.getEncoding().getAddressWidth()), sdnaIndex, count);
 			blend.add(block);
-			return new CArrayFacade<T>(block.header.getAddress(), new Class[]{facetClass}, new int[]{count}, blockTable);
+			return new CArrayFacade<T>(block.header.getAddress(), new Class[]{facetClass}, new int[]{count}, block, blockTable);
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
 			throw new IOException(e);
 		} catch (NoSuchFieldException e) {
@@ -194,6 +195,7 @@ public class BlenderFactoryBase {
 	public <T extends CFacade> CArrayFacade<T> newCStructBlock(Identifier blockCode, Class<T> facetClass, int count) throws IOException {
 		return newCStructBlock(blockCode, facetClass, count, blend);
 	}
+	
 	/**
 	 * Allocate a new block for one instance of a <b>one-dimensional</b> array of 
 	 * any <b>non-pointer</b> component type which is either a scalar or a DNA struct.
@@ -270,7 +272,7 @@ public class BlenderFactoryBase {
 		block.header.setCount(dimensions[0]);
 		block.header.setSdnaIndex(sdnaIndex);
 		blend.add(block);
-		return new CArrayFacade<T>(block.header.getAddress(), typeList, dimensions, blockTable);
+		return new CArrayFacade<T>(block.header.getAddress(), typeList, dimensions, block, blockTable);
 	}
 	/**
 	 * Factory instance method equivalent to {@link #newCArrayBlock(Identifier, Class[], int[], BlenderFile)}.
@@ -301,7 +303,7 @@ public class BlenderFactoryBase {
 		Class<?>[] typeListExtended = new Class<?>[typeList.length+1];
 		System.arraycopy(typeList, 0, typeListExtended, 1, typeList.length);
 		typeListExtended[0] = CPointer.class;
-		return new CPointer<CPointer<T>>(block.header.getAddress(), typeList, blockTable);
+		return new CPointer<CPointer<T>>(block.header.getAddress(), typeList, block, blockTable);
 	}
 	
 	/**
@@ -333,7 +335,7 @@ public class BlenderFactoryBase {
 		Class<?>[] typeListExtended = new Class<?>[typeList.length+1];
 		System.arraycopy(typeList, 0, typeListExtended, 1, typeList.length);
 		typeListExtended[0] = CPointer.class;
-		return new CArrayFacade<CPointer<T>>(block.header.getAddress(), typeList, new int[]{count}, blockTable);
+		return new CArrayFacade<CPointer<T>>(block.header.getAddress(), typeList, new int[]{count}, block, blockTable);
 	}
 	
 	/**

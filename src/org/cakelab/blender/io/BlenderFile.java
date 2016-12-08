@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 import java.util.List;
 
 import org.cakelab.blender.io.FileHeader.Version;
@@ -13,11 +14,13 @@ import org.cakelab.blender.io.block.BlockHeader;
 import org.cakelab.blender.io.block.BlockList;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.DNAModel;
+import org.cakelab.blender.io.dna.DNAStruct;
 import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.io.util.Identifier;
 import org.cakelab.blender.metac.CMetaModel;
 import org.cakelab.blender.metac.CStruct;
+import org.cakelab.blender.versions.OffheapAreas;
 
 
 
@@ -77,48 +80,24 @@ public class BlenderFile implements Closeable {
 
 	private File file;
 
-	
+
 	public BlenderFile(File file) throws IOException {
-		this(CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), Encoding.JAVA_NATIVE));
+		readFileHeader(CDataReadWriteAccess.create(new RandomAccessFile(file, "r"), Encoding.JAVA_NATIVE));
 		this.file = file;
 		// proceed from here with an input stream which decodes data according to its endianess
 		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), getEncoding());
 		readStructDNA();
-		blockTable = new BlockTable(getEncoding(), readBlocks());
+		String[] offheapAreas = OffheapAreas.get(header.version.getCode());
+		blockTable = new BlockTable(getEncoding(), readBlocks(), getSdnaIndices(offheapAreas));
 	}
-	
-	/**
-	 * Just basic read initialisation. Reading file header.
-	 * (byte order doesn't matter in this case).
-	 * 
-	 * @param in
-	 * @throws IOException
-	 */
-	protected BlenderFile(CDataReadWriteAccess in) throws IOException {
-		header = new FileHeader();
-		try {
-			try {
-				header.read(in);
-				firstBlockOffset = in.offset();
-				in.close();
-				
-			} catch (IOException e) {
-				// it might be a compressed file
-				throw new IOException("file is either corrupted or uses the compressed format (not yet supported).\n"
-						+ "In the latter case, please uncompress it first (i.e. gunzip <file>.");
-			}
-		} finally {
-			try {in.close();} catch (Throwable suppress){}
-		}
-	}
-	
-	protected BlenderFile(File file, StructDNA sdna, int blenderVersion) throws IOException {
+
+	protected BlenderFile(File file, StructDNA sdna, int blenderVersion, String[] offheapAreas) throws IOException {
 		// Unfortunately, blender has a bug in byte order conversion, so we use the
 		// systems native byte order as default.
-		this(file, sdna, blenderVersion, Encoding.nativeEncoding());
+		this(file, sdna, blenderVersion, Encoding.nativeEncoding(), offheapAreas);
 	}
 	
-	protected BlenderFile(File file, StructDNA sdna, int blenderVersion, Encoding encoding) throws IOException {
+	protected BlenderFile(File file, StructDNA sdna, int blenderVersion, Encoding encoding, String[] offheapAreas) throws IOException {
 		this.sdna = sdna;
 		
 		io = CDataReadWriteAccess.create(new RandomAccessFile(file, "rw"), encoding);
@@ -132,17 +111,69 @@ public class BlenderFile implements Closeable {
 		firstBlockOffset = io.offset();
 		
 		blocks = new BlockList();
-		blockTable = new BlockTable(getEncoding(), blocks);
+		
+		
+		blockTable = new BlockTable(getEncoding(), blocks, getSdnaIndices(offheapAreas));
 	}
 	
 	
 	protected BlenderFile() {}
 
+	
+	
+	/**
+	 * Just basic read initialisation. Reading file header.
+	 * (byte order doesn't matter in this case).
+	 * 
+	 * @param in
+	 * @throws IOException
+	 */
+	protected void readFileHeader(CDataReadWriteAccess in) throws IOException {
+		header = new FileHeader();
+		try {
+			header.read(in);
+			firstBlockOffset = in.offset();
+			in.close();
+			
+		} catch (IOException e) {
+			// it might be a compressed file
+			throw new IOException("file is either corrupted or uses the compressed format (not yet supported).\n"
+					+ "In the latter case, please uncompress it first (i.e. gunzip <file>.");
+		} finally {
+			try {in.close();} catch (Throwable suppress){}
+		}
+	}
+	
+	/** Retrieve indices for given names from Struct DNA. */
+	protected int[] getSdnaIndices(String[] structNames) throws IOException {
+		if (structNames == null) return null;
+		model = getBlenderModel();
+		
+		int[] indexes = new int[structNames.length];
+		int length = 0;
+		for (String structName : structNames) {
+			DNAStruct struct = model.getStruct(structName);
+			if (struct == null) {
+				System.err.println("warning: The list of offheap areas (see Java .Blend documentation) contains a struct name '" + structName + "' which does not exist in the blender version of the given file. This entry will be ignored.");
+			} else {
+				indexes[length++] = struct.getIndex();
+			}
+		}
+		return Arrays.copyOf(indexes, length);
+	}
+
+	/**
+	 * Write all blocks to the file. This method calls {@link #write(List)} whith
+	 * all blocks stored in this instance of BlenderFile.
+	 * @throws IOException
+	 */
 	public void write() throws IOException {
 		write(blocks);
 	}
 	
-	
+	/** Write given blocks to the file. This reorders only the Struct DNA (DNA1)
+	 * block and the End (ENDB) block. All other blocks have to be in the order 
+	 * expected by blender. */
 	public void write(List<Block> blocks) throws IOException {
 		io.offset(firstBlockOffset);
 		

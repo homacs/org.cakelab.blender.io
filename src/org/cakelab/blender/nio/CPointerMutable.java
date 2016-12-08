@@ -126,7 +126,8 @@ public class CPointerMutable<T> extends CPointer<T> {
 	public void assign(long address) throws IOException {
 		__io__address = address;
 		if (!isValid()) {
-			__io__block = __io__blockTable.getBlock(address);
+			// XXX: can we leave it like that?
+			__io__block = __io__blockTable.getBlock(address, -1);
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
 
@@ -195,12 +196,15 @@ import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
  * @param <T> Target type of the pointer.
  */
 public class CPointer<T> extends CFacade {
-	
+	// TODO: ZZZ could need fromArray for multidimensional arrays too
 	/**
 	 * Type of the target the pointer is able to address.
 	 */
 	protected Class<?>[] targetTypeList;
 	protected long targetSize;
+	
+	/** In case this pointer references instances of structs, we cache
+	 * a reference on the constructor to instantiate instances. */
 	private Constructor<T> constructor;
 	
 	/**
@@ -233,11 +237,12 @@ public class CPointer<T> extends CFacade {
 	 * 
 	 * @param targetAddress Address the pointer will point to.
 	 * @param targetTypes Type of the pointer (please read class documentation)
+	 * @param block Block, which contains the targetAddress.
 	 * @param memory Associated block table, which contains memory for the targetAddress.
 	 */
 	@SuppressWarnings("unchecked")
-	public CPointer(long targetAddress, Class<?>[] targetTypes, BlockTable memory) {
-		super(targetAddress, memory);
+	public CPointer(long targetAddress, Class<?>[] targetTypes, Block block, BlockTable memory) {
+		super(targetAddress, block, memory);
 		this.targetTypeList = (Class<T>[]) targetTypes;
 		this.targetSize = __io__sizeof(targetTypes[0]);
 	}
@@ -263,7 +268,7 @@ public class CPointer<T> extends CFacade {
 		if (targetSize == 0) throw new ClassCastException("Target type is unspecified (i.e. void*). Use cast() to specify its type first.");
 		if (isPrimitive(targetTypeList[0])) {
 			return getScalar(address);
-		} else if (targetTypeList[0].isArray()){
+		} else if (targetTypeList[0].equals(CArrayFacade.class)){
 			throw new ClassCastException("Impossible type declaration containing a pointer on an array (Cannot be declared in C).");
 		} else {
 			return (T) getCFacade(address);
@@ -368,7 +373,7 @@ public class CPointer<T> extends CFacade {
 	 * @return
 	 */
 	public <U> CPointer<U> cast(Class<U> type) {
-		return new CPointer<U>(__io__address, new Class<?>[]{type}, __io__blockTable);
+		return new CPointer<U>(__io__address, new Class<?>[]{type}, __io__block, __io__blockTable);
 	}
 	
 	/**
@@ -390,7 +395,7 @@ public class CPointer<T> extends CFacade {
 	 * @return
 	 */
 	public <U> CPointer<U> cast(Class<U>[] types) {
-		return new CPointer<U>(__io__address, types, __io__blockTable);
+		return new CPointer<U>(__io__address, types, __io__block, __io__blockTable);
 	}
 
 	/**
@@ -424,11 +429,13 @@ public class CPointer<T> extends CFacade {
 	 * of the given length.
 	 * 
 	 * @param length of the new Java array instance.
-	 * @return New Java array instance.
+	 * @return New Java array instance or null if the pointer is null ({@link CPointer#isNull()}).
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	public T[] toArray(int length) throws IOException {
+		if (isNull()) return null;
+		
 		T[] arr = (T[])Array.newInstance(targetTypeList[0], length);
 		long address = __io__address;
 		for (int i = 0; i < length; i++) {
@@ -448,7 +455,7 @@ public class CPointer<T> extends CFacade {
 	 * @throws IOException
 	 */
 	public CArrayFacade<T> toCArrayFacade(int len) {
-		return new CArrayFacade<T>(__io__address, targetTypeList, new int[]{len}, __io__blockTable);
+		return new CArrayFacade<T>(__io__address, targetTypeList, new int[]{len}, __io__block, __io__blockTable);
 	}
 	
 	/**
@@ -881,6 +888,8 @@ public class CPointer<T> extends CFacade {
 	}
 
 	/**
+	 * XXX: test whether the pointer references the same file?
+	 * 
 	 * This method provides pointer comparison functionality.
 	 * 
 	 * It allows comparison to all objects derived from {@link CFacade}
@@ -901,6 +910,10 @@ public class CPointer<T> extends CFacade {
 		return false;
 	}
 
+
+	/** 
+	 * XXX: consider file, which contains the data?
+	 */
 	@Override
 	public int hashCode() {
 		return (int)((__io__address>>32) ^ (__io__address));
@@ -951,10 +964,17 @@ public class CPointer<T> extends CFacade {
 	protected T getCFacade(long targetAddress) throws IOException {
 		try {
 			if (targetTypeList[0].equals(CPointer.class)) {
+				// pointer on pointer
 				long address = __io__block.readLong(targetAddress);
-				return (T) new CPointer(address, Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length), __io__blockTable);
+				Class<?>[] type = Arrays.copyOfRange(targetTypeList, 1, targetTypeList.length);
+				Block block = __io__blockTable.getBlock(address, type);
+				return (T) new CPointer(address, type, block, __io__blockTable);
 			} else {
-				return (T) CFacade.__io__newInstance((Class<? extends CFacade>) targetTypeList[0], targetAddress, __io__blockTable);
+				// pointer on struct
+				if (constructor == null) {
+					constructor = (Constructor<T>) targetTypeList[0].getDeclaredConstructor(long.class, Block.class, BlockTable.class);
+				}
+				return (T) CFacade.__io__newInstance(constructor, (Class<? extends CFacade>) targetTypeList[0], targetAddress, __io__block, __io__blockTable);
 			}
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {

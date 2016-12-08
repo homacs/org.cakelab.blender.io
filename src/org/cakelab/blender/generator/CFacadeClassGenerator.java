@@ -14,6 +14,7 @@ import org.cakelab.blender.generator.utils.GField;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.GPackage;
 import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.metac.CField;
@@ -50,6 +51,7 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 		
 		addImport(CFacade.class);
 		addImport(CMetaData.class);
+		addImport(Block.class);
 		addImport(BlockTable.class);
 
 		GComment doc = new GComment(GComment.Type.JavaDoc);
@@ -108,8 +110,8 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 			//
 			// Create constructor
 			//
-			out.println("\tpublic " + classname + "(long __address, " + BlockTable.class.getSimpleName() + " __blockTable) {");
-			out.println("\t\tsuper(__address, __blockTable);");
+			out.println("\tpublic " + classname + "(long __address, " + Block.class.getSimpleName() + " __block, " + BlockTable.class.getSimpleName() + " __blockTable) {");
+			out.println("\t\tsuper(__address, __block, __blockTable);");
 			out.println("\t}");
 			out.println();
 			
@@ -138,7 +140,7 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 		method.appendln("public " + pointerType + " " + __io__addressof + "() {");
 		method.indent(+1);
 		
-		method.appendln("return new " + pointerType + "(" + __io__address + ", new Class[]{" + classname + ".class}, " + __io__blockTable + ");");
+		method.appendln("return new " + pointerType + "(" + __io__address + ", new Class[]{" + classname + ".class}, " + __io__block + ", " + __io__blockTable + ");");
 		
 		method.indent(-1);
 		method.appendln("}");

@@ -15,7 +15,7 @@ import org.cakelab.blender.io.dna.DNAStruct;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONException;
 import org.cakelab.json.JSONObject;
-import org.cakelab.json.Parser;
+import org.cakelab.json.codec.Parser;
 
 /**
  * <p>

@@ -60,7 +60,7 @@ public abstract class MainLibBase {
 			for (long address = block.header.getAddress(); count < block.header.getCount();
 					address += size) 
 			{
-				CFacade libElem = CFacade.__io__newInstance(clazz, address, blockTable);
+				CFacade libElem = CFacade.__io__newInstance(clazz, address, block, blockTable);
 				addLibraryElement(libElem);
 				count++;
 			}

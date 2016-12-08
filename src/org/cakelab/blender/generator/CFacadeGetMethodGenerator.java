@@ -3,6 +3,7 @@ package org.cakelab.blender.generator;
 import java.io.IOException;
 
 import org.cakelab.blender.generator.typemap.JavaType;
+import org.cakelab.blender.generator.typemap.JavaType.JKind;
 import org.cakelab.blender.generator.utils.GComment;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.MethodGenerator;
@@ -58,11 +59,11 @@ public class CFacadeGetMethodGenerator extends MethodGenerator implements CFacad
 		
 		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
-		appendln("return new " + parameterizedArrayType + "(" + __io__address + " + " + offset64 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", " + __io__blockTable + ");");
+		appendln("return new " + parameterizedArrayType + "(" + __io__address + " + " + offset64 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", " + __io__block + ", " + __io__blockTable + ");");
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);
-		appendln("return new " + parameterizedArrayType + "(" + __io__address + " + " + offset32 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", " + __io__blockTable + ");");
+		appendln("return new " + parameterizedArrayType + "(" + __io__address + " + " + offset32 + ", "+ targetTypeListVar + ", " + dimensionsVar + ", " + __io__block + ", " + __io__blockTable + ");");
 		content.indent(-1);
 		appendln("}");
 	
@@ -103,10 +104,21 @@ public class CFacadeGetMethodGenerator extends MethodGenerator implements CFacad
 		appendln("}");
 		
 		String targetTypeListVar = "__dna__targetTypes";
-		__appendTargetTypeList(targetTypeListVar, jtype, field.getType());
-		
-		appendln("return new " + parameterizedPointerType + "(" + targetAddrVar +", "+ targetTypeListVar + ", " + __io__blockTable + ");");
-		
+		CType ctype = field.getType();
+		__appendTargetTypeList(targetTypeListVar, jtype, ctype);
+		JavaType targetType = jtype.getReferencedType();
+		if (targetType.getKind() == JKind.TYPE_OBJECT && ctype.getReferencedType().getKind() != CKind.TYPE_POINTER) {
+			String sdnaIndexVar;
+			if (targetType.getName().equals("Object")) {
+				sdnaIndexVar = "-1";
+			} else {
+				sdnaIndexVar = getClassTypeName(field.getType(), targetType) + "." + __DNA__SDNA_INDEX;
+			}
+			appendln("return new " + parameterizedPointerType + "(" + targetAddrVar +", "+ targetTypeListVar + ", " + __io__blockTable + ".getBlock(" + targetAddrVar + ", " + sdnaIndexVar + "), " + __io__blockTable + ");");
+			
+		} else {
+			appendln("return new " + parameterizedPointerType + "(" + targetAddrVar +", "+ targetTypeListVar + ", " + __io__blockTable + ".getBlock(" + targetAddrVar + ", " + targetTypeListVar + "), " + __io__blockTable + ");");
+		}
 		content.indent(-1);
 		appendln("}");
 	}
@@ -123,13 +135,13 @@ public class CFacadeGetMethodGenerator extends MethodGenerator implements CFacad
 		appendln("if (" + ARCH64_TEST + ") {");
 
 		content.indent(+1);
-		appendln("return new " + jtype.getName() + "(" + __io__address + " + " + offset64 + ", " + __io__blockTable + ");");
+		appendln("return new " + jtype.getName() + "(" + __io__address + " + " + offset64 + ", " + __io__block + ", " + __io__blockTable + ");");
 		content.indent(-1);
 		
 		appendln("} else {");
 		
 		content.indent(+1);
-		appendln("return new " + jtype.getName() + "(" + __io__address + " + " + offset32 + ", " + __io__blockTable + ");");
+		appendln("return new " + jtype.getName() + "(" + __io__address + " + " + offset32 + ", " + __io__block + ", " + __io__blockTable + ");");
 		content.indent(-1);
 		appendln("}");
 		

@@ -67,7 +67,6 @@ public class Main {
 		try {
 			converter.run();
 		} catch (SAXException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

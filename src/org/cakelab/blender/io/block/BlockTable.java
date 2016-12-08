@@ -1,14 +1,20 @@
 package org.cakelab.blender.io.block;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.io.block.alloc.Allocator;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.io.util.Identifier;
+import org.cakelab.blender.nio.CArrayFacade;
+import org.cakelab.blender.nio.CFacade;
+import org.cakelab.blender.nio.CPointer;
 import org.cakelab.blender.nio.UnsignedLong;
 
 /**
@@ -28,11 +34,21 @@ import org.cakelab.blender.nio.UnsignedLong;
  * Blocks in a block list are ordered by their address to improve
  * lookup performance. Blocks in a blender file have to be stored 
  * in a different order which is supposed to be maintained in a 
- * {@link BlockList}.
+ * {@link BlockList} (required only when writing to .blend files).
  * </p>
  * <p>
  * To support allocation of blocks and issue addresses to them, 
  * the block table has access to an {@link Allocator}.
+ * </p>
+ * <p>
+ * A block table may or may not reference so-called offheap areas 
+ * (see {@link org.cakelab.blender.versions.OffheapAreas}). Each 
+ * offheap area contains a list of blocks of a specific struct type.
+ * When retrieving a block for a given address, the block table uses
+ * the SDNA index to potentially search the assigned offheap area, for the block
+ * by an exact match of the start address.
+ * If no offheap area exists for the given struct type, it will search 
+ * the block in regular heap area.
  * </p>
  * 
  * @author homac
@@ -44,6 +60,16 @@ public class BlockTable {
 	private static final long HEAPBASE = UnsignedLong.plus(UnsignedLong.MIN_VALUE, 4096L);
 	/** Heap size is the maximum amount of memory to be stored in a blender file. */
 	private static final long HEAPSIZE = UnsignedLong.minus(UnsignedLong.MAX_VALUE, HEAPBASE);
+	
+	/** This comparator can be used with methods such as {@link Collections#sort(List, Comparator)}
+	 * to sort blocks ascending by address.
+	 */
+	public static final Comparator<? super Block> BLOCKS_ASCENDING_ADDRESS = new Comparator<Block>() {
+		@Override
+		public int compare(Block b1, Block b2) {
+			return b1.compareTo(b2.header.getAddress());
+		}
+	};
 	
 	
 	/** list of blocks sorted by block.header.address */
@@ -62,6 +88,12 @@ public class BlockTable {
 	 */
 	private boolean allocatorInitialised;
 	
+	/**
+	 * Lookup table of offheap areas identified by SDNA indices of the 
+	 * structs contained in affected, potentially overlapping blocks.
+	 */
+	private HashMap<Integer, BlockTable> offheapAreas;
+	
 	
 	/**
 	 * Instantiates a new block table with the given encoding.
@@ -78,29 +110,137 @@ public class BlockTable {
 	 * Instantiates a new block table with the given encoding and
 	 * initialises it with the blocks of the given list.
 	 * @param encoding
+	 * @param offheapStructs List of SDNA indices which are in offheap areas
 	 * @param blocks to be inserted in the new block table.
 	 */
-	public BlockTable(Encoding encoding, List<Block> blocks) {
+	public BlockTable(Encoding encoding, List<Block> blocks, int[] offheapStructs) {
 		this(encoding);
+		
 		this.sorted.addAll(blocks);
-		Collections.sort(this.sorted, new Comparator<Block>() {
-			@Override
-			public int compare(Block b1, Block b2) {
-				return b1.compareTo(b2.header.getAddress());
-			}
-		});
-		if (!blocks.isEmpty()) {
-			Block first = blocks.get(0);
+		Collections.sort(this.sorted, BLOCKS_ASCENDING_ADDRESS);
+		
+		initOffheapAreas(offheapStructs);
+		
+		if (!sorted.isEmpty()) {
+			Block first = sorted.get(0);
 			assert (UnsignedLong.ge(first.header.address, HEAPBASE));
 		}
 	}
 
 
+	/**
+	 * Creates offheap areas and moves all blocks of structs which are declared 
+	 * to be not in the heap address space to their respective offheap areas.
+	 * @param offheap List of offheap areas.
+	 */
+	private void initOffheapAreas(int[] offheap) {
+		if (offheap == null) return;
+		
+		offheapAreas = new HashMap<Integer, BlockTable>(offheap.length);
+		for (int sdna : offheap) {
+			offheapAreas.put(sdna, new BlockTable(encoding));
+		}
+		for (Iterator<Block> it = sorted.iterator(); it.hasNext();) {
+			Block b = it.next();
+			for (int sdna : offheap) {
+				if (b.header.sdnaIndex == sdna) {
+					offheapAreas.get(sdna).add(b);
+					it.remove();
+					break;
+				}
+			}
+		}
+		
+		if (null == System.getProperty("org.cakelab.blender.NoChecks")) {
+			checkBlockOverlaps();
+		}
+	}
+
+	/**
+	 * Method to check for overlapping blocks in heap address space for debugging purposes.
+	 */
+	private void checkBlockOverlaps() {
+		boolean valid = true;
+		for (int i = 0; i < sorted.size(); i++) {
+			Block cur = sorted.get(i);
+			for (int j=i+1; j < sorted.size(); j++) {
+				Block b = sorted.get(j);
+				if (cur.contains(b.header.address)) {
+					System.err.printf("error: block (sdna %d) overlaps block (sdna %d)\n", cur.header.sdnaIndex, b.header.sdnaIndex);
+					valid = false;
+				} else {
+					break;
+				}
+			}
+		}
+		if (!valid) throw new RuntimeException("File contains overlapping blocks which are not properly handled by this version of Java .Blend (see error messages above). Please refer to section Offheap Areas in Java .Blend's documentation.");
+	}
+
+	/**
+	 * Returns the block for a given address and type (array, pointer, struct or scalar).
+	 * 
+	 * @param address
+	 * @param type
+	 * @return
+	 */
+	public Block getBlock(long address, Class<?>[] type) {
+		if (type[0].equals(CPointer.class) || type[0].equals(CArrayFacade.class)) {
+			return getBlock(address, type[1]);
+		} else {
+			return getBlock(address, type[0]);
+		}
+		
+	}
+	
+	/** returns the block which contains the data of the given address and type (struct or scalar).
+	 * @param address
+	 * @param type
+	 * @return
+	 */
+	public Block getBlock(long address, Class<?> type) {
+		int sdnaIndex = -1;
+		Class<?> superClass = type.getSuperclass();
+		if (superClass != null && superClass.equals(CFacade.class)) {
+			try {
+				Field f = type.getDeclaredField("__DNA__SDNA_INDEX");
+				sdnaIndex = f.getInt(null);
+			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException("internal error", e);
+			}
+		}
+		return getBlock(address, sdnaIndex);
+	}
+	
+	/**
+	 * Returns the block which contains the given address.
+	 * The sdnaIndex is required to access offheap areas. 
+	 * The method identifies whether the struct is in an 
+	 * offheap area or not. If the data is know to be on heap, 
+	 * sdnaIndex can be -1 too.
+	 * 
+	 * @param address
+	 * @param sdnaIndex
+	 * @return
+	 */
+	public Block getBlock(long address, int sdnaIndex) {
+		BlockTable table = this;
+		if (offheapAreas != null && sdnaIndex >= 0) {
+			BlockTable t = offheapAreas.get(sdnaIndex);
+			if (t != null) {
+				return t.findBlock(sdnaIndex);
+			}
+		}
+		return table.getBlock(address);
+	}
+	
+	
 	/** Returns the block which contains the given address.
 	 * @param address
 	 * @return
 	 */
-	public Block getBlock(long address) {
+	protected Block getBlock(long address) {
+		if (address == 0) return null;
+		
 		Block block = null;
 		
 		int i = Collections.binarySearch(sorted, address);
@@ -124,6 +264,21 @@ public class BlockTable {
 		return block;
 	}
 
+	/** 
+	 * Returns the block, which is associated with the given start address.
+	 * Thus, it will only return a block which has an exact match with the given address.
+	 * @param startAddress Start address of the block to search for.
+	 * @return The block associated with the given address or null if none was found.
+	 */
+	public Block findBlock(long startAddress) {
+		int i = Collections.binarySearch(sorted, startAddress);
+		Block block = null;
+		if (i >= 0) {
+			block = sorted.get(i);
+		}
+		return block;
+	}
+	
 	/**
 	 * This method allocates memory and assigns it to a block with the given code.
 	 * 
@@ -138,15 +293,24 @@ public class BlockTable {
 		
 		CDataReadWriteAccess rwAccess = CDataReadWriteAccess.create(new byte[size], address, encoding);
 		Block block = new Block(new BlockHeader(blockCode, size, address), rwAccess);
-
 		
+		add(block);
+		
+		return block;
+	}
+
+	/**
+	 * Method to add a block to the ascending sorted list.
+	 * @param block
+	 */
+	protected void add(Block block) {
 		// insert block in list
-		int i = Collections.binarySearch(sorted, address);
+		int i = Collections.binarySearch(sorted, block.header.address);
 		assert(i < 0);
 		i = -i -1;
 		sorted.add(i, block);
-		return block;
 	}
+	
 	
 	/**
 	 * This method allocates memory for 'count' structs of type 'sdnaIndex' 
@@ -167,11 +331,16 @@ public class BlockTable {
 
 	
 	/**
-	 * This method allocates memory and assigns it to new a block with the given code.
+	 * This method allocates memory on heap and assigns it to a new block with the given code.
+	 * <p>
+	 * <em>Note: If you have declared offheap areas, and want to allocate a block for a struct 
+	 * which is declared to be offheap, then use the method 
+	 * {@link #allocate(Identifier, long, int, int) instead!</p>
+	 * @see #allocate(Identifier, long, int, int)
 	 * 
-	 * @param blockCode
-	 * @param size
-	 * @return
+	 * @param blockCode Block code to be assigned to the block
+	 * @param size Size of the block body in bytes.
+	 * @return Allocated block.
 	 */
 	public Block allocate(Identifier code, long size) {
 		return allocate(code, (int)size);
@@ -182,17 +351,22 @@ public class BlockTable {
 	 * @param block
 	 */
 	public void free(Block block) {
-		// When the allocator gets initialised, it will receive all blocks
-		// that still exist. Thus, we don't need to do anything
-		// if it is not initialised.
-		if (allocatorInitialised) {
-			allocator.free(block.header.address, block.header.size);
+		BlockTable offheapArea = offheapAreas.get(block.header.sdnaIndex);
+		if (offheapArea != null) {
+			offheapArea.free(block);
+		} else {
+			// When the allocator gets initialised, it will receive all blocks
+			// that still exist. Thus, we don't need to do anything
+			// if it is not initialised.
+			if (allocatorInitialised) {
+				allocator.free(block.header.address, block.header.size);
+			}
+			
+			// remove block from table
+			int i = Collections.binarySearch(sorted, block.header.address);
+			assert(i >= 0);
+			sorted.remove(i);
 		}
-		
-		// remove block from table
-		int i = Collections.binarySearch(sorted, block.header.address);
-		assert(i >= 0);
-		sorted.remove(i);
 	}
 	
 	/**
@@ -211,7 +385,12 @@ public class BlockTable {
 	}
 
 	/**
-	 * Determines if a block with this address exists.
+	 * Determines if a block, which contains this address, exists on heap.
+	 * 
+	 * <p>
+	 * <em>Use {@link #exists(long, int)} to check offheap areas too.</em>
+	 * </p>
+	 * @see #exists(long, int)
 	 * @param address
 	 * @return
 	 */
@@ -219,6 +398,23 @@ public class BlockTable {
 		return getBlock(address) != null;
 	}
 
+	/**
+	 * Determines if a block with this startAddress exists either on or off heap.
+	 */
+	public boolean exists(long startAddress, int sdnaIndex) {
+
+		BlockTable offheapArea = null;
+		if (offheapAreas != null) {
+			offheapArea = offheapAreas.get(sdnaIndex);
+		}
+		
+		if (offheapArea != null) {
+			return offheapArea.findBlock(startAddress) != null;
+		} else {
+			return findBlock(startAddress) != null;
+		}
+
+	}
 
 	/** 
 	 * @return encoding used by all blocks of this block table.
@@ -234,28 +430,50 @@ public class BlockTable {
 	 */
 	public List<Block> getBlocks(Identifier blockCode) {
 		List<Block> result = new ArrayList<Block>();
-		for (Block block : sorted) {
-			if (block.header.code.equals(blockCode)) {
-				result.add(block);
+		getBlocks(blockCode, result);
+		if (offheapAreas != null) {
+			for (BlockTable offheapArea : offheapAreas.values()) {
+				offheapArea.getBlocks(blockCode, result);
 			}
 		}
 		return result;
 	}
+	
+	/**
+	 * Retrieve all blocks with the given block code which are on heap.
+	 * <em>This does not include offheap areas!</em>
+	 * @param blockCode
+	 * @param list 
+	 */
+	public void getBlocks(Identifier blockCode, List<Block> list) {
+		for (Block block : sorted) {
+			if (block.header.code.equals(blockCode)) {
+				list.add(block);
+			}
+		}
+	}
+	
 
-	/** Returns the allocator used by this block table. */
+	/** Returns the allocator used by this block table. 
+	 * <p>
+	 * <em>This allocator does not know about offheap areas.</em>
+	 * </p>
+	 * */
 	public Allocator getAllocator() {
 		checkAllocator();
 		return allocator;
 	}
 
 	/**
-	 * This method returns the internal list of blocks which is sorted by
-	 * their address.
-	 * 
+	 * This method returns the internal list of blocks which are on heap 
+	 * and sorted by their address.
+	 * <p>
 	 * Please note, that the list of blocks returned by this method 
-	 * is sorted by block.header.address. If you are looking for the
-	 * list of blocks in their original sequence in the file than refer
+	 * is sorted by block.header.address and does not contain blocks from
+	 * offheap areas. If you are looking for the <b>complete</b> list of blocks 
+	 * in their original sequence in the file than refer
 	 * to {@link BlenderFile#getBlocks()}
+	 * </p>
 	 * @return
 	 */
 	public List<Block> getBlocksSorted() {

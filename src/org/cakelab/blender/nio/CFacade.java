@@ -58,7 +58,7 @@ public abstract class CFacade {
 	 * the associated instance.	 */
 	protected BlockTable __io__blockTable;
 	
-	/** Block, which contains the data of instance. */
+	/** Block, which contains the data of the instance. */
 	protected Block __io__block;
 	
 	/** The architecure index is used internally to determine the position 
@@ -77,19 +77,20 @@ public abstract class CFacade {
 	 * <li>There must exist a block in the __blockTable which is assigned
 	 * to the given __address</li>
 	 * </ul>
-	 * @param __address 
-	 * @param __blockTable
+	 * @param __address Start address of the instance.
+	 * @param __block The block which contains the address.
+	 * @param __blockTable Block table, which contains the block.
 	 */
-	protected CFacade(long __address, BlockTable __blockTable) {
+	protected CFacade(long __address, Block block, BlockTable __blockTable) {
 		this.__io__address = __address;
-		this.__io__block = __blockTable.getBlock(__address);
+		this.__io__block = block;
 		this.__io__blockTable = __blockTable;
 		this.__io__pointersize = __blockTable.getEncoding().getAddressWidth();
 		this.__io__arch_index = __io__pointersize == Encoding.ADDR_WIDTH_32BIT ? 0 : 1;
 	}
 	
 	/**
-	 * Copy constructor, which assignes the instanciated facade to a
+	 * Copy constructor, which assigns the instantiated facade to a
 	 * another address. Useful when iterating over multiple instances
 	 * of the same struct type in a block.
 	 * 
@@ -97,8 +98,8 @@ public abstract class CFacade {
 	 * targetAddress has to be in the block which is currently assigned to 
 	 * the 'other' facade.
 
-	 * @param other
-	 * @param targetAddress
+	 * @param other Instance to be copied.
+	 * @param targetAddress Start address of the instance.
 	 */
 	protected CFacade(CFacade other, long targetAddress) {
 		this.__io__address = targetAddress;
@@ -111,7 +112,9 @@ public abstract class CFacade {
 	/**
 	 * This method returns the size of the C type which corresponds
 	 * to the given Java type according to the type mapping of Java Blend.
-	 * @param type 
+	 * The method uses the architecture specifications (i.e. pointer size)
+	 * associated with the block of the instance, this method was called on.
+	 * @param type The type which size is requested.
 	 * @return sizeof(ctype)
 	 */
 	public long __io__sizeof(Class<?> type) {
@@ -122,6 +125,7 @@ public abstract class CFacade {
 	 * This method returns the size of the C type which corresponds
 	 * to the given Java type according to the type mapping of Java Blend.
 	 * @param type 
+	 * @param addressWith Size of a pointer in bytes, based on architecture specifications (i.e. 4/8 bytes)
 	 * @return sizeof(ctype)
 	 */
 	public static long __io__sizeof(Class<?> type, int addressWidth) {
@@ -158,12 +162,12 @@ public abstract class CFacade {
 	}
 
 	/**
-	 * This method creates a pointer on the given facade.
-	 * @param object
-	 * @return
+	 * This method creates a pointer on the given instance (object).
+	 * @param object The instance whose pointer is requested.
+	 * @return pointer on the given instance
 	 */
 	public static <T extends CFacade> CPointer<T> __io__addressof(T object) {
-		return new CPointer<T>(object.__io__address, new Class[]{object.getClass()}, object.__io__blockTable);
+		return new CPointer<T>(object.__io__address, new Class[]{object.getClass()}, object.__io__block, object.__io__blockTable);
 	}
 
 	/**
@@ -185,7 +189,7 @@ public abstract class CFacade {
 	 * @return
 	 */
 	public CPointer<Object> __io__addressof(long[] fieldDescriptor) {
-		return new CPointer<Object>(this.__io__address + fieldDescriptor[__io__arch_index], new Class[]{Object.class}, this.__io__blockTable);
+		return new CPointer<Object>(this.__io__address + fieldDescriptor[__io__arch_index], new Class[]{Object.class}, this.__io__block, this.__io__blockTable);
 	}
 
 	
@@ -221,6 +225,7 @@ public abstract class CFacade {
 	 * Creates a new facade instance of the given type.
 	 * @param type The type of facade to instantiate.
 	 * @param address The associated address for the instantiated facade.
+	 * @param block The block, which contains the address.
 	 * @param blockTable the global block map of the associated file.
 	 * @return new facade instance of the given type
 	 * @throws InstantiationException
@@ -231,15 +236,21 @@ public abstract class CFacade {
 	 * @throws SecurityException
 	 */
 	public static CFacade __io__newInstance(Class<? extends CFacade> type, long address,
-			BlockTable blockTable) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		Constructor<?> constructor = type.getDeclaredConstructor(long.class, BlockTable.class);
-		return (CFacade) constructor.newInstance(address, blockTable);
+			Block block, BlockTable blockTable) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Constructor<?> constructor = type.getDeclaredConstructor(long.class, Block.class, BlockTable.class);
+		return (CFacade) constructor.newInstance(address, block, blockTable);
+	}
+
+	static CFacade __io__newInstance(Constructor<?> constructor, Class<? extends CFacade> type, long address,
+			Block block, BlockTable blockTable) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return (CFacade) constructor.newInstance(address, block, blockTable);
 	}
 
 	/**
+	 * Tests whether the facade, this method was called on, references the given address in the same file as the given facade.
 	 * @param facade
 	 * @param address 
-	 * @return address (virtual) of the given object.
+	 * @return address (virtual) of the object, wrapped by the given facade.
 	 */
 	protected boolean __io__equals(CFacade facade, long address) {
 		return facade.__io__block == this.__io__block 

@@ -69,7 +69,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		method.appendln("if (globalBlock.size() == 1) {");
 		method.indent(+1);
 		method.appendln("Block b = globalBlock.get(0);");
-		method.appendln("fileGlobal = new FileGlobal(b.header.getAddress(), blockTable);");
+		method.appendln("fileGlobal = new FileGlobal(b.header.getAddress(), b, blockTable);");
 		method.indent(-1);
 		method.appendln("}");
 		method.appendln("return fileGlobal;");
@@ -124,7 +124,7 @@ public class FactoryClassGenerator extends ClassGenerator implements CFacadeMemb
 		code.appendln("super(file, sdna, blenderVersion);");
 		code.appendln("BlockTable blockTable = getBlockTable();");
 		code.appendln("Block block = blockTable.allocate(BlockCodes.ID_GLOB, FileGlobal." + __io__sizeof + "(FileGlobal.class, getEncoding().getAddressWidth()), FileGlobal." + __DNA__SDNA_INDEX + ", 1);");
-		code.appendln("global = new FileGlobal(block.header.getAddress(), blockTable);");
+		code.appendln("global = new FileGlobal(block.header.getAddress(), block, blockTable);");
 		code.appendln("String filename = file.getCanonicalPath();");
 		code.appendln("global.getFilename().fromString(filename);");
 		code.appendln("global.setMinsubversion(MainLib.BLENDER_MINSUBVERSION);");

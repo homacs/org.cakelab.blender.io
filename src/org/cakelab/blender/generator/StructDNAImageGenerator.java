@@ -12,7 +12,7 @@ public class StructDNAImageGenerator extends BlenderFile {
 
 	public StructDNAImageGenerator(File file, StructDNA sdna, int blenderVersion)
 			throws IOException {
-		super(file, sdna, blenderVersion, Encoding.JAVA_NATIVE);
+		super(file, sdna, blenderVersion, Encoding.JAVA_NATIVE, null);
 	}
 
 	/**

@@ -64,7 +64,7 @@ public class ModelGenerator {
 		String javaPackage = "org.cakelab.blender";
 		String docpath = "resources/dnadoc";
 		boolean generateUtils = true;
-		boolean debug = false;
+		boolean debug = true;
 		
 		for (int i = 0; i < args.length; i++) {
 			String name = args[i++];
