@@ -59,13 +59,17 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 		appendln("{");
 		content.indent(+1);
 		
+		String addressVar = "__address";
+		
+		appendln("long " + addressVar + " = ((" + field.getName() + " == null) ? 0 : " + field.getName() + ".getAddress());");
+		
 		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
-		appendln(__io__block + ".writeLong(" + __io__address + " + " + offset64 + ", " + field.getName() + ".getAddress());");
+		appendln(__io__block + ".writeLong(" + __io__address + " + " + offset64 + ", " + addressVar + ");");
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);
-		appendln(__io__block + ".writeLong(" + __io__address + " + " + offset32 + ", " + field.getName() + ".getAddress());");
+		appendln(__io__block + ".writeLong(" + __io__address + " + " + offset32 + ", " + addressVar + ");");
 		content.indent(-1);
 		appendln("}");
 

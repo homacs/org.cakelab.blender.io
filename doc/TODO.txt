@@ -1,3 +1,4 @@
 + New version specifiers
-+ DNA documentation
-+ publish json
++ cast() method on all objects
++ Iterator classes for ListBase and ID
++ accept null as argument to set functions of pointers 

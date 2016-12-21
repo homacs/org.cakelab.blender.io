@@ -115,6 +115,14 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 			out.println("\t}");
 			out.println();
 			
+			//
+			// Create copy constructor
+			//
+			out.println("\tprotected " + classname + "(" + classname + " that) {");
+			out.println("\t\tsuper(that." + __io__address + ", that." + __io__block + ", that." + __io__blockTable + ");");
+			out.println("\t}");
+			out.println();
+			
 			
 			for (GMethod method : methods) {
 				out.println(method.toString(1));

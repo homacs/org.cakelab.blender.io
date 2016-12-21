@@ -251,6 +251,11 @@ public class CPointer<T> extends CFacade {
 	 * This method returns the value, the pointer points to.
 	 * Whether the returned value is a reference or a copy depends
 	 * on its type. 
+	 * 
+	 * If this is a null pointer, the value returned will be null. 
+	 * In case this pointer references a scalar type, you should check
+	 * {@link #isNull()} before calling {@link #get()}.
+	 * 
 	 * <ul>
 	 * <li>Scalar types will be returned by value.</li>
 	 * <li>Pointers will be returned by value.</li>
@@ -261,7 +266,8 @@ public class CPointer<T> extends CFacade {
 	 * @throws IOException
 	 */
 	public T get() throws IOException {
-		return __get(__io__address);
+		if (isNull()) return null;
+		else return __get(__io__address);
 	}
 	
 	public T __get(long address) throws IOException {
@@ -304,7 +310,8 @@ public class CPointer<T> extends CFacade {
 			setScalar(address, value);
 		} else if (targetTypeList[0].equals(CPointer.class)) {
 			CPointer<?> p = (CPointer<?>) value;
-			__io__block.writeLong(address, p.__io__address);
+			long referenced_address = (p == null) ? 0 : p.__io__address;
+			__io__block.writeLong(address, referenced_address);
 		} else {
 			// object or array
 			
@@ -970,6 +977,7 @@ public class CPointer<T> extends CFacade {
 				Block block = __io__blockTable.getBlock(address, type);
 				return (T) new CPointer(address, type, block, __io__blockTable);
 			} else {
+				if (isNull()) return null;
 				// pointer on struct
 				if (constructor == null) {
 					constructor = (Constructor<T>) targetTypeList[0].getDeclaredConstructor(long.class, Block.class, BlockTable.class);
