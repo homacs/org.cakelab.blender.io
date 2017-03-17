@@ -5,7 +5,7 @@ import java.io.IOException;
  * This class is the mutable variant of {@link CPointer}.
  * <p>
  * Mutable pointers allow  in-place modification of the pointers 
- * address and theirby advanced pointer arithmetics 
+ * address and thereby advanced pointer arithmetics 
  * (better runtime performance). Please note, that modifications 
  * to the address will not be reflected in the memory region this
  * pointer originated from.

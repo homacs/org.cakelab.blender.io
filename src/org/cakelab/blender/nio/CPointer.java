@@ -109,7 +109,6 @@ import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
  * <h4>Example</h4>
  * <pre>
  * 
- * import static org.cakelab.blender.nio.CFacade.__dna__addressof;
  * 
  * CPointer<Link> next = link.getNext(); // retrieve address
  * Link anotherLink = .. ;                 // link we received elsewhere
@@ -168,10 +167,10 @@ import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
  * on pointer and the second pointer is of type pointer on Link.
  * <h4>Example</h4>
  * <pre>
- * CPointer<CPointer<Link> pplink = .. ;
- * CPointer<CPointer<Scene> ppscene;
+ * CPointer&lt;CPointer&lt;Link&gt;&gt; pplink = .. ;
+ * CPointer&lt;CPointer&lt;Scene&gt;&gt; ppscene;
  * ppscene = pplink.cast(new Class[]{Pointer.class, Scene.class};
- * CPointer<Scene> pscene = ppscene.get();
+ * CPointer&lt;Scene&gt; pscene = ppscene.get();
  * Scene scene = pscene.get();
  * </pre>
  * <p>This can get confusing but you will need to cast pointers 
@@ -270,7 +269,7 @@ public class CPointer<T> extends CFacade {
 		else return __get(__io__address);
 	}
 	
-	public T __get(long address) throws IOException {
+	protected T __get(long address) throws IOException {
 		if (targetSize == 0) throw new ClassCastException("Target type is unspecified (i.e. void*). Use cast() to specify its type first.");
 		if (isPrimitive(targetTypeList[0])) {
 			return getScalar(address);
@@ -391,7 +390,7 @@ public class CPointer<T> extends CFacade {
 	 * <pre>
 	 * CPointer&lt;CPointer&lt;ListBase&gt;&gt; p; 
 	 * ..
-	 * CPointer&lt;CPointer&lt;Scene&gt;&gt; pscene = p.cast(Scene.class);
+	 * CPointer&lt;CPointer&lt;Scene&gt;&gt; pscene = p.cast(new Class<?>[]{CPointer.class, Scene.class});
 	 * </pre>
 	 * 
 	 * <h4>Attention!</h4>
@@ -401,36 +400,41 @@ public class CPointer<T> extends CFacade {
 	 * @param type
 	 * @return
 	 */
-	public <U> CPointer<U> cast(Class<U>[] types) {
+	public <U> CPointer<U> cast(Class<?>[] types) {
 		return new CPointer<U>(__io__address, types, __io__block, __io__blockTable);
 	}
 
 	/**
-	 * Type cast for arrays with multiple levels of indirection. 
+	 * Type cast a pointer to an array. Since arrays require a length value, this
+	 * method will work only on pointers, which are arrays already 
+	 * (i.e. (<code>p <b>instanceof</b> CArrayFacade) == true</code>)). 
 	 * 
-	 * Casts the pointer to a different targetType.
+	 * The parameter is needed only to differentiate it from other 
+	 * <code>cast</code> methods. Thus, you can use it like this:
 	 * <pre>
-	 * CPointer&lt;CPointer&lt;ListBase&gt;&gt; p; 
-	 * ..
-	 * CPointer&lt;CPointer&lt;Scene&gt;&gt; pscene = p.cast(Scene.class);
+	 * CPointer&lt;Float&gt; p = null;
+	 * CArrayFacade&lt;Float&gt; array = null;
+	 * array = p.cast(array);
 	 * </pre>
 	 * 
-	 * <h4>Attention!</h4>
-	 * This is an even more dangerous and error prone method than 
-	 * {@link CPointer#cast(Class)} since you can do even more nasty stuff.
+	 * To create a new array facade for a given pointer you have to use the method 
+	 * {@link #toCArrayFacade(int)}.
 	 * 
 	 * @param type
-	 * @return
+	 * @return pointer casted to CArrayFacade
 	 * @throws IOException 
 	 */
 	public CArrayFacade<T> cast(CArrayFacade<T> type) throws IOException {
-		if (this.getClass().equals(type)) {
+		// TODO: erase if possible
+		if (this.getClass() == type.getClass()) {
 			return (CArrayFacade<T>)this;
 		} else {
-			throw new IOException("not implemented");
+			throw new IOException("pointer does not point to an array");
 		}
 	}
 
+	
+	
 	/**
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
