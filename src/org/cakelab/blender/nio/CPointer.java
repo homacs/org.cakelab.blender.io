@@ -426,7 +426,7 @@ public class CPointer<T> extends CFacade {
 	 */
 	public CArrayFacade<T> cast(CArrayFacade<T> type) throws IOException {
 		// TODO: erase if possible
-		if (this.getClass() == type.getClass()) {
+		if (this instanceof CArrayFacade) {
 			return (CArrayFacade<T>)this;
 		} else {
 			throw new IOException("pointer does not point to an array");
