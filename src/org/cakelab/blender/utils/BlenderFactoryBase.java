@@ -241,7 +241,7 @@ public class BlenderFactoryBase {
 	 * This method allocates a new block of appropriate size to fit an array of 
 	 * the given arrayLength and the given component type specification (typeList) 
 	 * and the given lengths for each dimension, in the given blender file and 
-	 * assigns it to an array facet. Refer to {@link CArrayFacade} and {@link CPointer} 
+	 * assigns it to an array facade. Refer to {@link CArrayFacade} and {@link CPointer} 
 	 * to understand the concept of type specifications by type lists.
 	 * </p>
 	 * <b>Example:</b>
