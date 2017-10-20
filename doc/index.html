@@ -32,7 +32,7 @@
 <dl>
 <dt><a href="#about">About</a></dt>
 <dt><a href="spec.html">Documentation</a></dt>
-<dt><a href="demo/index.html">Examples</a></dt>
+<dt><a href="../JavaBlendViewer/index.html">Examples</a></dt>
 <dt><a href="#download">Download</a></dt>
 <dt><a href="#changelog">Change Log</a></dt>
 <dt><a href="#Licensing">Licensing</a></dt>
@@ -107,6 +107,7 @@ in the <a href="spec.html">documentation</a>.
 </p>
 <table border="1">
 <tr><th>version</th><th>minversion</th><th></th><th></th><th></th></tr>
+<tr><th>2.79-0</th><th>2.70-6</th><td><a href="downloads/JavaBlend-${project.version}-DNA-2.79.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-2.79.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-2.79.zip">javadoc</a></td></tr>
 <tr><th>2.78-0</th><th>2.70-6</th><td><a href="downloads/JavaBlend-${project.version}-DNA-2.78.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-2.78.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-2.78.zip">javadoc</a></td></tr>
 <tr><th>2.76-0</th><th>2.70-5</th><td><a href="downloads/JavaBlend-${project.version}-DNA-2.76.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-2.76.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-2.76.zip">javadoc</a></td></tr>
 <tr><th>2.72-2</th><th>2.70-5</th><td><a href="downloads/JavaBlend-${project.version}-DNA-2.72.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-2.72.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-2.72.zip">javadoc</a></td></tr>
@@ -115,18 +116,11 @@ in the <a href="spec.html">documentation</a>.
 
 <h3>Examples</h3>
 <p>
-This package contains various examples for use cases of Java .Blend. Part of this package 
-is a pregenerated Java .Blend data model for Blender v2.78. It uses <a href="https://www.lwjgl.org/">LWJGL</a> and requires
-a graphics card which supports <a href="https://www.opengl.org/">OpenGL 4.3</a> (for no particular reason, but you should look at the source code anyway!).
+<a href="http://homac.cakelab.org/projects/JavaBlendViewer">Java .Blend Viewer</a> is 
+the new example application (20/10/2017) which demonstrates reading of an entire scene 
+from a blender file (with limits of course). It also contains examples for writing 
+blend files. Read <a href="http://homac.cakelab.org/projects/JavaBlendViewer">here</a> for more details.
 </p>
-<p>
-An overview of the contents of the examples package is given <a href="demo/index.html">here</a>.
-</p>
-<table border="1">
-<tr><th>version</th><th></th><th></th></tr>
-<tr><th>${project.version}</th><td><a href="demo/downloads/JavaBlendDemo-${project.version}.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-${project.version}.zip">src</a></td></tr>
-<tr><th>1.0.4</th><td><a href="demo/downloads/JavaBlendDemo-1.0.4.zip">binary</a></td><td><a href="demo/downloads/JavaBlendDemo-src-1.0.4.zip">src</a></td></tr>
-</table>
 
 <h3>Java .Blend SDK</h3>
 <p>
@@ -151,7 +145,17 @@ Source code documentation for generated facade classes is maintained in a separa
 
 <h2 id="changelog">Change Log</h2>
 <ul>
-<li>[1.1.0-r1117][18/01/2016]: fixed bugs due to overlapping blocks since 2.76 and even more source code documentation 
+<li>[1.1.1-r1271][20/10/2017]: adjusted scripts to generate DNA lib for Blender 2.79.
+	<ul>
+	<li>add: javadoc packages</li>
+	<li>fix: wrong path for java.blend docs</li>
+	<li>fix: crash in type cast when parameter is null</li>
+	<li>add: copy constructor for all generated facade classes</li>
+	<li>mod: set methods accept argument null interpreting it as NULL pointer</li>
+	<li>mod: get methods of pointers return null if the C pointer refers to NULL</li>
+	</ul>
+</li>
+<li>[1.1.0-r1117][12/11/2016]: fixed bugs due to overlapping blocks since 2.76 and even more source code documentation 
 	<ul>
 	<li>Added support for offheap areas (see documentation).</li>
 	<li>Fixed issue with TreeStoreElem (since 2.76) due to overlapping address areas in blocks (offheap).</li>

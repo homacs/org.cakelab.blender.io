@@ -2,7 +2,7 @@
 <project default="package.all" name="Generate and Package a Java .Blend Data Model">
 	
 	<target name="init">
-		<property name="version" value="1.1.0"/>
+		<property name="version" value="1.1.1"/>
 		
 		<property name="blender.cfgdir" value="${user.home}/.config/blender"/>
 		<property name="blender.java.package" value="org.blender"/>

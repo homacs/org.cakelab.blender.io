@@ -5,6 +5,7 @@ Create set of Library and Examples for new Version
 ==================================================
 
 
+
 I. Install new Blender Version
 ------------------------------
 1. Download from http://blender.org and unzip.
@@ -93,11 +94,28 @@ IX. Commit Changes
 ------------------
 
 
-- JavaBlendDocs
-- JavaBlendViewer
+1. JavaBlendDocs
+  * commit & push
+  * pull
+2. JavaBlendViewer
   * Remove Blenders temp files: *.blend1
   * then commit
-- org.cakelab.blender.io
+  * update
+3. org.cakelab.blender.io
+  * commit
+  * update
 
 
+
+X. Publish
+---------------
+1. org.cakelab.blender.io
+  + update doc/index.html
+  + run projexp
+  + upload changes
+2. JavaBlendViewer
+  + update doc/index.html
+  + run projexp
+  + run ant -f export-src.xml
+  + upload changes
 
