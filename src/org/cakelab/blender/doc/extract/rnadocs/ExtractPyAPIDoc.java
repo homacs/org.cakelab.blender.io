@@ -14,7 +14,8 @@ import org.cakelab.json.JSONObject;
  * Class used to extract Blender's python API documentation received by executing
  * the rna_info.py script.
  * 
- * It is recommended to use the shell script extract-pyapi-docs.sh for this task. 
+ * It is recommended to use the shell script extract-pyapi-docs.sh for this task.
+ * The shell script is located in JavaBlendDocs repository. 
  * 
  * @author homac
  *

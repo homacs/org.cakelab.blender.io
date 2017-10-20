@@ -9,11 +9,11 @@
 
 
 ################# CONFIGURATION SECTION ################
-# use this switch to 
 BLENDER_DEVEL_ENV=false
 
 
-BLENDER=$HOME/opt/blender-2.78a-linux-glibc211-x86_64/blender
+#BLENDER=$HOME/opt/blender-2.78a-linux-glibc211-x86_64/blender
+BLENDER=$HOME/opt/blender-2.79-linux-glibc219-x86_64/blender
 
 if $BLENDER_DEVEL_ENV ; then
 	# BLENDER_DEV_PATH
@@ -47,7 +47,7 @@ VERSION=`$BLENDER -v | grep "Blender" | head -n 1 | awk '{print $2}'`
 # can use any other .blend file as well.
 #
 #INPUT="${HOME}/.config/blender/${VERSION}/config/userpref.blend"
-INPUT="./versions/2.78.0-2.70.6.blend"
+INPUT="./versions/2.79.blend"
 
 #
 # OUTPUT
