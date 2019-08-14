@@ -10,14 +10,14 @@ import org.cakelab.json.JSONException;
 /**
  * DocGenerator is basically a hub to multiple documentations 
  * on the same subject. It searches for documentation in 
- * all source and combines it to a single documentation.
+ * all source and combines it into a single documentation.
  * 
  * @author homac
  *
  */
 public class DocGenerator implements DocumentationProvider {
 	private Documentation[] docs;
-
+	
 	public DocGenerator(File[] docfiles, boolean debug) throws IOException, JSONException {
 		docs = new Documentation[docfiles.length];
 		int i = 0;

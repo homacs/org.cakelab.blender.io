@@ -918,13 +918,14 @@ Documenation files are written in JSON and contain Javadoc comments. The followi
 </p>
 <table border="1">
 <tr><th>key</th><th>value</th><th>type</th><th>description</th></tr>
-<tr><td><b>system</b></td><td>"Blender"</td><td>String</td><td>Always "Blender".</td></tr>
-<tr><td><b>module</b></td><td>"DNA"</td><td>String</td><td>Always "DNA".</td></tr>
-<tr><td><b>version</b></td><td>major.minor</td><td>String</td><td>Version string as retrieved from file header (e.g. "2.69")</td></tr>
-<tr><td><b>source</b></td><td>source of information</td><td>String</td><td>String which specifies where this information was gathered from (e.g. Python API, Blender Source Code, etc.)</td></tr>
-<tr><td>includes</td><td>list of files to be included</td><td>Array of Strings</td><td>List of paths to files to be included in this documentation file.</td></tr>
-<tr><td>doc</td><td>(reserved for javadoc package info)</td><td>String</td><td>Place for package documentation which is not used in the current version.</td></tr>
-<tr><td>structs</td><td>list of structs</td><td>Array of JSON objects</td><td>List of structs with documentation.
+<tr><th>system</th><td>"Blender"</td><td>String</td><td>Always "Blender".</td></tr>
+<tr><th>module</th><td>"DNA"</td><td>String</td><td>Always "DNA".</td></tr>
+<tr><th>version</th><td>major.minor</td><td>String</td><td>Version string as retrieved from file header (e.g. "2.69")</td></tr>
+<tr><th><b>source</th><td>source of information</td><td>String</td><td>String which specifies where this information was gathered from (e.g. Python API, Blender Source Code, etc.)</td></tr>
+<tr><th>inherits</th><td>list of doc files to be inherited</td><td>Array of Strings</td><td>List of paths to doc files to be referred to, in case no other documentation was found for a given subject (e.g. struct). Inherited documentation will be overridden by included documentation or documentation found in the given doc file.</td></tr>
+<tr><th>includes</th><td>list of files to be included</td><td>Array of Strings</td><td>List of paths to doc files to be included in this documentation file. This will override previously inherited or included documentation.</td></tr>
+<tr><th>doc</th><td>Reserved for javadoc package info (e.g. package.html)</td><td>String</td><td>Place for package documentation which is not used in the current version.</td></tr>
+<tr><th>structs</th><td>list of structs</td><td>Array of JSON objects</td><td>List of structs with documentation.
 	<table border="1">
 	<tr><th>key</th><th>value</th><th>type</th><th>description</th></tr>
 	<tr><td><em>struct name</em></td><td>javadocs for a struct</td><td>JSON object</td><td>Contains javadoc for the corresponding class and its members.

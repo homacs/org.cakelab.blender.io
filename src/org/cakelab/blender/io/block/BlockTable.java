@@ -120,10 +120,20 @@ public class BlockTable {
 		Collections.sort(this.sorted, BLOCKS_ASCENDING_ADDRESS);
 		
 		initOffheapAreas(offheapStructs);
-		
+
+		// SANITY CHECK HERE
+		// Check if the first (actual) address is reasonable
+		// We assume, that addresses are at least greater than HEAPBASE.
+		// So far, even offheap areas have kind of reasonable start addresses.
+		// The only exception is the ENDB block, which has an address of NULL.
+		// TODO: consider offheap areas beyond HEAPBASE
 		if (!sorted.isEmpty()) {
 			Block first = sorted.get(0);
-			assert (UnsignedLong.ge(first.header.address, HEAPBASE));
+			if (first.header.code.equals(BlockCodes.ID_ENDB)) {
+				if (sorted.size()>1) first = sorted.get(1);
+				else first = null;
+			}
+			assert (first != null && UnsignedLong.ge(first.header.address, HEAPBASE));
 		}
 	}
 

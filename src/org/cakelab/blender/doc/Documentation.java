@@ -31,6 +31,11 @@ import org.cakelab.json.codec.Parser;
  * of the data model, the class and method generators use this 
  * class to lookup available documentation for classes and its members.
  * </p>
+ * 
+ * 
+ * 
+ * 
+ * 
  * @author homac
  *
  */
@@ -45,8 +50,8 @@ public class Documentation implements DocumentationProvider {
 	protected String source;
 	protected File includePath;
 	private boolean debug;
-
-	public Documentation (File docfile, boolean debug) throws IOException, JSONException{
+	
+	public Documentation(File docfile, boolean debug) throws IOException, JSONException{
 		this.debug = debug;
 		JSONObject docjson = new Parser(new FileInputStream(docfile)).parse();
 		
@@ -282,10 +287,10 @@ public class Documentation implements DocumentationProvider {
 						subfolderVer = version;
 					}
 				} catch (NumberFormatException e) {
-					System.err.println("Warning: doc folder '" + folder.getPath() + "': " + e.getMessage());
+					// not a version directory --> ignore
 				}
 			}
-		} 
+		}
 		return subfolder;
 	}
 

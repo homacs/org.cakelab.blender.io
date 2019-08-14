@@ -322,17 +322,20 @@ public class BlenderFile implements Closeable {
 	private BlockList readBlocks() throws IOException {
 		blocks = new BlockList();
 		io.offset(firstBlockOffset);
-		BlockHeader blockHeader = new BlockHeader();
-		blockHeader.read(io);
-		while (!blockHeader.getCode().equals(BlockCodes.ID_ENDB)) {
-			CDataReadWriteAccess data = readBlockData(blockHeader);
-			
-			Block block = new Block(blockHeader, data);
-			blocks.add(block);
-			
+		BlockHeader blockHeader;
+		Block block;
+		// We read all blocks until we hit ENDB.
+		// There is always at least the DNA block in a .blend file.
+		do {
 			blockHeader = new BlockHeader();
 			blockHeader.read(io);
-		}
+			CDataReadWriteAccess data = readBlockData(blockHeader);
+			
+			block = new Block(blockHeader, data);
+			blocks.add(block);
+			
+		} while (!blockHeader.getCode().equals(BlockCodes.ID_ENDB));
+		
 		return blocks;
 	}
 
@@ -349,6 +352,10 @@ public class BlenderFile implements Closeable {
 		io = null;
 	}
 
+	public FileHeader getHeader() {
+		return header;
+	}
+	
 	/**
 	 * @return Encoding according to the files header
 	 */
