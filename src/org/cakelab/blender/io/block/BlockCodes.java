@@ -25,7 +25,8 @@ import org.cakelab.blender.io.util.Identifier;
 public interface BlockCodes {
 
 
-	/* all known block codes as of v2.69 */
+	/* all known block codes as of Blender v2.80 
+	 * see 'source/blender/makesdna/DNA_ID.h' */
 	
 	/** Scene */
 	Identifier ID_SCE = new Identifier(new byte[]{'S', 'C', 0, 0});
@@ -59,8 +60,6 @@ public interface BlockCodes {
 	Identifier ID_WO = new Identifier(new byte[]{'W', 'O', 0, 0});
 	/** Screen */
 	Identifier ID_SCR = new Identifier(new byte[]{'S', 'R', 0, 0});
-	/** (depreciated?) */
-	Identifier ID_SCRN = new Identifier(new byte[]{'S', 'N', 0, 0});
 	/** VectorFont */
 	Identifier ID_VF = new Identifier(new byte[]{'V', 'F', 0, 0});
 	 /** Text */
@@ -71,14 +70,12 @@ public interface BlockCodes {
 	Identifier ID_SO = new Identifier(new byte[]{'S', 'O', 0, 0});
 	/** Group */
 	Identifier ID_GR = new Identifier(new byte[]{'G', 'R', 0, 0});
-	/** (internal use only) */
-	Identifier ID_ID = new Identifier(new byte[]{'I', 'D', 0, 0});
 	/** Armature */
 	Identifier ID_AR = new Identifier(new byte[]{'A', 'R', 0, 0});
 	/** Action */
 	Identifier ID_AC = new Identifier(new byte[]{'A', 'C', 0, 0});
 	/** Script (depreciated) */
-	Identifier ID_SCRIPT = new Identifier(new byte[]{'P', 'Y', 0, 0});
+	// Identifier ID_SCRIPT = new Identifier(new byte[]{'P', 'Y', 0, 0}); // no longer exists since 2.80
 	/** NodeTree */
 	Identifier ID_NT = new Identifier(new byte[]{'N', 'T', 0, 0});
 	/** Brush */
@@ -95,6 +92,24 @@ public interface BlockCodes {
 	Identifier ID_MSK = new Identifier(new byte[]{'M', 'S', 0, 0});
 	/** FreestyleLineStyle */
 	Identifier ID_LS = new Identifier(new byte[]{'L', 'S', 0, 0}); 
+	/** Palette */
+	Identifier ID_PAL = new Identifier(new byte[]{'P', 'L', 0, 0}); 
+	/** Paint Curve */
+	Identifier ID_PC = new Identifier(new byte[]{'P', 'C', 0, 0}); 
+	/** Cache File */
+	Identifier ID_CF = new Identifier(new byte[]{'C', 'F', 0, 0}); 
+	/** Work Space */
+	Identifier ID_WS = new Identifier(new byte[]{'W', 'S', 0, 0}); 
+	/** LightProbe */
+	Identifier ID_LP = new Identifier(new byte[]{'L', 'P', 0, 0}); 
+	
+	
+	/** Only used as 'placeholder' in .blend files for directly linked data-blocks. */
+	Identifier ID_ID = new Identifier(new byte[]{'I', 'D', 0, 0});
+	/** depreciated, but still heavily in use */
+	Identifier ID_SCRN = new Identifier(new byte[]{'S', 'N', 0, 0});
+
+	
 	/** NOTE! Fake IDs, needed for g.sipo->blocktype or outliner */
 	Identifier ID_SEQ = new Identifier(new byte[]{'S', 'Q', 0, 0});
 	/** constraint.
@@ -109,6 +124,8 @@ public interface BlockCodes {
 	/** fluidsim Ipo 
 	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner.*/
 	Identifier ID_FLUIDSIM = new Identifier(new byte[]{'F', 'S', 0, 0});
+	
+	
 	
 	/** block code of the last block. */
 	Identifier ID_ENDB = new Identifier("ENDB");

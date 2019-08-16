@@ -1,8 +1,8 @@
 
 
 
-Generating Library and Examples for new Version
-===============================================
+Generating Library and Examples for a new Blender Release
+=========================================================
 
 
 
@@ -32,6 +32,8 @@ III. Update Blender Source Code
    - look for a branch called
         blender-vX.XX-release
    - checkout or switch to new branch
+3. Identify changes:
+   - check source/blender/makesdna/DNA_ID.h
 
 
 IV. Create Source Code Docs
@@ -57,7 +59,7 @@ VI. Do a Test-Run with Class Generator
 1. Get a .blend file of the new version (e.g. save the default file) 
 2. Copy that file to org.cakelab.blender.io/versions/NEW_VERSION.blend (its temporary for now)
 3. Add a test project as target for generated classes
-4. Adjust Launcher or script to do a test generation run into the target project
+4. Adjust Launcher or script to do a test generation run into that target project
 5. Execute generator
 6. Adjust versions/NEW_VERSION.blend according to version range given in output of generator
 7. Validate generated output
