@@ -1,7 +1,0 @@
-TODO: Do the TODO list!
-
-+ javac --release for release?
-+ New version specifiers
-+ cast() method on all objects
-+ Iterator classes for ListBase and ID
-+ accept null as argument to set functions of pointers 
