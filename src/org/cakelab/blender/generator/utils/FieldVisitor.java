@@ -3,14 +3,14 @@ package org.cakelab.blender.generator.utils;
 import java.io.IOException;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.generator.typemap.JavaType;
-import org.cakelab.blender.generator.typemap.JavaType.JKind;
 import org.cakelab.blender.metac.CField;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.metac.CType;
 import org.cakelab.blender.metac.CType.CKind;
 import org.cakelab.blender.nio.CPointer;
 import org.cakelab.blender.nio.int64;
+import org.cakelab.blender.typemap.JavaType;
+import org.cakelab.blender.typemap.JavaType.JKind;
 
 public abstract class FieldVisitor extends CodeGenerator {
 

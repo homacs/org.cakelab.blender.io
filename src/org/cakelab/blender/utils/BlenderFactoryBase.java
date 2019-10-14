@@ -1,6 +1,6 @@
 package org.cakelab.blender.utils;
 
-import static org.cakelab.blender.generator.CFacadeMembers.__DNA__SDNA_INDEX;
+import static org.cakelab.blender.typemap.CFacadeMembers.__DNA__SDNA_INDEX;
 
 import java.io.File;
 import java.io.IOException;

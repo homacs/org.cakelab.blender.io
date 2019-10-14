@@ -1,4 +1,4 @@
-package org.cakelab.blender.generator;
+package org.cakelab.blender.typemap;
 
 
 /**

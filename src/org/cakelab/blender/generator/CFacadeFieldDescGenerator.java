@@ -2,7 +2,6 @@ package org.cakelab.blender.generator;
 
 import java.io.IOException;
 
-import org.cakelab.blender.generator.typemap.JavaType;
 import org.cakelab.blender.generator.utils.ClassGenerator;
 import org.cakelab.blender.generator.utils.FieldVisitor;
 import org.cakelab.blender.generator.utils.GComment;
@@ -11,6 +10,7 @@ import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.metac.CField;
 import org.cakelab.blender.metac.CType;
 import org.cakelab.blender.nio.CPointer;
+import org.cakelab.blender.typemap.JavaType;
 
 
 public class CFacadeFieldDescGenerator extends FieldVisitor {

@@ -1,4 +1,4 @@
-package org.cakelab.blender.generator.typemap;
+package org.cakelab.blender.typemap;
 
 import org.cakelab.blender.metac.CType;
 import org.cakelab.blender.nio.CArrayFacade;

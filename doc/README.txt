@@ -39,7 +39,7 @@ III. Update Blender Source Code
 IV. Create Source Code Docs
 ---------------------------
 Refers to script "JavaBlendDocs/doxygen-dnasrcdoc-xml.sh"
-1. Adjust version number in script!
+1. Adjust version number in script (BLENDER_VERSION)!
 2. Adjust ENV_PATH_BASE in script if necessary.
 3. Execute script.
 

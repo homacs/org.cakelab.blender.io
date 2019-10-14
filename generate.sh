@@ -13,8 +13,8 @@ BLENDER_DEVEL_ENV=false
 
 # BLENDER
 # Blender executable.
-BLENDER=$HOME/opt/blender-2.80-linux-glibc217-x86_64/blender
-
+#BLENDER=$HOME/opt/blender-2.80-linux-glibc217-x86_64/blender
+BLENDER=$HOME/opt/blender-2.81-95f020c853d6-linux-glibc217-x86_64
 if $BLENDER_DEVEL_ENV ; then
 	# BLENDER_DEV_PATH
 	# Path to .
@@ -47,7 +47,7 @@ VERSION=`$BLENDER -v | grep "Blender" | head -n 1 | awk '{print $2}'`
 # can use any other .blend file as well.
 #
 #INPUT="${HOME}/.config/blender/${VERSION}/config/userpref.blend"
-INPUT="./versions/2.80.75-2.80.0.blend"
+INPUT="./versions/2.81.15-2.80.0.blend"
 
 #
 # OUTPUT
@@ -55,8 +55,8 @@ INPUT="./versions/2.80.75-2.80.0.blend"
 # be stored. It will be extended by the Java package folders 
 # according to the PACKAGE argument (see below).
 #
-#OUTPUT="/home/homac/workspaces/Java.Blend/jb-test"
-OUTPUT="../JavaBlendViewer/gen"
+# OUTPUT="/home/homac/workspaces/Java.Blend/ZZZ-test/src"
+OUTPUT="../org.cakelab.blender.dna/src"
 
 #
 # DOCPATH

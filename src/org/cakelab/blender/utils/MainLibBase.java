@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cakelab.blender.generator.typemap.Renaming;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockCodes;
@@ -19,6 +18,7 @@ import org.cakelab.blender.io.util.Identifier;
 import org.cakelab.blender.metac.CField;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.nio.CFacade;
+import org.cakelab.blender.typemap.Renaming;
 
 /**
  * Blender organises data in so-called libraries. A main library contains

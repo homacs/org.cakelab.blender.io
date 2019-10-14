@@ -2,7 +2,6 @@ package org.cakelab.blender.generator;
 
 import java.io.IOException;
 
-import org.cakelab.blender.generator.typemap.JavaType;
 import org.cakelab.blender.generator.utils.GComment;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.MethodGenerator;
@@ -11,6 +10,8 @@ import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.metac.CType;
 import org.cakelab.blender.nio.CArrayFacade;
 import org.cakelab.blender.nio.CPointer;
+import org.cakelab.blender.typemap.CFacadeMembers;
+import org.cakelab.blender.typemap.JavaType;
 
 
 

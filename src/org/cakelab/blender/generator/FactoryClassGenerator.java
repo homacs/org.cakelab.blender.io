@@ -20,6 +20,7 @@ import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockCodes;
 import org.cakelab.blender.io.block.BlockTable;
 import org.cakelab.blender.io.dna.internal.StructDNA;
+import org.cakelab.blender.typemap.CFacadeMembers;
 import org.cakelab.blender.utils.BlenderFactoryBase;
 
 public class FactoryClassGenerator extends ClassGenerator implements CFacadeMembers {

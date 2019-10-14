@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.generator.typemap.JavaType;
-import org.cakelab.blender.generator.typemap.Renaming;
 import org.cakelab.blender.generator.utils.ClassGenerator;
 import org.cakelab.blender.generator.utils.GComment;
 import org.cakelab.blender.generator.utils.GField;
@@ -23,6 +21,9 @@ import org.cakelab.blender.metac.CType;
 import org.cakelab.blender.nio.CFacade;
 import org.cakelab.blender.nio.CMetaData;
 import org.cakelab.blender.nio.CPointer;
+import org.cakelab.blender.typemap.CFacadeMembers;
+import org.cakelab.blender.typemap.JavaType;
+import org.cakelab.blender.typemap.Renaming;
 
 
 public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMembers {

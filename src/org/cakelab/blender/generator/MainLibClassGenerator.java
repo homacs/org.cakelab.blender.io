@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.cakelab.blender.doc.DocumentationProvider;
-import org.cakelab.blender.generator.typemap.Renaming;
 import org.cakelab.blender.generator.utils.ClassGenerator;
 import org.cakelab.blender.generator.utils.GComment;
 import org.cakelab.blender.generator.utils.GComment.Type;
@@ -19,6 +18,8 @@ import org.cakelab.blender.io.FileVersionInfo;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.nio.CFacade;
 import org.cakelab.blender.nio.CPointer;
+import org.cakelab.blender.typemap.CFacadeMembers;
+import org.cakelab.blender.typemap.Renaming;
 import org.cakelab.blender.utils.MainLibBase;
 
 public class MainLibClassGenerator extends ClassGenerator {

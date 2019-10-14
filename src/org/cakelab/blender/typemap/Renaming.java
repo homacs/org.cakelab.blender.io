@@ -1,4 +1,4 @@
-package org.cakelab.blender.generator.typemap;
+package org.cakelab.blender.typemap;
 
 /**
  * This class implements mapping of blender struct names
