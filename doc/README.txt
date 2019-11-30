@@ -118,10 +118,17 @@ IX. Commit Changes
 X. Publish
 ---------------
 1. org.cakelab.blender.io
+  + update version in projexp.cfg
+  + update doc/index.html
+  + run projexp JavaBlend
+  + review changes in browser
+  + upload changes (scp -r tmp/public_html/projects/JavaBlend/* cakelab.org:public_html/projects/JavaBlend/.)
+2. org.cakelab.blender.viewer
   + update doc/index.html
   + run projexp
+  + run ant -f export-src.xml
   + upload changes
-2. JavaBlendViewer
+3. org.cakelab.blender.fileviewer
   + update doc/index.html
   + run projexp
   + run ant -f export-src.xml
