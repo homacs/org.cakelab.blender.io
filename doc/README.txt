@@ -17,8 +17,8 @@ II. Extract Python API
 ----------------------
 Related to JavaBlendDocs/extract-pyapi-docs.sh
 
-1. Adjust path to blender base dir in this script
-2. Execute script
+1. Adjust path to blender base dir (BLENDER_BASE) in this script
+2. Execute script in shell
 
 Result: New doc file "resources/dnadoc/VERSION/pyapi/doc.json"
 
@@ -32,7 +32,7 @@ III. Update Blender Source Code
    - look for a branch called
         blender-vX.XX-release
    - checkout or switch to new branch
-3. Identify changes:
+3. Identify changes for the change log on web page:
    - check source/blender/makesdna/DNA_ID.h
 
 
@@ -58,18 +58,18 @@ VI. Do a Test-Run with Class Generator
 --------------------------------------
 1. Get a .blend file of the new version (e.g. save the default file) 
 2. Copy that file to org.cakelab.blender.io/versions/NEW_VERSION.blend (its temporary for now)
-3. Add a test project as target for generated classes
-4. Adjust Launcher or script to do a test generation run into that target project
+3. Add a temporary test project as target for generated classes
+4. Adjust Eclipse run configuration or script to do a test generation run into that target project
 5. Execute generator
 6. Adjust versions/NEW_VERSION.blend according to version range given in output of generator
 7. Validate generated output
 
 VII. Update and Test Demo Application
 ------------------------------------
-1. Update the launcher or script to write generated classes to JavaBlendViewer/gen
-2. Open a shell (!) and remove the content of JavaBlendViewer/gen
+1. Update the launcher or script to write generated classes to org.cakelab.blender.dna/src
+2. Open a shell (!) and remove the content of org.cakelab.blender.dna/src (necessary to prevent git plugin to interfere)
 3. Run generator to generate dna classes.
-4. Open the example .blend files in JavaBlendViewer/examples in new Blender version and save them (now converted)
+4. Open the example .blend files in org.cakelab.blender.viewer/examples in new Blender version and save them (now converted)
 5. Refresh package view in IDE (so it actually sees changes)
 6. Test viewer
 7. Test Blender2Json converter
@@ -79,16 +79,16 @@ VII. Update and Test Demo Application
 VIII. Create new DNA Lib
 ------------------------
 1. Open org.cakelab.blender.io/export-DNA-lib.xml
-2. Scroll to target package-all
-3. Add a new subsection for the new version (copy from previous) and adjust version number and file name.
-4. Execute in console (!) 
+2. Adjust version of Java.Blend in init section (necessary on any changes in org.cakelab.blender.io)  
+3. Scroll to target package-all
+4. Add a new subsection for the new version (copy from previous) and adjust version number and file name.
+5. Execute in console (!) 
       ant -f export-DNA-lib.xml
-5. (just in case) Review output in content of the new files 
+6. (just in case) Review output in content of the new files 
 	- JavaBlend-1.1.0-DNA-2.79.jar
 	- JavaBlend-src-1.1.0-DNA-2.79.zip
    in /home/homac/tmp/public_html/projects/JavaBlend/downloads
-6. Create a test project and copy content of JavaBlendViewer except source folder "gen"
-7. Add new library and do a test run
+7. Test demo apps against generated library
 8. Upload new files to cakelab.org:public_html/projects/JavaBlend/downloads
 
 
@@ -99,13 +99,19 @@ IX. Commit Changes
 1. JavaBlendDocs
   * commit & push
   * pull
-2. JavaBlendViewer
-  * Remove Blenders temp files: *.blend1
-  * then commit
-  * update
-3. org.cakelab.blender.io
-  * commit
-  * update
+2. org.cakelab.blender.viewer
+  * Remove Blenders temp files: *.blend1 (not necessary -> .gitignore)
+  * commit & push
+  * pull
+3. org.cakelab.blender.fileviewer
+  * commit & push
+  * pull
+4. org.cakelab.blender.io
+  * commit & push
+  * pull
+5. org.cakelab.blender.dna
+  * commit & push
+  * pull
 
 
 
