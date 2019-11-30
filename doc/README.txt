@@ -133,4 +133,9 @@ X. Publish
   + run projexp
   + run ant -f export-src.xml
   + upload changes
+4. Commit final changes (web and scripts)
+5. Mirror all projects to github
+	
+
+
 
