@@ -15,10 +15,12 @@ I. Install new Blender Version
 
 II. Extract Python API
 ----------------------
-Related to JavaBlendDocs/extract-pyapi-docs.sh
+Refers to JavaBlendDocs/extract-pyapi-docs.sh
 
-1. Adjust path to blender base dir (BLENDER_BASE) in this script
+1. Adjust path to blender base dir (BLENDER_BASE) in that script
 2. Execute script in shell
+   > cd <path-to>/JavaBlendDocs
+   > ./extract-pyapi-docs.sh
 
 Result: New doc file "resources/dnadoc/VERSION/pyapi/doc.json"
 
@@ -42,6 +44,8 @@ Refers to script "JavaBlendDocs/doxygen-dnasrcdoc-xml.sh"
 1. Adjust version number in script (BLENDER_VERSION)!
 2. Adjust ENV_PATH_BASE in script if necessary.
 3. Execute script.
+	> cd <path-to>/JavaBlendDocs
+	> ./doxygen-dnasrcdoc-xml.sh
 
 Result: New doc file "resources/dnadoc/VERSION/dnasrc/doc.json"
 
