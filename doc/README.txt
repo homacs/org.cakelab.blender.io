@@ -33,7 +33,7 @@ III. Update Blender Source Code
 2. Switch to our existing workspace "blender" or follow https://wiki.blender.org/index.php/Dev:Doc/Tools/Git to checkout repo
    - look for a branch called
         blender-vX.XX-release
-   - checkout or switch to new branch
+   - checkout or switch+pull to new branch
 3. Identify changes for the change log on web page:
    - check source/blender/makesdna/DNA_ID.h
 
@@ -73,7 +73,9 @@ VII. Update and Test Demo Application
 1. Update the launcher or script to write generated classes to org.cakelab.blender.dna/src
 2. Open a shell (!) and remove the content of org.cakelab.blender.dna/src (necessary to prevent git plugin to interfere)
 3. Run generator to generate dna classes.
-4. Open the example .blend files in org.cakelab.blender.viewer/examples in new Blender version and save them (now converted)
+4. Open the example .blend files in org.cakelab.blender.viewer/examples in 
+   new Blender version and save them (now converted).
+   If files do not open or Blender freezes -> Uncheck "Load UI" in "Open File" dialog
 5. Refresh package view in IDE (so it actually sees changes)
 6. Test viewer
 7. Test Blender2Json converter
@@ -83,11 +85,13 @@ VII. Update and Test Demo Application
 VIII. Create new DNA Lib
 ------------------------
 1. Open org.cakelab.blender.io/export-DNA-lib.xml
-2. Adjust version of Java.Blend in init section (necessary on any changes in org.cakelab.blender.io)  
+2. [Adjust version of Java.Blend in init section] (only necessary on any changes in org.cakelab.blender.io)  
 3. Scroll to target package-all
 4. Add a new subsection for the new version (copy from previous) and adjust version number and file name.
-5. Execute in console (!) 
-      ant -f export-DNA-lib.xml
+5. Execute ant script from eclipse
+    - make sure, ant executes with java 1.8 environment
+    - Eclipse: Run As --> Ant Build ... -> configure JRE tab -> Run
+    (alternatively console:  ant -f export-DNA-lib.xml)
 6. (just in case) Review output in content of the new files 
 	- JavaBlend-1.1.0-DNA-2.79.jar
 	- JavaBlend-src-1.1.0-DNA-2.79.zip
