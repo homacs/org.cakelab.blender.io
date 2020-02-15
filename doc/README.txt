@@ -126,7 +126,7 @@ IX. Commit Changes
 X. Publish
 ---------------
 1. org.cakelab.blender.io
-  + update version in projexp.cfg
+  + update version in projexp.cfg (if necessary)
   + update doc/index.html
   + run projexp JavaBlend
   + review changes in browser
