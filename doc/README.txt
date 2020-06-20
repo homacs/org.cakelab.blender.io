@@ -147,12 +147,12 @@ XI. Publish
   + update doc/index.html
   + run projexp
   + run ant -f export-src.xml
-  + upload changes
+  + upload changes (scp -r tmp/public_html/projects/JavaBlendViewer/* cakelab.org:public_html/projects/JavaBlendViewer/.)
 3. org.cakelab.blender.fileviewer
   + update doc/index.html
   + run projexp
   + run ant -f export-src.xml
-  + upload changes
+  + upload changes (scp -r tmp/public_html/projects/JavaBlendFileViewer/* cakelab.org:public_html/projects/JavaBlendFileViewer/.)
 4. Commit final changes (web and scripts)
 5. Mirror all projects to github
 	
