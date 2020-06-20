@@ -33,7 +33,7 @@ public class FileVersionInfo {
 	/**
 	 * minversion;
 	 */
-	int minversion;
+	Version minversion;
 	/**
 	 * minsubversion;
 	 */
@@ -59,7 +59,7 @@ public class FileVersionInfo {
 				subversion = getIntegerValue(field, cin);
 				remaining--;
 			} else if (field.getName().equals("minversion")) {
-				minversion = getIntegerValue(field, cin);
+				minversion = new Version(getIntegerValue(field, cin));
 				remaining--;
 			} else if (field.getName().equals("minsubversion")) {
 				minsubversion = getIntegerValue(field, cin);
@@ -103,7 +103,7 @@ public class FileVersionInfo {
 		return subversion;
 	}
 
-	public int getMinversion() {
+	public Version getMinversion() {
 		return minversion;
 	}
 

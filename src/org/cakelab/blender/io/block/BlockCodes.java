@@ -9,121 +9,120 @@ import org.cakelab.blender.io.util.Identifier;
  * nowadays have a generic code called 'DATA'. The most 
  * important codes are 'ENDB' and 'DNA1' which are both unique
  * in a Blender file.
- * </p>
- * <b>List of known block codes:</b>
- * <table border="1">
- * <tr><td>code</td><td>description</td></tr>
- * <tr><td>ENDB</td><td>Marks the end of the Blender file.</td></tr>
- * <tr><td>DNA1</td><td>Contains the {@link StructDNA}</td></tr>
- * <tr><td>DATA</td><td>Arbitrary data.</td></tr>
- * </table>
- * <p>
-
  * @author homac
  *
  */
 public interface BlockCodes {
 
 
-	/* all known block codes as of Blender v2.80 
+	/* all known block codes as of Blender v2.83 
 	 * see 'source/blender/makesdna/DNA_ID.h' */
 	
 	/** Scene */
-	Identifier ID_SCE = new Identifier(new byte[]{'S', 'C', 0, 0});
+	Identifier ID_SCE = MAKE_ID2('S', 'C');
 	/** Library */
-	Identifier ID_LI = new Identifier(new byte[]{'L', 'I', 0, 0});
+	Identifier ID_LI = MAKE_ID2('L', 'I');
 	/** Object */
-	Identifier ID_OB = new Identifier(new byte[]{'O', 'B', 0, 0});
+	Identifier ID_OB = MAKE_ID2('O', 'B');
 	/** Mesh */
-	Identifier ID_ME = new Identifier(new byte[]{'M', 'E', 0, 0});
+	Identifier ID_ME = MAKE_ID2('M', 'E');
 	/** Curve */
-	Identifier ID_CU = new Identifier(new byte[]{'C', 'U', 0, 0});
+	Identifier ID_CU = MAKE_ID2('C', 'U');
 	/** MetaBall */
-	Identifier ID_MB = new Identifier(new byte[]{'M', 'B', 0, 0});
+	Identifier ID_MB = MAKE_ID2('M', 'B');
 	/** Material */
-	Identifier ID_MA = new Identifier(new byte[]{'M', 'A', 0, 0});
+	Identifier ID_MA = MAKE_ID2('M', 'A');
 	/** Texture */
-	Identifier ID_TE = new Identifier(new byte[]{'T', 'E', 0, 0});
+	Identifier ID_TE = MAKE_ID2('T', 'E');
 	/** Image */
-	Identifier ID_IM = new Identifier(new byte[]{'I', 'M', 0, 0});
+	Identifier ID_IM = MAKE_ID2('I', 'M');
 	/** Lattice */
-	Identifier ID_LT = new Identifier(new byte[]{'L', 'T', 0, 0});
+	Identifier ID_LT = MAKE_ID2('L', 'T');
 	/** Lamp */
-	Identifier ID_LA = new Identifier(new byte[]{'L', 'A', 0, 0});
+	Identifier ID_LA = MAKE_ID2('L', 'A');
 	/** Camera */
-	Identifier ID_CA = new Identifier(new byte[]{'C', 'A', 0, 0});
+	Identifier ID_CA = MAKE_ID2('C', 'A');
 	/** Ipo (depreciated, replaced by FCurves) */
-	Identifier ID_IP = new Identifier(new byte[]{'I', 'P', 0, 0});
+	Identifier ID_IP = MAKE_ID2('I', 'P');
 	/** Key (shape key) */
-	Identifier ID_KE = new Identifier(new byte[]{'K', 'E', 0, 0});
+	Identifier ID_KE = MAKE_ID2('K', 'E');
 	/** World */
-	Identifier ID_WO = new Identifier(new byte[]{'W', 'O', 0, 0});
+	Identifier ID_WO = MAKE_ID2('W', 'O');
 	/** Screen */
-	Identifier ID_SCR = new Identifier(new byte[]{'S', 'R', 0, 0});
+	Identifier ID_SCR = MAKE_ID2('S', 'R');
 	/** VectorFont */
-	Identifier ID_VF = new Identifier(new byte[]{'V', 'F', 0, 0});
+	Identifier ID_VF = MAKE_ID2('V', 'F');
 	 /** Text */
-	Identifier ID_TXT = new Identifier(new byte[]{'T', 'X', 0, 0});
+	Identifier ID_TXT = MAKE_ID2('T', 'X');
 	/** Speaker */
-	Identifier ID_SPK = new Identifier(new byte[]{'S', 'K', 0, 0});
+	Identifier ID_SPK = MAKE_ID2('S', 'K');
 	/** Sound */
-	Identifier ID_SO = new Identifier(new byte[]{'S', 'O', 0, 0});
+	Identifier ID_SO = MAKE_ID2('S', 'O');
 	/** Group */
-	Identifier ID_GR = new Identifier(new byte[]{'G', 'R', 0, 0});
+	Identifier ID_GR = MAKE_ID2('G', 'R');
 	/** Armature */
-	Identifier ID_AR = new Identifier(new byte[]{'A', 'R', 0, 0});
+	Identifier ID_AR = MAKE_ID2('A', 'R');
 	/** Action */
-	Identifier ID_AC = new Identifier(new byte[]{'A', 'C', 0, 0});
+	Identifier ID_AC = MAKE_ID2('A', 'C');
 	/** Script (depreciated) */
-	// Identifier ID_SCRIPT = new Identifier(new byte[]{'P', 'Y', 0, 0}); // no longer exists since 2.80
+	// Identifier ID_SCRIPT = MAKE_ID2('P', 'Y'); // no longer exists since 2.80
 	/** NodeTree */
-	Identifier ID_NT = new Identifier(new byte[]{'N', 'T', 0, 0});
+	Identifier ID_NT = MAKE_ID2('N', 'T');
 	/** Brush */
-	Identifier ID_BR = new Identifier(new byte[]{'B', 'R', 0, 0});
+	Identifier ID_BR = MAKE_ID2('B', 'R');
 	/** ParticleSettings */
-	Identifier ID_PA = new Identifier(new byte[]{'P', 'A', 0, 0});
+	Identifier ID_PA = MAKE_ID2('P', 'A');
 	/** GreasePencil */
-	Identifier ID_GD = new Identifier(new byte[]{'G', 'D', 0, 0});
+	Identifier ID_GD = MAKE_ID2('G', 'D');
 	/** WindowManager */
-	Identifier ID_WM = new Identifier(new byte[]{'W', 'M', 0, 0});
+	Identifier ID_WM = MAKE_ID2('W', 'M');
 	/** MovieClip */
-	Identifier ID_MC = new Identifier(new byte[]{'M', 'C', 0, 0});
+	Identifier ID_MC = MAKE_ID2('M', 'C');
 	/** Mask */
-	Identifier ID_MSK = new Identifier(new byte[]{'M', 'S', 0, 0});
+	Identifier ID_MSK = MAKE_ID2('M', 'S');
 	/** FreestyleLineStyle */
-	Identifier ID_LS = new Identifier(new byte[]{'L', 'S', 0, 0}); 
+	Identifier ID_LS = MAKE_ID2('L', 'S'); 
 	/** Palette */
-	Identifier ID_PAL = new Identifier(new byte[]{'P', 'L', 0, 0}); 
+	Identifier ID_PAL = MAKE_ID2('P', 'L'); 
 	/** Paint Curve */
-	Identifier ID_PC = new Identifier(new byte[]{'P', 'C', 0, 0}); 
+	Identifier ID_PC = MAKE_ID2('P', 'C'); 
 	/** Cache File */
-	Identifier ID_CF = new Identifier(new byte[]{'C', 'F', 0, 0}); 
+	Identifier ID_CF = MAKE_ID2('C', 'F'); 
 	/** Work Space */
-	Identifier ID_WS = new Identifier(new byte[]{'W', 'S', 0, 0}); 
+	Identifier ID_WS = MAKE_ID2('W', 'S'); 
 	/** LightProbe */
-	Identifier ID_LP = new Identifier(new byte[]{'L', 'P', 0, 0}); 
+	Identifier ID_LP = MAKE_ID2('L', 'P'); 
+	
+	/* SINCE v2.83 */
+	/** Hair */
+	Identifier ID_HA = MAKE_ID2('H', 'A');
+	/** PointCloud */
+	Identifier ID_PT = MAKE_ID2('P', 'T');
+	/** Volume */
+	Identifier ID_VO = MAKE_ID2('V', 'O');  
+	
 	
 	
 	/** Only used as 'placeholder' in .blend files for directly linked data-blocks. */
-	Identifier ID_ID = new Identifier(new byte[]{'I', 'D', 0, 0});
+	Identifier ID_ID = MAKE_ID2('I', 'D');
 	/** depreciated, but still heavily in use */
-	Identifier ID_SCRN = new Identifier(new byte[]{'S', 'N', 0, 0});
+	Identifier ID_SCRN = MAKE_ID2('S', 'N');
 
 	
 	/** NOTE! Fake IDs, needed for g.sipo->blocktype or outliner */
-	Identifier ID_SEQ = new Identifier(new byte[]{'S', 'Q', 0, 0});
+	Identifier ID_SEQ = MAKE_ID2('S', 'Q');
 	/** constraint.
 	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner. */
-	Identifier ID_CO = new Identifier(new byte[]{'C', 'O', 0, 0});
+	Identifier ID_CO = MAKE_ID2('C', 'O');
 	/** pose (action channel, used to be ID_AC in code, so we keep code for backwards compat)
 	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner. */
-	Identifier ID_PO = new Identifier(new byte[]{'A', 'C', 0, 0});
+	Identifier ID_PO = MAKE_ID2('A', 'C');
 	/** used in outliner... 
 	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner.*/
-	Identifier ID_NLA = new Identifier(new byte[]{'N', 'L', 0, 0});
+	Identifier ID_NLA = MAKE_ID2('N', 'L');
 	/** fluidsim Ipo 
 	 * <br/>NOTE! Fake IDs, needed for g.sipo->blocktype or outliner.*/
-	Identifier ID_FLUIDSIM = new Identifier(new byte[]{'F', 'S', 0, 0});
+	Identifier ID_FLUIDSIM = MAKE_ID2('F', 'S');
 	
 	
 	
@@ -139,5 +138,12 @@ public interface BlockCodes {
 	Identifier ID_GLOB = new Identifier("GLOB");
 	/** Block code of a block containing data related to other blocks. */
 	Identifier ID_DATA = new Identifier("DATA");
+	
+	
+	
+	
+	static Identifier MAKE_ID2(char c, char d) {
+		return new Identifier(new byte[]{(byte) c, (byte) d, 0, 0});
+	}
 
 }

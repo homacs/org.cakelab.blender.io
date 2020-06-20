@@ -14,6 +14,7 @@ import org.cakelab.blender.generator.utils.GField;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.GPackage;
 import org.cakelab.blender.io.BlenderFile;
+import org.cakelab.blender.io.FileHeader.Version;
 import org.cakelab.blender.io.FileVersionInfo;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.nio.CFacade;
@@ -181,13 +182,29 @@ public class MainLibClassGenerator extends ClassGenerator {
 		comment.appendln();
 		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
 		comment.appendln("Every file with a version lower than this needs conversion.");
-		addConstField("public static final", "short", "BLENDER_MINVERSION", Integer.toString(versionInfo.getMinversion()), comment);
+		addConstField("public static final", "short", "BLENDER_MINVERSION", Integer.toString(versionInfo.getMinversion().getCode()), comment);
 
 		comment = new GComment(GComment.Type.JavaDoc);
 		comment.appendln();
 		comment.appendln("This is the minimal version of blender, the generated data model corresponds to.");
 		comment.appendln("Every file with a version lower than this needs conversion.");
 		addConstField("public static final", "short", "BLENDER_MINSUBVERSION", Integer.toString(versionInfo.getMinsubversion()), comment);
+
+		Version VERSION = versionInfo.getVersion();
+		int SUBVERSION = versionInfo.getSubversion();
+		Version MINVERSION = versionInfo.getMinversion();
+		int MINSUBVERSION = versionInfo.getMinsubversion();
+		
+		comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln();
+		comment.appendln("BLENDER_VERSION and _SUBVERSION as a String.");
+		addConstField("public static final", "String", "BLENDER_VERSION_STRING", "\"" + VERSION + "." + SUBVERSION + "\"", comment);
+
+		comment = new GComment(GComment.Type.JavaDoc);
+		comment.appendln();
+		comment.appendln("BLENDER_MINVERSION and _MINSUBVERSION as a String.");
+		addConstField("public static final", "String", "BLENDER_MINVERSION_STRING", "\"" + MINVERSION + "." + MINSUBVERSION + "\"", comment);
+	
 	}
 
 
@@ -306,7 +323,5 @@ public class MainLibClassGenerator extends ClassGenerator {
 	public String getClassName() {
 		return CLASSNAME;
 	}
-
-
 
 }

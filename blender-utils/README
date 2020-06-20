@@ -1,0 +1,120 @@
+
+THIS MAY BE OUT DATED!
+
+
+
+Links:
+======
+
+Main Dev
+--------
+https://www.blender.org/get-involved/developers/
+
+
+Build instructions
+------------------
+https://wiki.blender.org/index.php/Dev:Doc/Building_Blender/Linux/Ubuntu/CMake
+
+
+Repositories and Bug tracking
+-----------------------------
+https://developer.blender.org/
+
+
+IDE Configuration
+-----------------
+https://wiki.blender.org/index.php/Dev:Doc/IDE_Configuration/Linux_CMake_Eclipse
+
+
+Chosen Options:
+===============
+
+Env modified to:
+----------------
+DISTRO="DEB"
+
+
+
+mkdir -p blender/build/lib
+
+./blender/build_files/build_environment/install_deps.sh --with-all --skip-opencollada --no-ldconfig --source `pwd`/blender/build/blender-deps --install `pwd`/blender/build/lib
+
+cd blender/build
+
+
+# CXX11 and C11 are mandatory.
+# The following is basically the output of install_deps.sh
+# with the first three lines added.
+
+cmake  \
+  -D WITH_C11=ON \
+  -D WITH_CXX11=ON \
+  -D CMAKE_BUILD_TYPE=Debug \
+  -D WITH_CODEC_SNDFILE=ON \
+  -D PYTHON_VERSION=3.5 \
+  -D WITH_OPENCOLORIO=ON \
+  -D OPENCOLORIO_ROOT_DIR=/home/homac/repos/git/blender.org/blender/build/lib/ocio \
+  -D WITH_OPENIMAGEIO=ON \
+  -D OPENIMAGEIO_ROOT_DIR=/home/homac/repos/git/blender.org/blender/build/lib/oiio \
+  -D WITH_CYCLES_OSL=ON \
+  -D WITH_LLVM=ON \
+  -D LLVM_VERSION=3.4 \
+  -D CYCLES_OSL=/home/homac/repos/git/blender.org/blender/build/lib/osl \
+  -D LLVM_ROOT_DIR=/home/homac/repos/git/blender.org/blender/build/lib/llvm \
+  -D LLVM_STATIC=ON \
+  -D WITH_OPENSUBDIV=ON \
+  -D OPENSUBDIV_ROOT_DIR=/home/homac/repos/git/blender.org/blender/build/lib/osd \
+  -D WITH_OPENVDB=ON \
+  -D WITH_OPENVDB_BLOSC=ON \
+  -D WITH_ALEMBIC=ON \
+  -D ALEMBIC_ROOT_DIR=/home/homac/repos/git/blender.org/blender/build/lib/alembic \
+  -D WITH_CODEC_FFMPEG=ON \
+  -D FFMPEG_LIBRARIES='avformat;avcodec;avutil;avdevice;swscale;swresample;lzma;rt;theoradec;theora;theoraenc;vorbisenc;vorbisfile;vorbis;ogg;xvidcore;vpx;mp3lame;x264;openjpeg;openjpeg_JPWL' \
+../.
+
+make
+
+
+
+
+Eclipse IDE
+-----------
+1. Import as existing C/C++ makefile project
+
+2. Immediately after import, stop indexer and build!
+
+3. Properties
+
+   * C/C++ Build 
+     - Build directory: (..)/blender/build
+     - Build(Incremental Build): OFF
+   * C/C++ Build -> Indexer
+     - Enable project specific settings: ON
+     - Index source files not included in the build: OFF
+   * C/C++ General -> Paths and Symbols
+     - Includes (GNU C):
+        ./source
+	/usr/include/python3.5m
+
+   * C/C++ General -> Run/Debug Settings
+     - Launch Configuration
+       binary: build/bin/blender
+       set arguments for: BLENDER_USER_CONFIG BLENDER_USER_SCRIPTS
+       env: LD_LIBRARY_PATH=${build_project}/build/lib
+	BLENDER_SYSTEM_DATAFILES=./release/datafiles
+	[optional] BLENDER_SYSTEM_PYTHON=<path to system python libs>
+	BLENDER_SYSTEM_SCRIPTS=./release/scripts
+
+
+
+
+UNINSTALL
+=========
+# remove downloaded files and compiled libs
+rm -r blender/build/lib blender/build/blender-deps
+
+# remove ld.so.conf entries
+rm `grep -l "blender" /etc/ld.so.conf.d/*.conf`
+ldconfig
+
+

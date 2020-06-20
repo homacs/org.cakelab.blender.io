@@ -1,0 +1,230 @@
+
+
+2.82.7 -> 2.83.0
+================
+
+Added:
+------
++ HairCurve
++ HairMapping
++ Hair
++ LightShaderFxData
++ Volume
++ VolumeRender
++ VolumeDisplay
++ Volume_Runtime
++ PointCloud
++ ViewLayerEEVEE
+
+Structs Removed
+---------------
+--none--
+
+
+Struct Changes:
+---------------
+
+BrushGpencilSettings
+- draw_sensitivity
+- draw_random_sub
+- thick_smoothlvl
+- thick_smoothfac
+x gradient_f --> hardeness
+x gradient_s --> aspect_ratio
++ /** Mix colorfactor */
++ float vertex_factor;
++ int vertex_mode;
++ /** eGP_Sculpt_Flag. */
++ int sculpt_flag;
++ /** eGP_Sculpt_Mode_Flag. */
++ int sculpt_mode_flag;
++ /** Preset type (used to reset brushes - internal). */
++ short preset_type;
++ char _pad3[6];
+
+Brush
++ /** Active grease pencil vertex tool. */
++ char gpencil_vertex_tool;
++ /** Active grease pencil sculpt tool. */
++ char gpencil_sculpt_tool;
++ /** Active grease pencil weight tool. */
++ char gpencil_weight_tool;
++ char _pad1[6];
++ float area_radius_factor;
++ float hardness;
++ int automasking_boundary_edges_propagation_steps;
++ /* Factor that controls the shape of the brush tip by rounding the corners of a square. */
++ /* 0.0 value produces a square, 1.0 produces a circle. */
++ float tip_roundness;
++ int pose_origin_type;
++ /* cloth */
++ int cloth_deform_type;
++ int cloth_force_falloff_type;
++ float cloth_mass;
++ float cloth_damping;
++ float cloth_sim_limit;
++ float cloth_sim_falloff;
++ /* smooth */
++ int smooth_deform_type;
++ float surface_smooth_shape_preservation;
++ float surface_smooth_current_vertex;
++ int surface_smooth_iterations;
+
+FluidDomainSettings
++ struct GPUTexture *tex_density;
++ struct GPUTexture *tex_color;
+- float domain_size;
+
+FluidEffectorSettings
++ int subframes;
+
+NoiseGpencilModifierData
++ float factor_strength;
++ float factor_thickness;
++ float factor_uvs;
++ /** Noise Frequency scaling */
++ float noise_scale;
++ struct CurveMapping *curve_intensity;
+
+SubdivGpencilModifierData
++ /** Type of subdivision */
++ short type;
+
+ThickGpencilModifierData
++ /** Relative thickness factor. */
++ float thickness_fac;
+
+ColorGpencilModifierData
++ struct CurveMapping *curve_intensity;
+
+OpacityGpencilModifierData
+- char opacity_mode;
++ float hardeness;
++ struct CurveMapping *curve_intensity;
+
+ArrayGpencilModifierData
+- float rnd_size;
+- float rnd_rot;
+- float rot[3];
+- float scale[3];
+- float rnd[20];
++ float rnd_offset[3];
++ float rnd_rot[3];
++ /** Random Scales. */
++ float rnd_scale[3];
++ int seed;
+
+SmoothGpencilModifierData
++  struct CurveMapping *curve_intensity;
+
+
+TintGpencilModifierData
+- struct Object *object;
++ /** Optional vertexgroup name, MAX_VGROUP_NAME. */
++ char vgname[64];
+- char modify_color;
++ /** Mode (Stroke/Fill/Both). */
++ int mode;
++ float radius;
++ /** Type of Tint. */
++ int type;
++ struct CurveMapping *curve_intensity;
++ struct ColorBand *colorband;
+
+
+ViewLayer
++ struct ViewLayerEEVEE eevee;
+
+Mesh
++ int face_sets_color_seed;
++ /* Stores the initial Face Set to be rendered white. This way the overlay can be enabled by
++  * default and Face Sets can be used without affecting the color of the mesh. */
++ int face_sets_color_default;
+
+BlurShaderFxData
+- coc; /** Circle of confusion. */
+- int blur[2];
++ /** Rotation of blur effect.  */
++ float rotation;
+
+GlowShaderFxData
++  float glow_color[4];
++  /** Rotation of effect.  */
++  float rotation;
++  /** Blend modes. */
++  int blend_mode;
+
+
+
+2.81a -> 2.82.7
+===============
+
+Remove:
+-------
+- SmokeDomainSettings (replaced by new Fluid structs)
+- SmokeFlowSettings (replaced by new Fluid structs)
+- SmokeCollSettings (replaced by new Fluid structs)
+
+Added:
+------
++ CurveProfile
++ FluidDomainVertexVelocity
++ FluidDomainSettings
++ FluidFlowSettings
++ FluidEffectorSettings
++ FluidModifierData
++ IDOverrideLibraryRuntime
++ ImageTile_Runtime
++ ImageTileImage
+
+Struct Changes
+--------------
+ARegion
+  + added 3D offset
+bActionConstraint
+  + mix_mode
+BevelModifierData 
+  + vmesh_method
+  + struct CurveProfile *custom_profile;
+Brush
+  + flag2  
+  + float dash_ratio;
+  + int dash_samples;
+  + int pose_smooth_iterations;
+  + int pose_ik_segments;
+  + float multiplane_scrape_angle;
+bToolRef
+  + idname_fallback
+ClothSimSettings
+  + float internal_spring_max_length;
+  + float internal_spring_max_diversion;
+  + short vgroup_intern;
+  + char _pad1[2];
+  + float internal_tension;
+  + float internal_compression;
+  + float max_internal_tension;
+  + float max_internal_compression;
+  + char _pad0[4];
+IDOverrideLibrary
+  + IDOverrideLibraryRuntime *runtime;
+Image
+  - short ok;
+  + int active_tile_index;
+  + ListBase tiles;
+MovieClip_RuntimeGPUTexture
+  + struct GPUTexture *gputexture[4]; // formerly [2]
+UnifiedPaintSettings
+  + float initial_pixel_radius;
+ToolSettings
+  char workspace_tool_type;
+  struct CurveProfile *custom_bevel_profile_preset;
+World
+- mistend
+
+
+
+
+
+
+
+

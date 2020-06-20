@@ -123,7 +123,7 @@ public class ModelGenerator {
 		// Be verbose
 		//
 		System.out.println("Info: Blender version and file version:");
-		System.out.println("\tVERSION: " + blend.getVersion().toString());
+		System.out.println("\tVERSION: " + blend.getVersion());
 		System.out.println("\tSUBVERSION: " + versionInfo.getSubversion());
 		System.out.println("\tMINVERSION: " + versionInfo.getMinversion());
 		System.out.println("\tMINSUBVERSION: " + versionInfo.getMinsubversion());

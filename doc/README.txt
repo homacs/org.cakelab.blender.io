@@ -28,15 +28,23 @@ Result: New doc file "resources/dnadoc/VERSION/pyapi/doc.json"
 
 III. Update Blender Source Code
 -------------------------------
+Refers to script org.cakelab.blender.io/blender-utils/checkout-branch.sh
 
-1. Identify the required version on https://developer.blender.org/diffusion/
-2. Switch to our existing workspace "blender" or follow https://wiki.blender.org/index.php/Dev:Doc/Tools/Git to checkout repo
-   - look for a branch called
-        blender-vX.XX-release
-   - checkout or switch+pull to new branch
-3. Identify changes for the change log on web page:
-   - check source/blender/makesdna/DNA_ID.h
-
+1. Identify the required branch of the new version on https://developer.blender.org/diffusion/
+   --> blender-vX.XX-release
+2. Clone the new branch  (or:  https://wiki.blender.org/index.php/Dev:Doc/Tools/Git)
+   - Edit script and adjust BRANCH and LOCATION
+   - Execute script
+   - Create a new C/C++ project in Eclipse pointing to the cloned blender folder.
+3. Identify changes by comparison with the previous release branch (remote->origin/blender-vX.XX-release) 
+   for the change log on web page:
+   - Focus comparison on source/blender/makesdna
+   - Especially check source/blender/makesdna/DNA_ID.h: If new block types (IDs) have been added, 
+     those have to be added manually in the source code: src/org/cakelab/blender/io/block/BlockCodes.java .
+   - Do a quick scan of the changes to find major changes, which might be interesting/API breaking to developers and write those down too.
+   - Put your results in org.cakelab.blender.io/doc/CHANGES_DNA.txt .
+   
+   
 
 IV. Create Source Code Docs
 ---------------------------
@@ -68,21 +76,25 @@ VI. Do a Test-Run with Class Generator
 6. Adjust versions/NEW_VERSION.blend according to version range given in output of generator
 7. Validate generated output
 
-VII. Update and Test Demo Application
-------------------------------------
+VII. Update Java.Blend API Project
+----------------------------------
 1. Update the launcher or script to write generated classes to org.cakelab.blender.dna/src
 2. Open a shell (!) and remove the content of org.cakelab.blender.dna/src (necessary to prevent git plugin to interfere)
 3. Run generator to generate dna classes.
-4. Open the example .blend files in org.cakelab.blender.viewer/examples in 
+
+
+VIII. Test Demo Applications
+----------------------------
+1. Open the example .blend files in org.cakelab.blender.viewer/examples in 
    new Blender version and save them (now converted).
    If files do not open or Blender freezes -> Uncheck "Load UI" in "Open File" dialog
-5. Refresh package view in IDE (so it actually sees changes)
-6. Test viewer
-7. Test Blender2Json converter
-8. Test copy buffer exchange
+2. Refresh package view in IDE (so it actually sees changes)
+3. Test viewer
+4. Test Blender2Json converter
+5. Test copy buffer exchange
 
 
-VIII. Create new DNA Lib
+IX. Create new DNA Lib
 ------------------------
 1. Open org.cakelab.blender.io/export-DNA-lib.xml
 2. [Adjust version of Java.Blend in init section] (only necessary on any changes in org.cakelab.blender.io)  
@@ -100,7 +112,7 @@ VIII. Create new DNA Lib
 8. Upload new files to cakelab.org:public_html/projects/JavaBlend/downloads
 
 
-IX. Commit Changes
+X. Commit Changes
 ------------------
 
 
@@ -123,7 +135,7 @@ IX. Commit Changes
 
 
 
-X. Publish
+XI. Publish
 ---------------
 1. org.cakelab.blender.io
   + update version in projexp.cfg (if necessary)
