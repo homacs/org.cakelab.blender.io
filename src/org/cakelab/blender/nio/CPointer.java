@@ -891,11 +891,11 @@ public class CPointer<T> extends CFacade {
 	 * holds.
 	 * 
 	 * @param value
-	 * @return new instance of this pointer with an address+=targetSize
+	 * @return new instance of this pointer with an address+=targetSize * value
 	 * @throws IOException
 	 */
 	public CPointer<T> plus(int value) throws IOException {
-		return new  CPointer<T>(this, __io__address + targetSize);
+		return new  CPointer<T>(this, __io__address + targetSize * value);
 	}
 
 	/**
