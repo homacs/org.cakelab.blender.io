@@ -371,7 +371,9 @@ can change and even the semantic of data can change. Thus, reading a file of one
 which is considered compatible, but not of the same version as the current DNA, is subject to
 several conversion procedures before it is available to the system. Those conversion procedures
 can be found in blenders source code in files 
-<code>source/blender/blenloader/intern/versioning_*.c</code>. 
+<code>source/blender/blenloader/intern/versioning_*.c</code>. Java .Blend does not implement these
+conversion function, and instead expects the user to use an exact matching library version for 
+their Blender version.
 </p>
 
 <h2 id="BlockOrder">Block Order</h2>

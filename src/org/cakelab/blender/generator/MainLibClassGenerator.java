@@ -138,8 +138,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 		comment.appendln("");
 		comment.appendln("<em>Please note that conversion requires to take into account all semantic ");
 		comment.appendln("reinterpretation to be found in Blender's source code in files ");
-		comment.appendln("<code>source/blender/blenloader/intern/versioning_*.c</code>. Thus, it is ");
-		comment.appendln("not enough to just apply type conversions on raw data.</em>");
+		comment.appendln("<code>source/blender/blenloader/intern/versioning_*.c</code>. These functions ");
+		comment.appendln("are not implemeted in Java .Blend.</em>");
 		comment.appendln();
 		comment.appendln("You can get file version info from {@link BlenderFile#readFileGlobal}.");
 		
