@@ -1,3 +1,26 @@
+2.83.x -> 2.90
+==============
+
+Someone is really working on improving code quality here.
+
+All files:
+- #pragma once   statt   #ifdef directives
+- values explicitly assigned to items in enums
+- attribute 'name' turned into 'filename' at several places
+
+Added new Block ID_SIM (blocks describing a simulation)
+
+Some new features to Brush
+
+ClothSimSettings
+   /* Density of the fluid inside or outside the object for use in the hydrostatic pressure
+   * gradient. */
+  + float fluid_density;
+
+Lots of work went into grease pencil (gpencil)
+
+
+Struct Simulation has been added, which looks more like runtime state information.
 
 
 2.82.7 -> 2.83.0

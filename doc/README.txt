@@ -9,7 +9,7 @@ Generating Library and Examples for a new Blender Release
 I. Install new Blender Version
 ------------------------------
 1. Download from http://blender.org and unzip.
-2. Do a test run
+2. Do a test run (important)
 
 
 
@@ -41,7 +41,8 @@ Refers to script org.cakelab.blender.io/blender-utils/checkout-branch.sh
    - Focus comparison on source/blender/makesdna
    - Especially check source/blender/makesdna/DNA_ID.h: If new block types (IDs) have been added, 
      those have to be added manually in the source code: src/org/cakelab/blender/io/block/BlockCodes.java .
-   - Do a quick scan of the changes to find major changes, which might be interesting/API breaking to developers and write those down too.
+   - Do a quick scan of the changes to find major changes, which might be interesting/API breaking to 
+     developers and write those down too.
    - Put your results in org.cakelab.blender.io/doc/CHANGES_DNA.txt .
    
    
@@ -118,20 +119,15 @@ X. Commit Changes
 
 1. org.cakelab.blender.dnadoc
   * commit & push
-  * pull
 2. org.cakelab.blender.viewer
   * Remove Blenders temp files: *.blend1 (not necessary -> .gitignore)
   * commit & push
-  * pull
 3. org.cakelab.blender.fileviewer
   * commit & push
-  * pull
 4. org.cakelab.blender.io
   * commit & push
-  * pull
 5. org.cakelab.blender.dna
   * commit & push
-  * pull
 
 
 

@@ -15,7 +15,7 @@ import org.cakelab.json.JSONObject;
  * the rna_info.py script.
  * 
  * It is recommended to use the shell script extract-pyapi-docs.sh for this task.
- * The shell script is located in JavaBlendDocs repository. 
+ * The shell script is located in org.cakelab.blender.dnadoc repository. 
  * 
  * @author homac
  *

@@ -9,7 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		File input = new File("/tmp/blender-2.78-xmldoc");
-		File output = new File("/home/homac/repos/git/github/homacs/JavaBlendDocs/resources/dnadoc");
+		File output = new File("/home/homac/repos/git/cakelab.org/playground/org.cakelab.blender.dnadoc/resources/dnadoc");
 		String version = "2.78";
 
 

@@ -101,6 +101,9 @@ public interface BlockCodes {
 	/** Volume */
 	Identifier ID_VO = MAKE_ID2('V', 'O');  
 	
+	/* SINCE v2.90 */
+	/** Simulation */
+	Identifier ID_SIM = MAKE_ID2('S', 'I');
 	
 	
 	/** Only used as 'placeholder' in .blend files for directly linked data-blocks. */

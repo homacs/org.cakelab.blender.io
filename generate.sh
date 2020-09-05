@@ -63,7 +63,7 @@ OUTPUT="../org.cakelab.blender.dna/src"
 # This is the location of the Java .Blend externally maintained
 # source code documentation. 
 #
-DOCPATH="$HOME/repos/git/github/homacs/JavaBlendDocs/resources/dnadoc"
+DOCPATH="$HOME/repos/git/cakelab.org/playground/org.cakelab.blender.dnadoc/resources/dnadoc"
 
 #
 # PACKAGE
