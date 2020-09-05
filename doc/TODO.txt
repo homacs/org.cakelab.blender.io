@@ -1,3 +1,2 @@
-+ move repository JavaBlendDocs to cakelab.org and mirror like any other repo
-+ common approach to retreiving blender version in scripts and maven build
++ common approach to retrieving blender version in scripts and maven build
 + separate source code generator from I/O lib

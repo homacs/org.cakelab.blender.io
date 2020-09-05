@@ -15,11 +15,11 @@ I. Install new Blender Version
 
 II. Extract Python API
 ----------------------
-Refers to JavaBlendDocs/extract-pyapi-docs.sh
+Refers to org.cakelab.blender.dnadoc/extract-pyapi-docs.sh
 
 1. Adjust path to blender base dir (BLENDER_BASE) in that script
 2. Execute script in shell
-   > cd <path-to>/JavaBlendDocs
+   > cd <path-to>/org.cakelab.blender.dnadoc
    > ./extract-pyapi-docs.sh
 
 Result: New doc file "resources/dnadoc/VERSION/pyapi/doc.json"
@@ -48,11 +48,11 @@ Refers to script org.cakelab.blender.io/blender-utils/checkout-branch.sh
 
 IV. Create Source Code Docs
 ---------------------------
-Refers to script "JavaBlendDocs/doxygen-dnasrcdoc-xml.sh"
+Refers to script "org.cakelab.blender.dnadoc/doxygen-dnasrcdoc-xml.sh"
 1. Adjust version number in script (BLENDER_VERSION)!
 2. Adjust ENV_PATH_BASE in script if necessary.
 3. Execute script.
-	> cd <path-to>/JavaBlendDocs
+	> cd <path-to>/org.cakelab.blender.dnadoc
 	> ./doxygen-dnasrcdoc-xml.sh
 
 Result: New doc file "resources/dnadoc/VERSION/dnasrc/doc.json"
@@ -61,7 +61,7 @@ Result: New doc file "resources/dnadoc/VERSION/dnasrc/doc.json"
 
 V. Copy added Documentation
 ---------------------------
-1. Go in JavaBlendDocs/resources/dnadoc
+1. Go in org.cakelab.blender.dnadoc/resources/dnadoc
 2. Copy folder PREVIOUS_VER/added to NEW_VER/added
 3. Review the content and compare with docs in dnasrc and pyapi
 
@@ -116,7 +116,7 @@ X. Commit Changes
 ------------------
 
 
-1. JavaBlendDocs
+1. org.cakelab.blender.dnadoc
   * commit & push
   * pull
 2. org.cakelab.blender.viewer
@@ -137,6 +137,7 @@ X. Commit Changes
 
 XI. Publish
 ---------------
+0. Upload artifacts (downloads) first and wait until finished!
 1. org.cakelab.blender.io
   + update version in projexp.cfg (if necessary)
   + update doc/index.html
