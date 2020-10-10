@@ -1,17 +1,18 @@
 package org.cakelab.blender.generator.utils;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class ImportSectionGenerator extends CodeGenerator {
 
 	private HashSet<Class<?>> classes;
-	private HashSet<GPackage> packages;
+	private HashMap<String, GPackage> packages;
 
 
 	public ImportSectionGenerator() {
 		super(0);
 		this.classes = new HashSet<Class<?>>();
-		this.packages = new HashSet<GPackage>();
+		this.packages = new HashMap<String, GPackage>();
 	}
 	
 	
@@ -21,11 +22,11 @@ public class ImportSectionGenerator extends CodeGenerator {
 	
 	public String toString() {
 		GCodeSection imports = new GCodeSection(0);
-		for (GPackage pkg : packages) {
+		for (GPackage pkg : packages.values()) {
 			imports.appendln("import " + pkg + ".*;");
 		}
 		for (Class<?> clazz : classes) {
-			if (!packages.contains(clazz.getPackage().getName())) {
+			if (!packages.containsKey(clazz.getPackage().getName())) {
 				imports.appendln("import " + clazz.getCanonicalName() + ";");
 			}
 		}
@@ -40,7 +41,7 @@ public class ImportSectionGenerator extends CodeGenerator {
 
 
 	public void add(GPackage package2bImported) {
-		packages.add(package2bImported);
+		packages.put(package2bImported.getName(), package2bImported);
 	}
 
 }

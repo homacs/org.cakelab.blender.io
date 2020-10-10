@@ -2,7 +2,7 @@
 <project default="package.all" name="Generate and Package a Java .Blend Data Model">
 	
 	<target name="init">
-		<property name="version" value="1.3.2"/>
+		<property name="version" value="1.3.3"/>
 		
 		<property name="ant.build.javac.target" value="1.8"/>
 		
@@ -12,13 +12,13 @@
 		<property name="java.blend.docs" value="/home/homac/repos/git/cakelab.org/playground/org.cakelab.blender.dnadoc/resources/dnadoc"/>
 		<property name="web.downloads" value="${user.home}/tmp/public_html/projects/JavaBlend/downloads"/>
 		<property name="project.name" value="JavaBlend"/>
-		<property name="package.name" value="${project.name}-${version}-DNA-${blender.version}"/>
+		<property name="package.name" value="${project.name}-${version}-DNA-${blender.file.version}"/>
         <property name="workdir" value="${java.io.tmpdir}/${package.name}"/>
         <property name="srcdir" value="${workdir}/src"/>
 		<property name="bindir" value="${workdir}/bin"/>
 		<property name="jarfile" value="${web.downloads}/${package.name}.jar"/>
-		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.version}.zip"/>
-		<property name="javadoczip" value="${web.downloads}/${project.name}-javadoc-${version}-DNA-${blender.version}.zip"/>
+		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.file.version}.zip"/>
+		<property name="javadoczip" value="${web.downloads}/${project.name}-javadoc-${version}-DNA-${blender.file.version}.zip"/>
 
 		<delete failonerror="false" includeEmptyDirs="true">
 			<fileset dir="${workdir}"/>
@@ -91,7 +91,7 @@
         	author="true" 
         	classpath="${bindir}" 
         	destdir="${workdir}/javadoc" 
-        	doctitle="Java .Blend for Blender ${blender.version}" 
+        	doctitle="Java .Blend for Blender File Version ${blender.file.version}" 
         	nodeprecated="false" 
         	nodeprecatedlist="false" 
         	noindex="false" 
@@ -141,43 +141,43 @@
 	
 	<target name="package.all">
 		<antcall target="package">
-			<param name="blender.version" value="2.90.8"/>
+			<param name="blender.file.version" value="2.90.8"/>
 			<param name="input" value="versions/2.90.8-2.90.0.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.83.2"/>
+			<param name="blender.file.version" value="2.83.2"/>
 			<param name="input" value="versions/2.83.19-2.83.0.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.82"/>
+			<param name="blender.file.version" value="2.82"/>
 			<param name="input" value="versions/2.82.7-2.80.0.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.81"/>
+			<param name="blender.file.version" value="2.81"/>
 			<param name="input" value="versions/2.81.16-2.80.0.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.80"/>
+			<param name="blender.file.version" value="2.80"/>
 			<param name="input" value="versions/2.80.75-2.80.0.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.79"/>
+			<param name="blender.file.version" value="2.79"/>
 			<param name="input" value="versions/2.79.0-2.70.6.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.78"/>
+			<param name="blender.file.version" value="2.78"/>
 			<param name="input" value="versions/2.78.0-2.70.6.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.76"/>
+			<param name="blender.file.version" value="2.76"/>
 			<param name="input" value="versions/2.76.0-2.70.5.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.72"/>
+			<param name="blender.file.version" value="2.72"/>
 			<param name="input" value="versions/2.72.2-2.70.5.blend"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.version" value="2.69"/>
+			<param name="blender.file.version" value="2.69"/>
 			<param name="input" value="versions/2.69.0-2.62.0.blend"/>
 		</antcall>
 	</target>

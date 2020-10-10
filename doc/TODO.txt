@@ -1,2 +1,3 @@
 + common approach to retrieving blender version in scripts and maven build
 + separate source code generator from I/O lib
++ extract-pyapi-docs.sh: blender --version ==> version.subversion.patchversion 

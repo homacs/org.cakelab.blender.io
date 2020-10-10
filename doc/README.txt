@@ -32,6 +32,7 @@ Refers to script org.cakelab.blender.io/blender-utils/checkout-branch.sh
 
 1. Identify the required branch of the new version on https://developer.blender.org/diffusion/
    --> blender-vX.XX-release
+   Note: For patch version updates (e.g. 2.90.0 -> 2.90.1), just 'git pull' the branch
 2. Clone the new branch  (or:  https://wiki.blender.org/index.php/Dev:Doc/Tools/Git)
    - Edit script and adjust BRANCH and LOCATION
    - Execute script
@@ -64,7 +65,8 @@ V. Copy added Documentation
 ---------------------------
 1. Go in org.cakelab.blender.dnadoc/resources/dnadoc
 2. Copy folder PREVIOUS_VER/added to NEW_VER/added
-3. Review the content and compare with docs in dnasrc and pyapi
+3. Update version entry in doc.json (at least)
+4. Review the content and compare with docs in dnasrc and pyapi
 
 
 VI. Do a Test-Run with Class Generator
@@ -88,7 +90,7 @@ VIII. Test Demo Applications
 ----------------------------
 1. Open the example .blend files in org.cakelab.blender.viewer/examples in 
    new Blender version and save them (now converted).
-   If files do not open or Blender freezes -> Uncheck "Load UI" in "Open File" dialog
+   Note: If files do not open or Blender freezes -> Uncheck "Load UI" in "Open File" dialog
 2. Refresh package view in IDE (so it actually sees changes)
 3. Test viewer
 4. Test Blender2Json converter
