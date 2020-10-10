@@ -33,7 +33,7 @@ public class BlockList implements List<Block> {
 
 		@Override
 		public void remove() {
-			list.remove(this);
+			list.remove(current);
 		}
 
 		@Override
