@@ -1,3 +1,271 @@
+2.91.0 -> 2.90.1
+================
+
+FCurve
++ int active_keyframe_index
+- char _pad2[4]; (different place than active_key_frame_index --> incompatible struct layout)
+
+BrushGpencilSettings
++ short fill_layer_mode;
++ short fill_direction;
++ short brush_draw_mode;
+
+Brush
+~ char _pad0[5]; -> char _pad0[1];
++ float tilt_strength_factor;
++ int deform_target;
++ int boundary_deform_type;
++ int boundary_falloff_type;
++ float boundary_offset;
++ int cloth_simulation_area_type;
++ float cloth_constraint_softbody_strength;
+
+CacheFile
+~ char _pad[3]; -> char _pad[4];
++ char velocity_unit;
++ char velocity_name[64];
+
+Collection
++ int16_t color_tag;
+~ char _pad[2]; ->  char _pad[4];
+
+BPoint
+~ uint8_t f1; -> short f1;
++ char _pad1[1];
+
+Curve
++ struct CurveProfile *bevel_profile;
++ char bevel_mode;
+~ char _pad[2]; -> char _pad[3];
+~ int len_char32; -> int len_wchar;
+
+FluidDomainSettings
++ struct GPUTexture *tex_flags;
++ struct GPUTexture *tex_range_field;
++ float fractions_distance;
++ char _pad4[6]; ->   char _pad4[2];
+- char slice_method, axis_slice_method;
+- char slice_axis, draw_velocity;
++ float grid_scale;
++ float gridlines_lower_bound;
++ float gridlines_upper_bound;
++ float gridlines_range_color[4];
++ char axis_slice_method;
++ char slice_axis;
++ char show_gridlines;
++ char draw_velocity;
++ char vector_field; /* Simulation field used for vector display. */
++ char vector_scale_with_magnitude;
++ char vector_draw_mac_components;
++ char gridlines_color_field; /* Simulation field used to color map onto gridlines. */
++ char gridlines_cell_filter;
++ char _pad9[7]; // inserted padding, name doesn't matter
+
+GpencilModifierData
++  char _pad0[4];
+- int stackindex;
+
+Hair
++ int attributes_active_index;
++ int _pad3;
+
+Image
+~ struct GPUTexture *gputexture[3][2]; -> struct GPUTexture *gputexture[4][2];
++ short gpu_pass;
++ short gpu_layer;
++ short gpu_slot;
+~ char _pad2[4]; -> char _pad2[2];
+
+Mesh
++ int attributes_active_index;
++ int _pad3;
++ char symmetry;
+~ char _pad1[2]; -> char _pad1[3];
+
+ModifierData
+- int stackindex;
++ char _pad0[4];
++ SessionUUID session_uuid;
+
+SubsurfModifierData
++ short boundary_smooth;
+~ char _pad[2]; ->  char _pad[4];
+
+BooleanModifierData
++ struct Collection *collection;
++ float double_threshold;
++ char solver;
++ char flag;
+- char _pad[2];
+- float double_threshold;
+
+MultiresModifierData
++ short boundary_smooth;
+~ char _pad2[2]; -> char _pad2[4]; 
+
+OceanModifierData
++ int viewport_resolution;
+- char _pad1[4];
+
+WeldModifierData
+- unsigned int max_interactions;
+~ char _pad[2]; - >  char _pad[6];
+
++ MeshCacheVertexVelocity
+  + float vel[3];
+
+MeshSeqCacheModifierData
+~ char _pad[3]; ->  char _pad[7];
++ float velocity_scale;
++ struct MeshCacheVertexVelocity *vertex_velocities;
++ int num_vertices;
++ float velocity_delta;
++ float last_lookup_time;
++ int _pad1;
+
+SimulationModifierData
+- struct Simulation *simulation;
+- char *data_path;
+
++ MeshToVolumeModifierData
+  + ModifierData modifier;
+  + struct Object *object;
+  + int resolution_mode;
+  + float voxel_size;
+  + int voxel_amount;
+  + char fill_volume;
+  + char _pad1[3];
+  + float interior_band_width;
+  + float exterior_band_width;
+  + float density;
+  + char _pad2[4];
+
++ VolumeDisplaceModifierData
+  + ModifierData modifier;
+  + struct Tex *texture;
+  + struct Object *texture_map_object;
+  + int texture_map_mode;
+  + float strength;
+  + float texture_mid_level[3];
+  + float texture_sample_radius;
+
++ VolumeToMeshModifierData
+  + ModifierData modifier;
+  + struct Object *object;
+  + float threshold;
+  + float adaptivity;
+  + uint32_t flag;
+  + int resolution_mode;
+  + float voxel_size;
+  + int voxel_amount;
+  + char grid_name[64];
+
+- LodLevel
+  - struct LodLevel *next, *prev;
+  - struct Object *source;
+  - int flags;
+  - float distance;
+  - char _pad0[4];
+  - int obhysteresis;
+
+Object
+- ListBase lodlevels;
+- LodLevel *currentlod;
+
+PointCloud
+- int attributes_active_index;
+- int _pad4;
+
+RigidBodyWorld
+~ short substeps_per_frame; -> short steps_per_second;
+
+RenderData
+~ char _pad5[3]; -> char _pad5[7];
++ float simplify_volumes;
+
+TimeMarker
++ struct IDProperty *prop;
+
+GP_Interpolate_Settings
++ int step;
++ char _pad[4];
+
+UnitSettings
++ char temperature_unit;
+~ char _pad[4]; -> char _pad[5];
+
+SceneEEVEE
++ int motion_blur_position;
++ char _pad0[4];
+
+Panel_Runtime
+- int list_index;
++ char _pad[4];
++ struct uiBlock *block;
+
++ SDNA_StructMember
+  + short type;
+  + short name;
+
++ SDNA_Struct
+  + short type;
+  + short members_len;
+  + SDNA_StructMember members[];
+
+SDNA
+~ SDNA_Struct **structs; ->  short **structs;
+
+ShaderFxData
+- int stackindex;
++ char _pad0[4];
+
+Simulation
+- float current_frame;
+- float current_simulation_time;
+- struct ListBase states;
+- struct ListBase persistent_data_handles;
+
+- typedef struct SimulationState
+  - struct SimulationState *next;
+  - struct SimulationState *prev;
+  - char *type;
+  - char *name;
+
+- ParticleSimulationState {
+  - SimulationState head;
+  - int tot_particles;
+  - int next_particle_id;
+  - struct CustomData attributes;
+
+- ParticleMeshEmitterSimulationState {
+  - SimulationState head;
+  - float last_birth_time;
+  - char _pad[4];
+
+- PersistentDataHandleItem
+  - struct PersistentDataHandleItem *next;
+  - struct PersistentDataHandleItem *prev;
+  - struct ID *id;
+  - int handle;
+  - char _pad[4];
+
+SpaceProperties
++ struct SpaceProperties_Runtime *runtime;
+
++ SpaceImageOverlay {
+  + int flag;
+  + char _pad[4];
+
+SpaceImage
++ SpaceImageOverlay overlay;
+
+MovieTrackingCamera
++ float brown_k1, brown_k2, brown_k3, brown_k4;
++ float brown_p1, brown_p2;
+
+
+
+
 2.90.0 -> 2.90.1
 ================
 

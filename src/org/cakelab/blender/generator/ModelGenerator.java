@@ -2,7 +2,10 @@ package org.cakelab.blender.generator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.doc.DocumentationProvider;
@@ -10,6 +13,8 @@ import org.cakelab.blender.generator.utils.GPackage;
 import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.FileVersionInfo;
 import org.cakelab.blender.io.dna.DNAModel;
+import org.cakelab.blender.io.dna.internal.StructDNA;
+import org.cakelab.blender.io.dna.internal.StructDNA.Struct;
 import org.cakelab.blender.metac.CMetaModel;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.json.JSONException;
@@ -115,6 +120,12 @@ public class ModelGenerator {
 		// gather required resources
 		//
 		BlenderFile blend = new BlenderFile(input);
+		
+		// This is for debugging purposes. If there are unknown types, than
+		// it's usually because of new scalar types, that are not yet supported
+		// by CMetaModel.isScalarType() and CMetaModel.getScalarSize()
+		checkForUnsupportedTypes(blend.getStructDNA());
+		
 		DNAModel model = blend.getBlenderModel();
 		FileVersionInfo versionInfo = blend.readFileGlobal();
 		blend.close();
@@ -172,6 +183,38 @@ public class ModelGenerator {
 		sdnaImage.generate();
 	}
 
+
+	private static void checkForUnsupportedTypes(StructDNA dna) {
+		// Check if all types can be identified as one of the following
+		//    scalar type
+		//    struct type
+		//    opaque type with unknown size (type_length == 0)
+		// As it looks, opaque types are used for runtime data only and referenced by points,
+		// so the unknown length does not affect the length calculation.
+		
+		Set<Short> structTypes = new HashSet<>();
+		for (Struct s : dna.structs) {
+			structTypes.add(s.type);
+		}
+		
+		List<String> unsupported = new ArrayList<>();
+		for (short type = 0; type < dna.types_len; type++) {
+			if (!structTypes.contains(type)               // not struct
+				&& !CMetaModel.isScalar(dna.types[type])  // not scalar
+				&& dna.type_lengths[type] != 0)           // not opaque
+			{
+				unsupported.add(dna.types[type] + " " + dna.type_lengths[type]);
+			}
+		}
+		
+		if (!unsupported.isEmpty()) {
+			System.err.println("There are unknown types:");
+			for (String t : unsupported) {
+				System.err.println("\t" + t);
+			}
+			throw new IllegalStateException("Unsupported types found. Please fix that first.");
+		}
+	}
 
 	private static void synopsis() {
 		// TODO: ZZZ document synopsis of model generator

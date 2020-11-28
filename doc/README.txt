@@ -30,11 +30,11 @@ III. Update Blender Source Code
 -------------------------------
 Refers to script org.cakelab.blender.io/blender-utils/checkout-branch.sh
 
-1. Identify the required branch of the new version on https://developer.blender.org/diffusion/
+1. Identify the required branch of the new version on https://developer.blender.org/diffusion/B/branches/master/
    --> blender-vX.XX-release
-   Note: For patch version updates (e.g. 2.90.0 -> 2.90.1), just 'git pull' the branch
+   Note: For patch version updates (tags, e.g. 2.90.0 -> 2.90.1), just 'git pull' the branch
 2. Clone the new branch  (or:  https://wiki.blender.org/index.php/Dev:Doc/Tools/Git)
-   - Edit script and adjust BRANCH and LOCATION
+   - Edit script mentioned above and adjust BRANCH and LOCATION
    - Execute script
    - Create a new C/C++ project in Eclipse pointing to the cloned blender folder.
 3. Identify changes by comparison with the previous release branch (remote->origin/blender-vX.XX-release) 
@@ -44,7 +44,7 @@ Refers to script org.cakelab.blender.io/blender-utils/checkout-branch.sh
      those have to be added manually in the source code: src/org/cakelab/blender/io/block/BlockCodes.java .
    - Do a quick scan of the changes to find major changes, which might be interesting/API breaking to 
      developers and write those down too.
-   - Put your results in org.cakelab.blender.io/doc/CHANGES_DNA.txt .
+   - Put your results in org.cakelab.blender.dna/doc/CHANGES.txt .
    
    
 
@@ -58,7 +58,6 @@ Refers to script "org.cakelab.blender.dnadoc/doxygen-dnasrcdoc-xml.sh"
 	> ./doxygen-dnasrcdoc-xml.sh
 
 Result: New doc file "resources/dnadoc/VERSION/dnasrc/doc.json"
-
 
 
 V. Copy added Documentation
@@ -79,10 +78,13 @@ VI. Do a Test-Run with Class Generator
 6. Adjust versions/NEW_VERSION.blend according to version range given in output of generator
 7. Validate generated output
 
+
 VII. Update Java.Blend API Project
 ----------------------------------
 1. Update the launcher or script to write generated classes to org.cakelab.blender.dna/src
-2. Open a shell (!) and remove the content of org.cakelab.blender.dna/src (necessary to prevent git plugin to interfere)
+2. Open a shell (!) and remove the content of org.cakelab.blender.dna/src 
+   (necessary to prevent git plugin to interfere and have the file marked as removed instead of changes)
+   > rm -r /home/homac/repos/git/cakelab.org/playground/org.cakelab.blender.dna/src/*
 3. Run generator to generate dna classes.
 
 
@@ -115,9 +117,34 @@ IX. Create new DNA Lib
 8. Upload new files to cakelab.org:public_html/projects/JavaBlend/downloads
 
 
-X. Commit Changes
-------------------
 
+
+X. Publish
+---------------
+0. Upload artifacts (downloads) first and wait until finished!
+1. org.cakelab.blender.io
+  + update version in projexp.cfg (if necessary)
+  + update doc/index.html
+  + run projexp JavaBlend
+  + review changes in browser file:///home/homac/tmp/public_html/projects/JavaBlend/index.html
+  + upload changes (scp -r tmp/public_html/projects/JavaBlend/* cakelab.org:public_html/projects/JavaBlend/.)
+2. org.cakelab.blender.viewer
+  + update version in projexp.cfg and export-src.xml (if necessary)
+  + update doc/index.html
+  + run projexp JavaBlendViewer
+  + run ant -f export-src.xml
+  + upload changes (scp -r tmp/public_html/projects/JavaBlendViewer/* cakelab.org:public_html/projects/JavaBlendViewer/.)
+3. org.cakelab.blender.fileviewer
+  + update version in projexp.cfg and export-src.xml (if necessary)
+  + update doc/index.html
+  + run projexp
+  + run ant -f export-src.xml
+  + upload changes (scp -r tmp/public_html/projects/JavaBlendFileViewer/* cakelab.org:public_html/projects/JavaBlendFileViewer/.)
+	
+
+
+XI. Commit Changes
+------------------
 
 1. org.cakelab.blender.dnadoc
   * commit & push
@@ -130,31 +157,6 @@ X. Commit Changes
   * commit & push
 5. org.cakelab.blender.dna
   * commit & push
-
-
-
-XI. Publish
----------------
-0. Upload artifacts (downloads) first and wait until finished!
-1. org.cakelab.blender.io
-  + update version in projexp.cfg (if necessary)
-  + update doc/index.html
-  + run projexp JavaBlend
-  + review changes in browser
-  + upload changes (scp -r tmp/public_html/projects/JavaBlend/* cakelab.org:public_html/projects/JavaBlend/.)
-2. org.cakelab.blender.viewer
-  + update doc/index.html
-  + run projexp
-  + run ant -f export-src.xml
-  + upload changes (scp -r tmp/public_html/projects/JavaBlendViewer/* cakelab.org:public_html/projects/JavaBlendViewer/.)
-3. org.cakelab.blender.fileviewer
-  + update doc/index.html
-  + run projexp
-  + run ant -f export-src.xml
-  + upload changes (scp -r tmp/public_html/projects/JavaBlendFileViewer/* cakelab.org:public_html/projects/JavaBlendFileViewer/.)
-4. Commit final changes (web and scripts)
-5. Mirror all projects to github
-	
-
+6. Mirror all projects to github
 
 

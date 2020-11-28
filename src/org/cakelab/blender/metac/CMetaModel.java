@@ -78,6 +78,8 @@ public class CMetaModel {
 				String typespec = getFieldTypeSpec(name, bfield.getSignatureName());
 				String basetype = bfield.getType().getName();
 				CType ctype = getType(basetype, typespec);
+				if (ctype == null) 
+					throw new IllegalStateException("DNA error: did not manage to determine type for base type '" + basetype + "' and type specification '" + typespec + '\'');
 				CField cfield = new CField(name, ctype); 
 				struct.addField(cfield);
 				
@@ -153,7 +155,7 @@ public class CMetaModel {
 		} else if (typespec.startsWith("*")) {
 			return getPointerType(basetype, typespec);
 		} else if (isScalar(typesig)) {
-			ctype = new CType(typesig, CKind.TYPE_SCALAR, getScalarSize(basetype, Encoding.ADDR_WIDTH_32BIT), getScalarSize(basetype, Encoding.ADDR_WIDTH_32BIT));
+			ctype = new CType(typesig, CKind.TYPE_SCALAR, getScalarSize(basetype, Encoding.ADDR_WIDTH_32BIT), getScalarSize(basetype, Encoding.ADDR_WIDTH_64BIT));
 		} else if (typesig.equals("void")) {
 			ctype = new CType(typesig, CKind.TYPE_VOID, 0, 0);
 		} else {
@@ -225,11 +227,14 @@ public class CMetaModel {
 		return name;
 	}
 
-
-	private boolean isScalar(String typeName) {
-		return (typeName.equals("char")) 
+	
+	
+	public static boolean isScalar(String typeName) {
+		return     (typeName.equals("char")) 
+				|| (typeName.equals("uchar"))
 				|| (typeName.equals("short"))
 				|| (typeName.equals("ushort"))
+				|| (typeName.equals("bool"))
 				|| (typeName.equals("int"))
 				|| (typeName.equals("uint"))
 				|| (typeName.equals("long"))
@@ -241,11 +246,13 @@ public class CMetaModel {
 				;
 	}
 
-	private int getScalarSize(String typeName, int addressWidth) {
-		if (typeName.equals("char")) {
+	public static int getScalarSize(String typeName, int addressWidth) {
+		if (typeName.equals("char") || typeName.equals("uchar")) {
 			return 1;
 		} else if(typeName.equals("short") || typeName.equals("ushort")) {
 			return 2;
+		} else if(typeName.equals("bool")) {
+			return 4;
 		} else if(typeName.equals("int") || typeName.equals("uint") || typeName.equals("unsigned int")) {
 			return 4;
 		} else if(typeName.equals("long") || typeName.equals("ulong")) {

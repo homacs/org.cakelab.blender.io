@@ -1,5 +1,8 @@
 package org.cakelab.blender.io.dna;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.cakelab.blender.io.dna.internal.StructDNA;
 import org.cakelab.blender.io.dna.internal.StructDNA.Struct;
 import org.cakelab.blender.io.dna.internal.StructDNA.Struct.Field;
@@ -16,6 +19,7 @@ public class DNAModel {
 	private StructDNA dna;
 	private DNAType[] types;
 	private DNAStruct[] structs;
+	private Map<String, DNAStruct> structMap = new HashMap<>();
 
 	public DNAModel(StructDNA dna) {
 		this.dna = dna;
@@ -27,7 +31,9 @@ public class DNAModel {
 		structs = new DNAStruct[dna.structs_len];
 		for (int i = 0; i < dna.structs.length; i++) {
 			Struct s = dna.structs[i];
-			structs[i] = createStruct(i, s);
+			DNAStruct dnas = createStruct(i, s);
+			structs[i] = dnas;
+			structMap.put(dnas.type.name, dnas);
 		}
 	}
 

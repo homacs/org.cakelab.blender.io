@@ -77,7 +77,7 @@ public class JavaType {
 		
 		String signature = ctype.getSignature();
 		
-		if (signature.equals("char")) {
+		if (signature.equals("char") || signature.equals("uchar")) {
 			name = "byte";
 		} else if (signature.equals("short") || signature.equals("ushort")) {
 			name = "short";
