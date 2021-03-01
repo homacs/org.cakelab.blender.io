@@ -17,7 +17,7 @@ II. Extract Python API
 ----------------------
 Refers to org.cakelab.blender.dnadoc/extract-pyapi-docs.sh
 
-1. Adjust path to blender base dir (BLENDER_BASE) in that script
+1. Adjust path to blender base dir (BLENDER_BASE) in that script (if necessary)
 2. Execute script in shell
    > cd <path-to>/org.cakelab.blender.dnadoc
    > ./extract-pyapi-docs.sh
@@ -146,17 +146,17 @@ X. Publish
 XI. Commit Changes
 ------------------
 
-1. org.cakelab.blender.dnadoc
-  * commit & push
-2. org.cakelab.blender.viewer
-  * Remove Blenders temp files: *.blend1 (not necessary -> .gitignore)
-  * commit & push
-3. org.cakelab.blender.fileviewer
-  * commit & push
-4. org.cakelab.blender.io
-  * commit & push
-5. org.cakelab.blender.dna
-  * commit & push
-6. Mirror all projects to github
+1. Commit all changes
+2. Publish (mirror)
+	+ org.cakelab.appbase
+	+ org.cakelab.soapbox
+	+ org.cakelab.jdoxml
+	+ org.cakelab.json
+	+ org.cakelab.blender.io
+	+ org.cakelab.blender.dna
+	+ org.cakelab.blender.dnadoc
+	+ org.cakelab.blender.viewer
+	+ org.cakelab.blender.fileviewer
+
 
 

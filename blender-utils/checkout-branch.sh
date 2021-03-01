@@ -9,7 +9,7 @@
 # BRANCH
 # Branch to be checked out. Blender creates a new branch for each release with following pattern:
 #     blender-vX.XX-release
-BRANCH=blender-v2.91-release
+BRANCH=blender-v2.92-release
 
 
 # LOCATION
