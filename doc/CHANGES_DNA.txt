@@ -3,7 +3,7 @@
 
 FCurve
 + int active_keyframe_index
-- char _pad2[4]; (different place than active_key_frame_index --> incompatible struct layout)
+- char _pad2[4]; (different place than active_key_frame_index --> incompatible struct layout between versions)
 
 BrushGpencilSettings
 + short fill_layer_mode;

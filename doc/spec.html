@@ -330,15 +330,80 @@ may or may not overlap the address range of other blocks.
 
 <h2 id="FileVersion">Blender Versioning and File Version</h2>
 <p>
-A new Blender version can contain modifications in Blender DNA, but it doesn't have to.
+Blender differentiates between Blender program version (referred to as Blender version) 
+and Blender file version. This section clarifies the meaning and relationship of both version specifiers. 
+</p>
+<p>
+On release, both types of version specifiers are comprised of three numbers which have different meanings:
+</p>
+<ul>
+<li>Major version: This number is currently, internally limited to a single digit. It changes based on 
+marketing or political decisions, which is rare for the time beeing.</li>
+<li>Minor version: This number is internally limited to two digits. Unless the major number 
+has been changed, this number counts up with every official release.</li>
+<li>Patch version: This is also referred to as <i>sub-version</i>. Once released, a given Blender version gets maintenance support. 
+This number changes when bug fixes have been incorporated. This number is abritrary long.</li>
+</ul>
+<p>
+Beyond that, there is also a version cycle specifier, which reflects different stages in the development process, such as
+<i>alpha</i>, <i>beta</i>, release candidate (<i>rc</i>) and finally <i>release</i>. 
+However, any officially released version (including patch releases) has the version cycle specifier <i>release</i>, 
+which is why it can be ignored here.
+</p>
+
+<p>
+As initially mentioned, Blender developers have decided to separate versioning of the Blender program code 
+and the Blender file format.
+</p>
+<ul>
+<li>Blender Version: The Blender program version, or Blender version for short, refers to the version of alle that code, 
+    which makes up the Blender program except of the code, which is related to the file format.</li>
+<li>Blender File Version: The Blender file version refers to the version of the file format, the data model behind it 
+(so-called DNA) and the associated code, which is responsible to read, write files and provide access to the DNA in memory, 
+inside of a running Blender program instance. So, one can think of the DNA to be a module, which is added to the program code and
+therefor has its own versioning. </li>
+</ul>
+<p>
+To keep track of the relationship between Blender version and Blender file version, both version numbers will always have the same
+major and minor number. Thus, a Blender program of version 2.91.x will always create files of file version 2.91.y, where x and y can be different. 
+</p>
+<p>
+Blender generally allows to read older version Blender files into a newer version Blender program. This requires Blender 
+to have the code to migrate the DNA stored in an older version file into a new version DNA. To some degree, Blender can also
+migrate backwards, which means that a Blender program of an older version can read a Blender file of a newer version. However, 
+this works only in a limited version range and this range is specified by two file version: The actual file version 
+and the so-called 'minimal' version. Below is the comment in the code, which states that. Blender achives that by 
+storing the actual layout of each struct and offsets of their properties in each blender file in the block DNA1.
+</p>
+
+<pre>
+/* Blender major and minor version. */
+#define BLENDER_VERSION 291
+/* Blender patch version for bugfix releases. */
+#define BLENDER_VERSION_PATCH 0
+/** Blender release cycle stage: alpha/beta/rc/release. */
+#define BLENDER_VERSION_CYCLE release
+
+/* Blender file format version. */
+#define BLENDER_FILE_VERSION BLENDER_VERSION
+#define BLENDER_FILE_SUBVERSION 10
+
+/* Minimum Blender version that supports reading file written with the current
+ * version. Older Blender versions will test this and show a warning if the file
+ * was written with too new a version. */
+#define BLENDER_FILE_MIN_VERSION 290
+#define BLENDER_FILE_MIN_SUBVERSION 0
+</pre>
+
+<p>
 The version specifier given in the file header of a Blender file always refers to the
-version of the Blender instance, which created the file. Besides this information, a Blender
+version of the Blender program instance, which created the file. Besides this information, a Blender
 file contains a block called <code>GLOB</code>, which contains more detailed information 
 in respect to DNA model compatibility, based on additional version specifiers.
 This block contains the struct <code>FileGlobal</code>.
 </p>
 <p>
-A full version check in Blender considers theses four version specifiers:
+A full version check in Blender considers these four version specifiers:
 </p>
 <dl>
 <dt>VERSION (file header)</dt>

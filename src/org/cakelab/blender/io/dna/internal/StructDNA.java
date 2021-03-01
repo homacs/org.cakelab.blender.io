@@ -179,7 +179,7 @@ public class StructDNA {
  			structs[i].read(io);
  			
  		}
- 	 	
+ 		
 	}
  	public void write(CDataReadWriteAccess io) throws IOException {
  		SDNA.write(io);
