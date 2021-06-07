@@ -230,12 +230,15 @@ public class CMetaModel {
 	
 	
 	public static boolean isScalar(String typeName) {
+		// TODO: consider using a hashtable for scalar type lookup ... they start to get more an more ..
 		return     (typeName.equals("char")) 
+				|| (typeName.equals("int8_t"))
 				|| (typeName.equals("uchar"))
 				|| (typeName.equals("short"))
 				|| (typeName.equals("ushort"))
 				|| (typeName.equals("bool"))
 				|| (typeName.equals("int"))
+				|| (typeName.equals("int32_t"))
 				|| (typeName.equals("uint"))
 				|| (typeName.equals("long"))
 				|| (typeName.equals("ulong"))
@@ -247,13 +250,13 @@ public class CMetaModel {
 	}
 
 	public static int getScalarSize(String typeName, int addressWidth) {
-		if (typeName.equals("char") || typeName.equals("uchar")) {
+		if (typeName.equals("char") || typeName.equals("uchar") || typeName.equals("int8_t")) {
 			return 1;
 		} else if(typeName.equals("short") || typeName.equals("ushort")) {
 			return 2;
 		} else if(typeName.equals("bool")) {
 			return 4;
-		} else if(typeName.equals("int") || typeName.equals("uint") || typeName.equals("unsigned int")) {
+		} else if(typeName.equals("int") || typeName.equals("int32_t") || typeName.equals("uint") || typeName.equals("unsigned int")) {
 			return 4;
 		} else if(typeName.equals("long") || typeName.equals("ulong")) {
 			if (addressWidth == Encoding.ADDR_WIDTH_32BIT) {

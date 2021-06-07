@@ -36,7 +36,6 @@ Refers to script org.cakelab.blender.io/blender-utils/checkout-branch.sh
 2. Clone the new branch  (or:  https://wiki.blender.org/index.php/Dev:Doc/Tools/Git)
    - Edit script mentioned above and adjust BRANCH and LOCATION
    - Execute script
-   - Create a new C/C++ project in Eclipse pointing to the cloned blender folder.
 3. Identify changes by comparison with the previous release branch (remote->origin/blender-vX.XX-release) 
    for the change log on web page:
    - Focus comparison on source/blender/makesdna

@@ -1,3 +1,223 @@
+2.93.0 -> 2.92.0
+================
+bAction
++ PreviewImage *preview;
+
+FModifier
++ /**
++  * Expansion state for the modifier panel and its sub-panels, stored as a bit-field
++  * in depth-first order. (Maximum of `sizeof(short)` total panels).
++  */
++ short ui_expand_flag;
+
+bArmature
++ /** Relative position of the axes on the bone, from head (0.0f) to tail (1.0f). */
++ float axes_position;
+
+BrushGpencilSettings
++ /** Fill zoom factor */
++ float fill_factor;
+
+Collection
++ /** Line Art engine specific */
++ short lineart_usage;
+
+- PathPoint
+
+- Path
+
+BevPoint
+- short split_tag;
+
+Curve
++ /**
++  * Determine how the effective radius of the bevel point is computed when a taper object is
++  * specified. The effective radius is a function of the bevel point radius and the taper radius.
++  */
++ char taper_radius_mode;
+
+NoiseGpencilModifierData
++ float noise_offset;
+
++ LineartGpencilModifierData
+
+Light
++ float area_spread;
++ float diff_fac, volume_fac;
+
+MirrorModifierData
++ float bisect_threshold;
+
+bNodeSocket
++ /* Runtime-only cache of the number of input links, for multi-input sockets. */
++ short total_inputs;
++ char description[64];
+
++ CryptomatteLayer
+ + struct CryptomatteEntry *next, *prev;
+ + char name[64];
+
+NodeCryptomatte
++ /**
++  * `iuser` needs to be first element due to RNA limitations.
++  * When we define the #ImageData properties, we can't define them from
++  * `storage->iuser`, so storage needs to be cast to #ImageUser directly.
++  */
++ ImageUser iuser;
++ char layer_name[64];
+
+
++ NodeAttributeClamp
+ + /* CustomDataType. */
+ + uint8_t data_type;
+ + /* NodeClampOperation. */
+ + uint8_t operation;
+
++ NodeAttributeMapRange
+ + /* GeometryNodeAttributeDataType */
+ + uint8_t data_type;
+ + /* NodeMapRangeType. */
+ + uint8_t interpolation_type;
+
+NodeAttributeMath
++ uint8_t input_type_c;
+
++ NodeAttributeRandomize
+ + /* CustomDataType. */
+ + uint8_t data_type;
+ + /* AttributeDomain. */
+ + uint8_t domain;
+ + /* GeometryNodeAttributeRandomizeMode. */
+ + uint8_t operation;
+
++ NodeInputString
+ + char *string;
+
+NodeGeometryAlignRotationToVector
++ /* GeometryNodeAlignRotationToVectorPivotAxis */
++ uint8_t pivot_axis;
+
++ NodeGeometryPointInstance
+ + /* GeometryNodePointInstanceType. */
+ + uint8_t instance_type;
+ + /* GeometryNodePointInstanceFlag. */
+ + uint8_t flag;
+
++ NodeGeometryPointsToVolume
+ + /* GeometryNodePointsToVolumeResolutionMode */
+ + uint8_t resolution_mode;
+ + /* GeometryNodeAttributeInputMode */
+ + uint8_t input_type_radius;
+
++ NodeGeometryCollectionInfo
+ + /* GeometryNodeTransformSpace. */
+ + uint8_t transform_space;
+
++ NodeGeometryAttributeProximity
+ + /* GeometryNodeAttributeProximityTargetType. */
+ + uint8_t target_geometry_element;
+
++ NodeGeometryVolumeToMesh
+ + /* VolumeToMeshResolutionMode */
+ + uint8_t resolution_mode;
+
++ NodeAttributeCombineXYZ
+ + /* GeometryNodeAttributeInputMode. */
+ + uint8_t input_type_x;
+ + uint8_t input_type_y;
+ + uint8_t input_type_z;
+
+NodeAttributeSeparateXYZ
+ + /* GeometryNodeAttributeInputMode. */
+ + uint8_t input_type;
+
++ NodeAttributeConvert
+ + /* CustomDataType. */
+ + uint8_t data_type;
+ + char _pad[1];
+ + /* AttributeDomain. */
+ + int16_t domain;
+
++ NodeGeometryMeshCircle
+ + /* GeometryNodeMeshCircleFillType. */
+ + uint8_t fill_type;
+
++ NodeGeometryMeshCylinder
+ + /* GeometryNodeMeshCircleFillType. */
+ + uint8_t fill_type;
+
++ NodeGeometryMeshCone
+ + /* GeometryNodeMeshCircleFillType. */
+ + uint8_t fill_type;
+
++ NodeGeometryMeshLine
+ + /* GeometryNodeMeshLineMode. */
+ + uint8_t mode;
+ + /* GeometryNodeMeshLineCountMode. */
+ + uint8_t count_mode;
+
++ ObjectLineArt {
+ + short usage;
+ + short flags;
+ + /** if OBJECT_LRT_OWN_CREASE is set */
+ + float crease_threshold;
+
+Object
++ ObjectLineArt lineart;
+
+GP_Interpolate_Settings
+- /** #eGP_Interpolate_SettingsFlag. */
+- short flag;
+- /** #eGP_Interpolate_Type - Interpolation Mode. */
+- char type;
+- /** #eBezTriple_Easing - Easing mode (if easing equation used). */
+- char easing;
+- /** BEZT_IPO_BACK. */
+- float back;
+- /** BEZT_IPO_ELASTIC. */
+- float amplitude, period;
+- /* Step between sequence interpolated frames. */
+- int step;
+- char _pad[4];
+
+SceneEEVEE
++ float bokeh_overblur;
++ float bokeh_neighbor_max;
++ float bokeh_denoise_fac;
+
+bNodeTreePath
++ char display_name[64];
+
+SpaceNode
++ /** Direction for offsetting nodes on insertion. */
++ char insert_ofs_dir;
+- /** Currently on 0/1, for auto compo. */
+- short recalc;
+- /** Direction for offsetting nodes on insertion. */
+- char insert_ofs_dir;
+- char _pad4;
+- /** Temporary data for modal linking operator. */
+- ListBase linkdrag;
+- /* XXX hack for translate_attach op-macros to pass data from transform op to insert_offset op */
+- /** Temporary data for node insert offset (in UI called Auto-offset). */
+- struct NodeInsertOfsData *iofsd;
+
++ SpreadsheetColumn
+
++ SpreadsheetContext
+
++ SpreadsheetContextObject
+
++ SpreadsheetContextModifier
+
++ SpreadsheetContextNode
+
++ SpaceSpreadsheet
+
+
+
+
+
 2.92.0 -> 2.91.1
 ================
 + AssetTag // User defined tag for an asset
@@ -398,13 +618,13 @@ Simulation
   - char *type;
   - char *name;
 
-- ParticleSimulationState {
+- ParticleSimulationState
   - SimulationState head;
   - int tot_particles;
   - int next_particle_id;
   - struct CustomData attributes;
 
-- ParticleMeshEmitterSimulationState {
+- ParticleMeshEmitterSimulationState
   - SimulationState head;
   - float last_birth_time;
   - char _pad[4];
@@ -419,7 +639,7 @@ Simulation
 SpaceProperties
 + struct SpaceProperties_Runtime *runtime;
 
-+ SpaceImageOverlay {
++ SpaceImageOverlay
   + int flag;
   + char _pad[4];
 
