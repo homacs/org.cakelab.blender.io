@@ -9,7 +9,7 @@
 # BRANCH
 # Branch to be checked out. Blender creates a new branch for each release with following pattern:
 #     blender-vX.XX-release
-BRANCH=blender-v2.93-release
+BRANCH=blender-v3.0-release
 
 
 # LOCATION
@@ -45,10 +45,41 @@ function do_checkout ()
 }
 
 
+function move_old ()
+{
+	pushd blender >/dev/null
+	local OLDBRANCH=$(git branch | awk '{print $2}')
+	popd >/dev/null
+
+	if [ "$BRANCH" == "$OLDBRANCH" ]
+	then
+		error_exit "Old branch and new branch are the same: $BRANCH"
+	fi
+
+cat <<EOF
+*********************************
+* Going to move older version 
+* 	old branch: "$OLDBRANCH"
+* 	new branch: "$BRANCH"
+*   
+*	target dir: "$OLDBRANCH"
+********************************
+EOF
+	read -p "enter to proceed: " || fatal_exit
+	
+	# move and replace link
+	rm -f blender-previous
+	mv blender "$OLDBRANCH"
+	ln -s "$OLDBRANCH" blender-previous
+}
+
 function main ()
 {
 	cd "$LOCATION"  || fatal_exit
-	! [ -d blender ] || error_exit "Directory 'blender' already exists."
+	if [ -d blender ]
+	then
+		move_old || fatal_exit
+	fi
 	
 	do_checkout
 }

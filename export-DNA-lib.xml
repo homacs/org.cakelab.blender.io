@@ -141,6 +141,10 @@
 	
 	<target name="package.all">
 		<antcall target="package">
+			<param name="blender.file.version" value="2.93.21"/>
+			<param name="input" value="versions/2.93.21-2.90.0.blend"/>
+		</antcall>
+		<antcall target="package">
 			<param name="blender.file.version" value="2.93.20"/>
 			<param name="input" value="versions/2.93.20-2.90.0.blend"/>
 		</antcall>
