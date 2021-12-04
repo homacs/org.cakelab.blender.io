@@ -10,7 +10,7 @@ import org.cakelab.json.JSONException;
 /**
  * DocGenerator is basically a hub to multiple documentations 
  * on the same subject. It searches for documentation in 
- * all source and combines it into a single documentation.
+ * all sources and combines it into a single documentation.
  * 
  * @author homac
  *

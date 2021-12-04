@@ -104,6 +104,10 @@ public class FileHeader {
 			code = major*100 + minor;
 		}
 
+		/** 
+		 * Creates string from major and minor number.
+		 * FORMAT: printf("%d.%02d)
+		 */
 		public String toString() {
 			return "" + major + '.' + (minor < 10 ? "0"+minor : minor);
 		}

@@ -2,6 +2,8 @@ package org.cakelab.blender.generator;
 
 import java.io.IOException;
 
+import static org.cakelab.blender.generator.Mangeling.*;
+
 import org.cakelab.blender.generator.utils.GComment;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.MethodGenerator;
@@ -34,17 +36,18 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 
 	@Override
 	protected void visitScalar(long offset32, long offset64, CField field, JavaType jtype) throws IOException {
+		String paramName = mangle(field.getName());
 		appendMethodSignature(field, jtype);
 		appendln("{");
 		content.indent(+1);
 		
 		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
-		appendln(__io__block + "." + writeMethod(jtype, field.getType()) + "(" + __io__address + " + " + offset64 + ", " + field.getName() + ");");
+		appendln(__io__block + "." + writeMethod(jtype, field.getType()) + "(" + __io__address + " + " + offset64 + ", " + paramName + ");");
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);
-		appendln(__io__block + "." + writeMethod(jtype, field.getType()) + "(" + __io__address + " + " + offset32 + ", " + field.getName() + ");");
+		appendln(__io__block + "." + writeMethod(jtype, field.getType()) + "(" + __io__address + " + " + offset32 + ", " + paramName + ");");
 		content.indent(-1);
 		appendln("}");
 
@@ -55,6 +58,7 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 
 	@Override
 	protected void visitPointer(long offset32, long offset64, CField field, JavaType jtype) throws IOException {
+		String paramName = mangle(field.getName());
 		classgen.addImport(CPointer.class);
 		appendMethodSignature(field, jtype);
 		appendln("{");
@@ -62,7 +66,7 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 		
 		String addressVar = "__address";
 		
-		appendln("long " + addressVar + " = ((" + field.getName() + " == null) ? 0 : " + field.getName() + ".getAddress());");
+		appendln("long " + addressVar + " = ((" + paramName + " == null) ? 0 : " + paramName + ".getAddress());");
 		
 		appendln("if (" + ARCH64_TEST + ") {");
 		content.indent(+1);
@@ -93,7 +97,7 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 	}
 
 	private void appendLowlevelCopy(long offset32, long offset64, CField field, JavaType jtype) {
-		String other = field.getName();
+		String other = mangle(field.getName());
 		appendln("{");
 		content.indent(+1);
 		
@@ -152,9 +156,9 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 		appendFieldDoc(javadoc);
 		javadoc.appendln("@see #" + super.getFieldDescriptorName(field.getName()));
 		
-		
+		String paramName = mangle(field.getName());
 		appendln(javadoc.toString(0));
-		appendln("public void set" + toCamelCase(field.getName()) + "(" + paramType + " " + field.getName() + ") throws " + IOException.class.getSimpleName());
+		appendln("public void set" + toCamelCase(field.getName()) + "(" + paramType + " " + paramName + ") throws " + IOException.class.getSimpleName());
 	}
 
 }
