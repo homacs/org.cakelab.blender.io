@@ -1,4 +1,10 @@
 
+
+BUGS:
++ docgen: <code> empty
++ docgen: name mangling for Object in JavaDoc
+
+
 CODE:
 + allow to differentiate between read/write access when opening
 + separate source code generator from I/O lib

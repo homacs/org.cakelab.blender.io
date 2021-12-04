@@ -71,13 +71,13 @@ public class JavaType {
 	}
 
 
-
+	/* Map native scalar type to Java primitive type */
 	private void mapScalar(CType ctype) {
 		this.kind = JKind.TYPE_SCALAR;
 		
 		String signature = ctype.getSignature();
 		
-		if (signature.equals("char") || signature.equals("uchar")) {
+		if (signature.equals("char") || signature.equals("uchar") || signature.equals("int8_t")) {
 			name = "byte";
 		} else if (signature.equals("short") || signature.equals("ushort")) {
 			name = "short";

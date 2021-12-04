@@ -3,8 +3,6 @@ package org.cakelab.blender.io.util;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.cakelab.blender.io.util.CStringUtils;
-
 /**
  * This class implements an abstraction layer to 4 byte
  * character identifiers used for block codes and markers

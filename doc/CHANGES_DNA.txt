@@ -1,8 +1,439 @@
+3.00.42 -> 2.93.1
+=================
+
+
+- AlembicObjectPath
+
++ AssetLibraryReference
+
+AssetMetaData
++ local_type_info
++ catalog_id
++ catalog_simple_name
++ author
+
+bGPdata_Runtime
++ lineart_cache
+
+bGPdata
++ vertex_group_names
+~ int vertex_group_active_index <-- char[4]  vertex_group_active_index
+
+BlenderObject
+- imat_ren
+
+bNode
++ NodeDeclarationHandle declaration
+
+
+bNodeSocket
++ char attribute_domain
+
+
++ bNodeSocketValueMaterial
+
++ bNodeSocketValueTexture
+
+
+bNodeTree
++ FieldInferencingInterfaceHandle field_inferencing_interface
++ int execution_mode
+- ui_storage
+
+BoidParticle
+- rt
+
+BoidRuleAverageSpeed
+- rt
+
+Bone
++ float[3] scale_in
++ float[3] scale_out
++ int bbone_flag
++ short bbone_prev_flag
++ short bbone_next_flag
+
+bPoseChannel
++ float[3] custom_scale_xyz
++ float[3] custom_translation
++ float[3] custom_rotation_euler
++ float[3] scale_in
++ float[3] scale_out
+
+bRotLimitConstraint
++ char euler_order
+
+
+BrushGpencilSettings
++ caps_type
++ int dilate_pixels
+
+
+bTheme
++ strip_color
+
+bTransLikeConstraint
++ flag
+
+BuildEff
+- rt
+
+
++ bUUID
+
+CacheFile
++ type
++ use_render_procedural
+- draw_flag
++ use_prefetch
++ prefetch_cache_size
+~ CacheArchiveHandle handle <-- AbcArchiveHandle handle
+
++ CacheObjectPath
+
+CacheParticle
+- rt
+
+Collection
++ lineart_flags
++ lineart_intersection_mask
+
+Curve
++ CurveEval* curve_eval
+
+CustomDataLayer
++ AnonymousAttributeID anonymous_id
+
+
++ DashGpencilModifierData
++ DashGpencilModifierSegment
+
+Editing
++ EditingRuntime runtime
+
++ EditingRuntime
+
+Effect
+- rt
+
+EffectorWheights
+- rt
+
+
+FileAssetSelectParams
++ AssetLibraryReference asset_library_ref
++ short asset_catalog_visibility
++ bUUID catalog_id
++ short import_type
+
+
+- FileSelectAssetLibraryUID
+
+FileSelectParams
+- f_fp
+- fp_str
+
+FluidDomainSettings
+- mesh_velocities
+- noise_type
+- totvert
+
+- FluidDomainVertexVelocity
+
+
+ID
++ LibraryWeakReference library_weak_reference
+
+IDProperty
++ ui_data
+
++ IDPropertyUIData
+
++ IDPropertyUIDataFloat
+
++ IDPropertyUIDataID
+
++ IDPropertyUIDataInt
+
++ IDPropertyUIDataString
+
+Image
+~ GPUTexture*[3][2][2] gputexture <-- GPUTexture*[3][2] gputexture
+
+
+ImageTile_Runtime
+- tilearray_layer
+- tilearray_offset
+- tilearray_size
++ ImageTile_RuntimeTextureSlot[2] slots
+
++ ImageTile_RuntimeTextureSlot
+
+IpoCurve
+- rt
+
+Lattice
++ ListBase vertex_group_names
++ int vertex_group_active_index
+
++ LengthGpencilModifierData
+
++ LibraryWeakReference
+
+LinearGpencilModifierData
++ BlenderObject* source_camera
++ float overscan
++ char intersection_mask
++ float chain_smooth_tolerance
++ float stroke_depth_offset
++ char level_start_override
++ char level_end_override
++ short edge_types_override
++ LineartCache* cache
+- render_buffer
++ LineartRenderBuffer* render_buffer_ptr
+
+MaterialLineArt
++ char mat_occlusion
+
+Mesh_Runtime
++ void* render_mutex
+
+Mesh
++ ListBase vertex_group_names
++ int vertex_group_active_index
+
+
+MeshCacheModifierData
++ char[64] defgrp_name
+
+- MeshCacheVertexVelocity
+
+MeshSeqCacheModifierData
+- vertex_velocities
+- num_vertices
+- velocity_delta
+- last_lookup_time
+
+
+MirrorModifierData
++ uchar use_correct_order_on_merge
+
+MovieTrackingDopesheetChannel
++ int first_not_disabled_marker_framenr
++ int last_not_disabled_marker_framenr
+
+MTex
+- pmapto
+- pmaptoneg
+- rt
+
+NodeAttributeConvert
+~ int8_t domain <-- short domain
+
++ NodeAttributeCurveMap
+
++ NodeAttributeVectorRotate
+
+NodeDenoise
++ char prefilter
+
++ NodeGeometry.*
+
++ NodeInputBool
+
++ NodeInputColor
+
++ NodeInputInt
+
++ NodeRandomValue
+
++ NodeShaderPrincipled
+
+NodesModifierData
++ void* runtime_eval_log
+
++ NodeSwitch
+
+Object_Runtime
++ double overlay_mode_transfer_start_time
+- geometry_set_previews
+
+OffsetGpencilModifierData
++ float[3] rnd_offset
+
+Panel_Runtime
++ bContextStore* context
+
+ParticleDupliWeight
+- rt
+
+ParticleEditSettings
+- rt
+
+ParticleSettings
+- rt
+
+PhysicsSettings
+- rt
+
+PointCache
+- rt
+
+RegionView3D
+- depths
+
+RenderData
+- preview_start_resolution
+. debug_pass_type
+
+SDefVert
++ int vertex_idx
+
+Sequence
+- depth
++ char tmp_tag
+- handsize
++ int8_t color_tag
+
++ SequencerPreviewOverlay
+
++ SequencerTimelineOverlay
+
+SequencerToolSettings
++ short snap_mode
++ short snap_flag
++ int overlap_mode
++ int snap_distance
++ int pivot_point
+
+SoftBody
+- sfra
+- efra
+~ local  char <-- short 
+~ solverflags  char <-- short 
+
+SpaceImage
+- curtile
+~ lock   char <-- short
++ int custom_grid_subdiv
+
+SpaceNode
++ SpaceNodeOverlay overlay
+
++ SpaceNodeOverlay
+
+SpaceSeq
+~ view   char <-- int
+~ overlay_type   char <-- int
+~ draw_flag  char <-- int
++ char gizmo_flag
++ float[2] cursor
++ SequencerPreviewOverlay preview_overlay
++ SequencerTimelineOverlay timeline_overlay
++ SpaceSeqRuntime runtime
+
++ SpaceSeqRuntime
+
+SpaceSpreadsheet
++ ListBase row_filters
+
+SpeedControlVars
++ int speed_control_type
++ float speed_fader
++ float speed_fader_length
+- lastValidFrame
++ float speed_fader_frame_number
+
+SpreadsheetColumn
++ uchar data_type
++ char* display_name
+
++ SpreadsheetRowFilter
+
+StripColorBalance
++ int method
++ float[3] slope
++ float[3] offset
++ float[3] power
+
+StripElem
++ float orig_fps
+
+StripTransform
++ float[2] origin
+
+SurfaceDeformModifierData
++ int num_mesh_verts
+
+ThemeSpace
++ float dash_alpha
+
+
++ ThemeStripColor
+
+ThemeUI
++ float panel_roundness
+
+
+ToolSettings
+- gpencil_seq_align
+- gpencil_ima_align
++ char snap_uv_flag
+
+uiFontStyle
+- kerning
+
+uiList
++ char* custom_activate_opname
++ char* custom_drag_opname
+
+UserDef_Experimental
++ char no_proxy_to_override_conversion
++ char use_geometry_nodes_legacy
++ char show_asset_debug_info
++ char use_full_frame_compositor
+- use_asset_browser
++ char use_extended_asset_browser
+
+UserDef
++ char file_preview_type
+
+View3D_Runtime
++ SceneStats local_stats
+
+View3DOverlay
++ float normals_constant_screen_size
+
++ WeightAngleGpencilModifierData
+
+
++ WeightProxGpencilModifierData
+
+WorkSpace
++ AssetLibraryReference asset_library_ref
+
++ XrActionMap
+
++ XrActionMapBinding
+
++ XrActionMapItem
+
+XrSessionSettings
++ float base_scale
++ char controller_draw_style
+
+
+
+
 2.93.1 -> 2.93.0
 ================
 
 ModifierData
 + _pad1
+
+
+
 
 
 2.93.0 -> 2.92.0

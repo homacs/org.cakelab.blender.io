@@ -3,16 +3,70 @@ package org.cakelab.blender.doc.extract.dnadocs;
 import java.io.File;
 import java.io.IOException;
 
+import org.cakelab.blender.io.FileHeader.Version;
 import org.xml.sax.SAXException;
 
 public class Main {
 
+	
+	
+	
+	private static String version;
+	private static File input;
+	private static File output;
+
+
 	public static void main(String[] args) {
-		File input = new File("/tmp/blender-2.78-xmldoc");
-		File output = new File("/home/homac/repos/git/cakelab.org/playground/org.cakelab.blender.dnadoc/resources/dnadoc");
-		String version = "2.78";
+		setDefaults();
 
 
+		readArguments(args);
+		
+		validateConfig();
+		
+		
+		
+		output = new File(output, getVersionFolderName(version));
+		output = new File(output, "/dnasrc");
+		output.mkdirs();
+		
+		output = new File(output, "/doc.json");
+
+		
+		Converter converter = new Converter(input, version, output);
+		try {
+			converter.run();
+		} catch (SAXException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	private static String getVersionFolderName(String version) {
+		Version v = new Version(version);
+		return v.toString();
+	}
+
+
+	private static void validateConfig() {
+		if (version == null || input == null) {
+			System.err.println("error: missing arguments.");
+			System.err.println();
+			synopsis();
+			System.exit(-1);
+		}
+	}
+
+
+	private static void setDefaults() {
+		version = "3.0";
+		input = new File("/tmp/blender-" + version + "-xmldoc");
+		output = new File("/tmp/blender-" + version + "-dnadoc");
+	}
+
+
+	private static void readArguments(String[] args) {
+		
 		for (int i = 0; i < args.length; i++) {
 			String name = args[i++];
 			String value;
@@ -46,32 +100,10 @@ public class Main {
 				}
 			}
 		}
-		//
-		// print help if arguments are missing
-		//
-		if (version == null || input == null) {
-			System.err.println("error: missing arguments.");
-			System.err.println();
-			synopsis();
-			System.exit(-1);
-		}
 		
-		output = new File(output, version);
-		output = new File(output, "/dnasrc");
-		output.mkdirs();
-		
-		output = new File(output, "/doc.json");
-
-		
-		Converter converter = new Converter(input, version, output);
-		try {
-			converter.run();
-		} catch (SAXException | IOException e) {
-			e.printStackTrace();
-		}
 	}
 
-	
+
 	private static void synopsis() {
 		Class<?> clazz = Main.class;
 		System.err.println("Synopsis: java " + clazz.getName() + " -in doxygenXmlDir -out dnaDocOutputFolder -v blenderVersionStr");

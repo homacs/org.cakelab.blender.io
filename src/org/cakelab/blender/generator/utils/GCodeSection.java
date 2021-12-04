@@ -12,7 +12,7 @@ import java.util.Comparator;
  *
  */
 public class GCodeSection extends CodeGenerator {
-	ArrayList<String> lines = new ArrayList<String>();
+	private ArrayList<String> lines = new ArrayList<String>();
 
 	protected StringBuffer currentLine = new StringBuffer();
 	
@@ -80,7 +80,7 @@ public class GCodeSection extends CodeGenerator {
 	}
 
 	/**
-	 * Sorts existing lines by alphabetic order. Usefule to sort 
+	 * Sorts existing lines by alphabetic order. Useful to sort 
 	 * for example import statements.
 	 */
 	public void sortLines() {
@@ -88,8 +88,8 @@ public class GCodeSection extends CodeGenerator {
 	}
 
 	/**
-	 * Sorts existing lines by alphabetic order. Usefule to sort 
-	 * for example import statements.
+	 * Sorts existing lines by the order defined by the given comparator. 
+	 * Useful to sort for example import statements.
 	 */
 	public void sortLines(Comparator<String> c) {
 		Collections.sort(lines, c);
