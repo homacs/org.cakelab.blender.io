@@ -15,8 +15,8 @@ import org.cakelab.blender.io.dna.DNAStruct;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONException;
 import org.cakelab.json.JSONObject;
-import org.cakelab.json.parser.Parser;
-import org.cakelab.json.parser.ParserFactory;
+import org.cakelab.json.JSONDefaults;
+import org.cakelab.json.parser.JSONParser;
 
 /**
  * <p>
@@ -54,7 +54,7 @@ public class Documentation implements DocumentationProvider {
 	
 	public Documentation(File docfile, boolean debug) throws IOException, JSONException{
 		this.debug = debug;
-		Parser parser = ParserFactory.getDefault().create();
+		JSONParser parser = JSONDefaults.createDefaultParser();
 		JSONObject docjson = parser.parse(new FileInputStream(docfile));
 		
 		includePath = docfile.getCanonicalFile().getParentFile();
