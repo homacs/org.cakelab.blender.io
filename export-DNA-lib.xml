@@ -2,7 +2,7 @@
 <project default="package.all" name="Generate and Package a Java .Blend Data Model">
 	
 	<target name="init">
-		<property name="version" value="1.3.7"/>
+		<property name="version" value="1.3.8"/>
 		
 		<property name="ant.build.javac.target" value="1.8"/>
 		
@@ -12,13 +12,13 @@
 		<property name="java.blend.docs" value="/home/homac/repos/git/cakelab.org/playground/org.cakelab.blender.dnadoc/resources/dnadoc"/>
 		<property name="web.downloads" value="${user.home}/tmp/public_html/projects/JavaBlend/downloads"/>
 		<property name="project.name" value="JavaBlend"/>
-		<property name="package.name" value="${project.name}-${version}-DNA-${blender.file.version.cur}"/>
+		<property name="package.name" value="${project.name}-${version}-DNA-${blender.version}"/>
         <property name="workdir" value="${java.io.tmpdir}/${package.name}"/>
         <property name="srcdir" value="${workdir}/src"/>
 		<property name="bindir" value="${workdir}/bin"/>
 		<property name="jarfile" value="${web.downloads}/${package.name}.jar"/>
-		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.file.version.cur}.zip"/>
-		<property name="javadoczip" value="${web.downloads}/${project.name}-javadoc-${version}-DNA-${blender.file.version.cur}.zip"/>
+		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.version}.zip"/>
+		<property name="javadoczip" value="${web.downloads}/${project.name}-javadoc-${version}-DNA-${blender.version}.zip"/>
 
 		<delete failonerror="false" includeEmptyDirs="true">
 			<fileset dir="${workdir}"/>
@@ -33,7 +33,8 @@
 	<target name="generate" depends="init">
 		<echo message="generating source code"/>
 		<property name="input" value="versions/${blender.file.version.cur}-${blender.file.version.min}.blend"/>
-		<java classname="org.cakelab.blender.generator.ModelGenerator">
+		<java classname="org.cakelab.blender.generator.ModelGenerator" failonerror="true">
+ 
 			<arg value="-in"/><arg file="${input}"/>
 			<arg value="-out"/><arg file="${srcdir}"/>
 			<arg value="-p"/><arg value="${blender.java.package}"/>
@@ -92,7 +93,7 @@
         	author="true" 
         	classpath="${bindir}" 
         	destdir="${workdir}/javadoc" 
-        	doctitle="Java .Blend for Blender File Version ${blender.file.version.cur}" 
+        	doctitle="Java .Blend for Blender Version ${blender.version}" 
         	nodeprecated="false" 
         	nodeprecatedlist="false" 
         	noindex="false" 
@@ -142,67 +143,78 @@
 
 	<target name="package.all">
 		<antcall target="package">
+			<param name="blender.version" value="3.01"/>
 			<param name="blender.file.version.cur" value="3.01.07"/>
 			<param name="blender.file.version.min" value="3.00.42"/>
 		</antcall>
 		<antcall target="package">
+			<param name="blender.version" value="3.00"/>
 			<param name="blender.file.version.cur" value="3.00.42"/>
 			<param name="blender.file.version.min" value="3.00.42"/>
 		</antcall>
 		<antcall target="package">
+			<param name="blender.version" value="2.93"/>
 			<param name="blender.file.version.cur" value="2.93.21"/>
 			<param name="blender.file.version.min" value="2.90.0"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.93.20"/>
-			<param name="blender.file.version.min" value="2.90.0"/>
-		</antcall>
-		<antcall target="package">
+			<param name="blender.version" value="2.92"/>
 			<param name="blender.file.version.cur" value="2.92.15"/>
 			<param name="blender.file.version.min" value="2.90.0"/>
 		</antcall>
 		<antcall target="package">
+			<param name="blender.version" value="2.91"/>
 			<param name="blender.file.version.cur" value="2.91.10"/>
 			<param name="blender.file.version.min" value="2.90.0"/>
 		</antcall>
 		<antcall target="package">
+			<param name="blender.version" value="2.90"/>
 			<param name="blender.file.version.cur" value="2.90.8"/>
 			<param name="blender.file.version.min" value="2.90.0"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.83.2"/>
+			<param name="blender.version" value="2.83"/>
+			<param name="blender.file.version.cur" value="2.83.19"/>
 			<param name="blender.file.version.min" value="2.83.0"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.82"/>
+			<param name="blender.version" value="2.82"/>
+			<param name="blender.file.version.cur" value="2.82.7"/>
 			<param name="blender.file.version.min" value="2.80.0"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.81"/>
+			<param name="blender.version" value="2.81"/>
+			<param name="blender.file.version.cur" value="2.81.16"/>
 			<param name="blender.file.version.min" value="2.80.0"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.80"/>
+			<param name="blender.version" value="2.80"/>
+			<param name="blender.file.version.cur" value="2.80.75"/>
 			<param name="blender.file.version.min" value="2.80.0"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.79"/>
+			<param name="blender.version" value="2.79"/>
+			<param name="blender.file.version.cur" value="2.79.0"/>
 			<param name="blender.file.version.min" value="2.70.6"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.78"/>
+			<param name="blender.version" value="2.78"/>
+			<param name="blender.file.version.cur" value="2.78.0"/>
 			<param name="blender.file.version.min" value="2.70.6"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.76"/>
+			<param name="blender.version" value="2.76"/>
+			<param name="blender.file.version.cur" value="2.76.0"/>
 			<param name="blender.file.version.min" value="2.70.5"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.72"/>
+			<param name="blender.version" value="2.71"/>
+			<param name="blender.file.version.cur" value="2.72.2"/>
 			<param name="blender.file.version.min" value="2.70.5"/>
 		</antcall>
 		<antcall target="package">
-			<param name="blender.file.version.cur" value="2.69"/>
+			<param name="blender.version" value="2.69"/>
+			<param name="blender.file.version.cur" value="2.69.0"/>
 			<param name="blender.file.version.min" value="2.62.0"/>
 		</antcall>
 	</target>
