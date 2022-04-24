@@ -1,4 +1,13 @@
-BUILD=$HOME/repos/git/blender.org/blender/build
+#!/bin/bash
+
+JAVA_BLEND_TOOLING="../org.cakelab.blender.io.tooling"
+
+source "$JAVA_BLEND_TOOLING/sh/config.sh"   || exit -1
+source "blender/repo.sh"  || exit -1
+
+
+
+BUILD=$BLENDER_REPO_HOME/blender/build
 
 CFGDIR=$HOME/tmp/.blender
 

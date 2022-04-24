@@ -5,34 +5,24 @@
 #
 
 
+JAVA_BLEND_TOOLING="../org.cakelab.blender.io.tooling"
+
+source "$JAVA_BLEND_TOOLING/sh/config.sh"   || exit -1
+source "blender/repo.sh"  || exit -1
+
+
+
 # LOCATION
 # Target location of the cloned working copy which will become:
 #     $LOCATION/blender 
-LOCATION="$HOME/repos/git/blender.org"
+LOCATION="$BLENDER_REPO_HOME"
 
 
-SUBDIR=source/blender/makesdna
-
-
-function fatal_exit ()
-{
-	echo "aborted." >&2
-	exit 127
-}
-
-
-function error_exit ()
-{
-	echo "$1" >&2
-	fatal_exit
-}
 
 
 function main ()
 {
-	
-	pushd "$LOCATION" >/dev/null
-	meld blender/$SUBDIR blender-previous/$SUBDIR
+	blender_repo_DNA_diff	
 }
 
 
