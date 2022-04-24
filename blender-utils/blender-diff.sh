@@ -8,7 +8,7 @@
 JAVA_BLEND_TOOLING="../org.cakelab.blender.io.tooling"
 
 source "$JAVA_BLEND_TOOLING/sh/config.sh"   || exit -1
-source "blender/repo.sh"  || exit -1
+source "work/update.sh"  || exit -1
 
 
 
@@ -22,7 +22,7 @@ LOCATION="$BLENDER_REPO_HOME"
 
 function main ()
 {
-	blender_repo_DNA_diff	
+	update_show_DNA_diff	
 }
 
 
