@@ -156,6 +156,7 @@ XI. Commit Changes
 	+ org.cakelab.blender.dnadoc
 	+ org.cakelab.blender.viewer
 	+ org.cakelab.blender.fileviewer
+	+ org.cakelab.blender.io.tooling
 
 
 
