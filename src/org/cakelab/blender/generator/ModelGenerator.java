@@ -1,10 +1,13 @@
 package org.cakelab.blender.generator;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.cakelab.blender.doc.Documentation;
@@ -181,6 +184,19 @@ public class ModelGenerator {
 		@SuppressWarnings("resource")
 		StructDNAImageGenerator sdnaImage = new StructDNAImageGenerator(sdnaImageFile, blend.getStructDNA(), blend.getVersion().getCode());
 		sdnaImage.generate();
+		
+		//
+		// write version specifier
+		//
+		File propertiesFile = new File(new File(output, javaPackage.replace('.',File.separatorChar)), "version.properties");
+		Properties props = new Properties();
+		props.setProperty("org.blender.version", blend.getVersion().toString());
+		props.setProperty("org.blender.file.version", blend.getVersion() + "." + versionInfo.getSubversion());
+		props.setProperty("org.blender.file.minversion", versionInfo.getMinversion() + "." + versionInfo.getMinsubversion());
+		try (OutputStream out = new FileOutputStream(propertiesFile)) {
+			props.store(out, "");
+		}
+
 	}
 
 

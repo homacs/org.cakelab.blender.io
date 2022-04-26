@@ -159,7 +159,7 @@
 		</antcall>
 		<antcall target="package">
 			<param name="blender.version" value="2.83"/>
-			<param name="blender.file.version.cur" value="2.83.19"/>
+			<param name="blender.file.version.cur" value="2.83.21"/>
 			<param name="blender.file.version.min" value="2.83.0"/>
 		</antcall>
 	</target>
