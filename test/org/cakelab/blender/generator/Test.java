@@ -24,7 +24,7 @@ public class Test {
 			"-d", "true"
 		};
 		
-		ModelGenerator.main(args);
+		LibraryGenerator.main(args);
 		
 	}
 }

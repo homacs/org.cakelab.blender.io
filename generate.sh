@@ -89,7 +89,7 @@ done`
 
 
 
-java -cp ${CLASSPATH} org.cakelab.blender.generator.ModelGenerator -in ${INPUT} -c ${DOCPATH} -out ${OUTPUT} -p ${PACKAGE}
+java -cp ${CLASSPATH} org.cakelab.blender.generator.LibraryGenerator -in ${INPUT} -c ${DOCPATH} -out ${OUTPUT} -p ${PACKAGE}
 
 
 echo "done."
