@@ -71,6 +71,7 @@ public class ModelGenerator {
 		File output = null;
 		String javaPackage = "org.cakelab.blender";
 		String docpath = "resources/dnadoc";
+		boolean userProvidedDocPath = false;
 		boolean generateUtils = true;
 		boolean debug = true;
 		
@@ -98,6 +99,7 @@ public class ModelGenerator {
 				} else if (name.equals("-d")) {
 					debug = Boolean.valueOf(value);
 				} else if (name.equals("-c")) {
+					userProvidedDocPath = true;
 					docpath = value;
 				} else if (name.equals("-h") || name.equals("--help") || name.equals("?")) {
 					synopsis();
@@ -150,7 +152,11 @@ public class ModelGenerator {
 		File[] docfiles = null;
 		docfolder = Documentation.getDocFolder(docfolder, versionInfo);
 		if (docfolder == null) {
-			System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo.getVersion() + "' in doc folder '" + docpath.toString() + "'");
+			if (userProvidedDocPath) {
+				throw new Error("Missing documentation for version " + versionInfo.getVersion() + " at: " + docpath);
+			} else {
+				System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo.getVersion() + "' in doc folder '" + docpath.toString() + "'");
+			}
 			docfiles = new File[0];
 		} else {
 			System.out.println("Info: selected documentation: " + docfolder.getPath());
