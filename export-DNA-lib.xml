@@ -5,27 +5,26 @@
 		<property name="version" value="1.3.9"/>
 		
 		<property name="ant.build.javac.target" value="1.8"/>
-		
-		<property name="blender.cfgdir" value="${user.home}/.config/blender"/>
+		<property name="ant.build.javac.source" value="1.8"/>
 		<property name="blender.java.package" value="org.blender"/>
-		<property name="blender.java.package.dir" value="org.blender"/>
-		<property name="java.blend.docs" value="/home/homac/repos/git/cakelab.org/playground/org.cakelab.blender.dnadoc/resources/dnadoc"/>
+		<property name="java.blend.docs" value="${basedir}/../org.cakelab.blender.dnadoc/resources/dnadoc"/>
 		<property name="web.downloads" value="${user.home}/tmp/public_html/projects/JavaBlend/downloads"/>
 		<property name="project.name" value="JavaBlend"/>
 		<property name="package.name" value="${project.name}-${version}-DNA-${blender.version}"/>
-        <property name="workdir" value="${java.io.tmpdir}/${package.name}"/>
-        <property name="srcdir" value="${workdir}/src"/>
-		<property name="bindir" value="${workdir}/bin"/>
+        <property name="workdir" value="${java.io.tmpdir}"/>
+        <property name="packdir" value="${workdir}/${package.name}"/>
+        <property name="srcdir" value="${packdir}/src"/>
+		<property name="bindir" value="${packdir}/bin"/>
 		<property name="jarfile" value="${web.downloads}/${package.name}.jar"/>
 		<property name="zipfile" value="${web.downloads}/${project.name}-src-${version}-DNA-${blender.version}.zip"/>
 		<property name="javadoczip" value="${web.downloads}/${project.name}-javadoc-${version}-DNA-${blender.version}.zip"/>
 
 		<delete failonerror="false" includeEmptyDirs="true">
-			<fileset dir="${workdir}"/>
+			<fileset dir="${packdir}"/>
 			<fileset file="${zipfile}"/>
 			<fileset file="${javadoczip}"/>
 		</delete>
-        <mkdir dir="${workdir}"/>
+        <mkdir dir="${packdir}"/>
         <mkdir dir="${srcdir}"/>
         <mkdir dir="${bindir}"/>
 	</target>
@@ -33,7 +32,7 @@
 	<target name="generate" depends="init">
 		<echo message="generating source code"/>
 		<property name="input" value="versions/${blender.file.version.cur}-${blender.file.version.min}.blend"/>
-		<java classname="org.cakelab.blender.generator.ModelGenerator" failonerror="true">
+		<java classname="org.cakelab.blender.generator.LibraryGenerator" failonerror="true">
  
 			<arg value="-in"/><arg file="${input}"/>
 			<arg value="-out"/><arg file="${srcdir}"/>
@@ -69,7 +68,7 @@
 
 	<target name="package.src" depends="generate">
 		<echo message="creating source code package"/>
-		<copy todir="${workdir}">
+		<copy todir="${packdir}">
 			<fileset dir="." casesensitive="yes">
 				<include name="doc/**/*"/>
 				<include name="licenses/**/*"/>
@@ -78,7 +77,7 @@
 			</fileset>
 		</copy>
 		
-		<zip destfile="${zipfile}" basedir="${java.io.tmpdir}">
+		<zip destfile="${zipfile}" basedir="${workdir}">
 			<include name="${package.name}/**/*"/>
 			<exclude name="${package.name}/bin"/>
 		</zip>
@@ -86,29 +85,35 @@
 	
 	<target name="package.javadoc" depends="package.bin">
 		<echo message="creating javadoc"/>
-        <mkdir dir="${workdir}/javadoc"/>
+        <mkdir dir="${packdir}/javadoc"/>
 
         <javadoc 
         	access="protected" 
         	author="true" 
         	classpath="${bindir}" 
-        	destdir="${workdir}/javadoc" 
+        	destdir="${packdir}/javadoc" 
         	doctitle="Java .Blend for Blender Version ${blender.version}" 
         	nodeprecated="false" 
         	nodeprecatedlist="false" 
         	noindex="false" 
         	nonavbar="false" 
         	notree="false" 
-        	overview="${workdir}/doc/spec.html" 
+        	overview="${packdir}/doc/spec.html" 
         	packagenames="org.*"
         	source="1.8" 
         	sourcepath="${srcdir}" 
         	splitindex="true" 
         	use="true" 
         	version="true"
-        />
+        	failonerror="true"
+        >
+        	<!-- it's not working - can't suppress javadoc warnings --> 
+        	<arg line="-Xdoclint:none"/>
+        	<arg value="-quiet"/>
+        </javadoc>
+
 		<echo message="zip javadoc"/>
-		<zip destfile="${javadoczip}" basedir="${workdir}/javadoc">
+		<zip destfile="${javadoczip}" basedir="${packdir}/javadoc">
 		</zip>
 	</target>
 	
@@ -144,7 +149,7 @@
 	<target name="package.all">
 		<antcall target="package">
 			<param name="blender.version" value="3.01"/>
-			<param name="blender.file.version.cur" value="3.01.07"/>
+			<param name="blender.file.version.cur" value="3.01.7"/>
 			<param name="blender.file.version.min" value="3.00.42"/>
 		</antcall>
 		<antcall target="package">
