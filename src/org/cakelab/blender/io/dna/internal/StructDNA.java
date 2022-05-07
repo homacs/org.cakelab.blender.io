@@ -18,9 +18,9 @@ import org.cakelab.blender.io.util.Identifier;
  * (c-structs and scalar types) supported by the Blender version the 
  * file was created in, thus it can be very long. All data types 
  * considered are declared in one of the header files in directory
- * {@linkplain source/blender/makesdna} which also contains the code to
+ * "source/blender/makesdna" which also contains the code to
  * generate this information in the file. 
- * {@linkplain source/blender/makesdna/DNA_documentation.h} describes
+ * "source/blender/makesdna/DNA_documentation.h" describes
  * the rules for the declaration of structs.
  * </p>
  * <p>
@@ -179,8 +179,8 @@ public class StructDNA {
  			structs[i].read(io);
  			
  		}
- 		
 	}
+ 	
  	public void write(CDataReadWriteAccess io) throws IOException {
  		SDNA.write(io);
  		NAME.write(io);

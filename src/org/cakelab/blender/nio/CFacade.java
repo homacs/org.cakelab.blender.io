@@ -7,9 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteOrder;
 
-import org.cakelab.blender.io.Encoding;
-import org.cakelab.blender.io.block.Block;
-import org.cakelab.blender.io.block.BlockTable;
+import org.cakelab.blender.io.*;
+import org.cakelab.blender.io.block.*;
 
 /**
  * {@link CFacade} is the base class of all complex types
@@ -74,18 +73,18 @@ public abstract class CFacade {
 	 * DNA struct, a pointer or an array.
 	 * <h3>Preconditions:</h3>
 	 * <ul>
-	 * <li>There must exist a block in the __blockTable which is assigned
-	 * to the given __address</li>
+	 * <li>There must exist a block in the blockTable which is assigned
+	 * to the given address</li>
 	 * </ul>
-	 * @param __address Start address of the instance.
-	 * @param __block The block which contains the address.
-	 * @param __blockTable Block table, which contains the block.
+	 * @param address Start address of the instance.
+	 * @param block The block which contains the address.
+	 * @param blockTable Block table, which contains the block.
 	 */
-	protected CFacade(long __address, Block block, BlockTable __blockTable) {
-		this.__io__address = __address;
+	protected CFacade(long address, Block block, BlockTable blockTable) {
+		this.__io__address = address;
 		this.__io__block = block;
-		this.__io__blockTable = __blockTable;
-		this.__io__pointersize = __blockTable.getEncoding().getAddressWidth();
+		this.__io__blockTable = blockTable;
+		this.__io__pointersize = blockTable.getEncoding().getAddressWidth();
 		this.__io__arch_index = __io__pointersize == Encoding.ADDR_WIDTH_32BIT ? 0 : 1;
 	}
 	
@@ -214,11 +213,7 @@ public abstract class CFacade {
 	}
 
 	/**
-	 * Tests whether the given object is an instance of class clazz
-	 * or some subclass of class clazz.
-	 * @param type type to be tested.
-	 * @param superType expected base class of the given type.
-	 * @return true if true.
+	 * Tests whether the given object is an instance or some subclass of class clazz.
 	 */
 	public static boolean __io__instanceof(CFacade object, Class<?> clazz) {
 		Class<?> testClass = object.getClass();
@@ -309,7 +304,6 @@ public abstract class CFacade {
 	 * 
 	 * 
 	 * @param source An object derived from CFacade or CArrayFacade, but not CPointer. 
-	 * @param nla_tracks 
 	 * @throws IOException
 	 */
 	protected void __io__generic__copy (CFacade source) throws IOException {
@@ -337,7 +331,7 @@ public abstract class CFacade {
 	 * @param target Facade, which gets its data overriden with the values of source.
 	 * @param source Facade, which data gets copied to target.
 	 * @throws IOException
-	 * @see {@link #__io__generic__copy(CFacade)}
+	 * @see #__io__generic__copy(CFacade)
 	 */
 	protected static void __io__generic__copy (CFacade target, CFacade source) throws IOException {
 		target.__io__generic__copy(source);
@@ -347,10 +341,6 @@ public abstract class CFacade {
 	/**
 	 * Tests whether the underlying data blocks of both facades use the
 	 * same encoding (byte order and address length).
-	 * 
-	 * @param facadeA
-	 * @param facadeB
-	 * @return
 	 */
 	protected boolean __io__same__encoding(CFacade facadeA, CFacade facadeB) {
 		return facadeA.__io__pointersize == facadeB.__io__pointersize

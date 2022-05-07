@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.cakelab.blender.generator.utils.ClassGenerator;
 import org.cakelab.blender.generator.utils.FieldVisitor;
-import org.cakelab.blender.generator.utils.GComment;
+import org.cakelab.blender.generator.utils.GJavaDoc;
 import org.cakelab.blender.generator.utils.HtmlEncoder;
 import org.cakelab.blender.io.Encoding;
 import org.cakelab.blender.metac.CField;
@@ -35,7 +35,7 @@ public class CFacadeFieldDescGenerator extends FieldVisitor {
 	}
 
 	private void addConstField(CField field, long offset32, long offset64, CType ctype, JavaType jtype) throws IOException {
-		GComment javadoc = new GComment(GComment.Type.JavaDoc);
+		GJavaDoc javadoc = new GJavaDoc(classgen);
 
 		String classname = classgen.getClassName();
 		String descrname = getFieldDescriptorName(field.getName());

@@ -65,7 +65,6 @@ public class CType {
 	 * dimension can be determined by 
 	 * getReferencedType().getArrayLength()
 	 * and so forth.
-	 * @return
 	 */
 	public int getArrayLength() {
 		return arrayLength;
@@ -106,7 +105,6 @@ public class CType {
 	/**
 	 * Returns the overall size of this type considering specifica such as array lengths.
 	 * @param addressWidth
-	 * @return
 	 */
 	public int sizeof(int addressWidth) {
 		switch(addressWidth) {

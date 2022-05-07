@@ -57,7 +57,7 @@ public class Allocator {
 	/** 
 	 * Allocate memory of given size and return its address.
 	 * @param size
-	 * @return
+	 * @return address of allocated area
 	 */
 	public long alloc(long size) {
 		long address = 0;

@@ -40,7 +40,7 @@ public class LibraryGenerator {
 		
 		printVersionInfos(blend, versionInfo);
 		
-		DocumentationProvider docs = loadSourceCodeDocumentation(opts.docpath, versionInfo, opts.userProvidedDocPath, opts.debug);
+		DocumentationProvider docs = loadSourceCodeDocumentation(opts, blend.getMetaModel(), versionInfo);
 		
 		generateModel(model, versionInfo, opts.output, opts.javaPackage, docs, opts.generateUtils, opts.debug);
 		
@@ -92,15 +92,15 @@ public class LibraryGenerator {
 		System.out.println("Info: working directory: " + System.getProperty("user.dir"));
 	}
 
-	private static DocumentationProvider loadSourceCodeDocumentation(String docpath, FileVersionInfo versionInfo, boolean userProvidedDocPath, boolean debug) throws IOException, JSONException {
-		File docfolder = new File(docpath);
+	private static DocumentationProvider loadSourceCodeDocumentation(Options opts, CMetaModel model, FileVersionInfo versionInfo) throws IOException, JSONException {
+		File docfolder = new File(opts.docpath);
 		File[] docfiles = null;
 		docfolder = Documentation.getDocFolder(docfolder, versionInfo);
 		if (docfolder == null) {
-			if (userProvidedDocPath) {
-				throw new Error("Missing documentation for version " + versionInfo.getVersion() + " at: " + docpath);
+			if (opts.userProvidedDocPath) {
+				throw new Error("Missing documentation for version " + versionInfo.getVersion() + " at: " + opts.docpath);
 			} else {
-				System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo.getVersion() + "' in doc folder '" + docpath.toString() + "'");
+				System.err.println("Warning: can't find appropriate doc folder for version '" + versionInfo.getVersion() + "' in doc folder '" + opts.docpath.toString() + "'");
 			}
 			docfiles = new File[0];
 		} else {
@@ -111,7 +111,7 @@ public class LibraryGenerator {
 					new File(docfolder, "/dnasrc/doc.json")
 			};
 		}
-		return new DocGenerator(docfiles, debug);
+		return new DocGenerator(docfiles, model, opts.debug);
 	}
 
 	private static void generateModel(DNAModel model, FileVersionInfo versionInfo, File output, String javaPackage, DocumentationProvider docs, boolean generateUtils, boolean debug) throws IOException {

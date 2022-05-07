@@ -106,7 +106,6 @@ public class Identifier {
 
 	/**
 	 * Returns the sequence of bytes which represents the actual code.
-	 * @return
 	 */
 	public byte[] getData() {
 		return code;

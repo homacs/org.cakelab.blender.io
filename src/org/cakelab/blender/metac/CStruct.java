@@ -14,7 +14,7 @@ import org.cakelab.blender.io.dna.DNAStruct;
 public class CStruct extends CType {
 	int sdnaIndex;
 	
-	private ArrayList<CField> fields = new ArrayList<CField>();
+	private ArrayList<CField> fields = new ArrayList<>();
 
 	public CStruct(DNAStruct bstruct) {
 		super(bstruct.getType().getName(), CKind.TYPE_STRUCT);
@@ -31,5 +31,16 @@ public class CStruct extends CType {
 
 	public int getSdnaIndex() {
 		return sdnaIndex;
+	}
+
+	/** warning: lookup not optimised! Linear search!*/
+	public CField getField(String name) {
+		// FIXME: optimise: lookup for CStruct fields
+		for (CField f : fields) {
+			if (f.getName().equals(name)) {
+				return f;
+			}
+		}
+		return null;
 	}
 }

@@ -1,5 +1,6 @@
 package org.cakelab.blender.io.dna;
 
+import org.cakelab.blender.io.dna.internal.StructDNA;
 
 /**
  * DNAStruct is not {@link StructDNA}!

@@ -2,7 +2,7 @@ package org.cakelab.blender.generator;
 
 import java.io.IOException;
 
-import org.cakelab.blender.generator.utils.GComment;
+import org.cakelab.blender.generator.utils.GJavaDoc;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.MethodGenerator;
 import org.cakelab.blender.metac.CField;
@@ -189,12 +189,12 @@ public class CFacadeGetMethodGenerator extends MethodGenerator implements CFacad
 
 		String returnType = getFieldType(field.getType(), jtype);
 		
-		GComment javadoc = new GComment(GComment.Type.JavaDoc);
+		GJavaDoc javadoc = new GJavaDoc(classgen);
 
 		javadoc.appendln();
 		javadoc.appendln("Get method for struct member '" + field.getName() + "'.");
 		appendFieldDoc(javadoc);
-		javadoc.appendln("@see #" + super.getFieldDescriptorName(field.getName()));
+		javadoc.addSeeTag("#" + getFieldDescriptorName(field.getName()));
 		
 		
 		appendln(javadoc.toString(0));

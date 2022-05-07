@@ -134,7 +134,6 @@ public class CBufferReadWrite extends CDataReadWriteAccess {
 	 * This is supposed to be used by internal methods only, which 
 	 * know how to handle the data.
 	 * 
-	 * @return
 	 */
 	public byte[] getBytes() {
 		return rawData.array();

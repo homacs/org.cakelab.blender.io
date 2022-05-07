@@ -6,9 +6,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.cakelab.blender.io.FileHeader.Version;
+import org.cakelab.blender.io.BlenderFile;
 
 /**
- * This class is just required internally (e.g. by the class {@link BlenderFile).
+ * This class is just required internally (e.g. by the class {@link BlenderFile}.
  * 
  * The class contains a list of so-called offheap areas 
  * (refer to Java .Blend documentation for more information on offheap areas).

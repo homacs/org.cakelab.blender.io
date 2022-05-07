@@ -9,13 +9,13 @@ public abstract class ClassGenerator extends CodeGenerator {
 
 
 
-	protected ModelGenerator modelgen;
-	protected GPackage gpackage;
-	protected ImportSectionGenerator imports;
-	protected ArrayList<GField> constFields;
-	protected ArrayList<GField> fields;
-	protected ArrayList<GMethod> methods;
-	protected DocumentationProvider docs;
+	protected final ModelGenerator modelgen;
+	protected final GPackage gpackage;
+	protected final ImportSectionGenerator imports;
+	protected final ArrayList<GField> constFields;
+	protected final ArrayList<GField> fields;
+	protected final ArrayList<GMethod> methods;
+	protected final DocumentationProvider docs;
 	
 	public ClassGenerator(ModelGenerator modelgen, GPackage gpackage, DocumentationProvider docs2) {
 		super(0);
@@ -23,9 +23,9 @@ public abstract class ClassGenerator extends CodeGenerator {
 		this.gpackage = gpackage;
 		this.docs = docs2;
 		this.imports = new ImportSectionGenerator();
-		this.fields = new ArrayList<GField>();
-		this.constFields = new ArrayList<GField>();
-		this.methods = new ArrayList<GMethod>();
+		this.fields = new ArrayList<>();
+		this.constFields = new ArrayList<>();
+		this.methods = new ArrayList<>();
 	}
 
 
@@ -78,8 +78,8 @@ public abstract class ClassGenerator extends CodeGenerator {
 		return docs;
 	}
 
-
+	
 	public abstract String getClassName();
 
-
 }
+

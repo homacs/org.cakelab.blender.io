@@ -19,5 +19,10 @@ public class Renaming {
 		if(name.equals("Object")) return "BlenderObject";
 		else return name;
 	}
+	
+	public static String mapClass2Struct(String name) {
+		if(name.equals("BlenderObject")) return "Object";
+		else return name;
+	}
 
 }

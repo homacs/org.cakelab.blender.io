@@ -133,11 +133,11 @@ public interface BlockCodes {
 	Identifier ID_ENDB = new Identifier("ENDB");
 	/** block code of the block containing the {@link StructDNA} struct. */
 	Identifier ID_DNA1 = new Identifier("DNA1");
-	/** Block code of a block containing struct {@link Link}. */
+	/** Block code of a block containing struct Link. */
 	Identifier ID_REND = new Identifier("REND");
-	/** Block code of a block containing struct {@link Link}. */
+	/** Block code of a block containing struct Link. */
 	Identifier ID_TEST = new Identifier("TEST");
-	/** Block code of a block containing struct {@link FileGlobal}. */
+	/** Block code of a block containing struct FileGlobal. */
 	Identifier ID_GLOB = new Identifier("GLOB");
 	/** Block code of a block containing data related to other blocks. */
 	Identifier ID_DATA = new Identifier("DATA");

@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.cakelab.blender.doc.Documentation;
 import org.cakelab.blender.doc.DocumentationProvider;
+import org.cakelab.blender.generator.utils.JavaDocPostprocessor;
+import org.cakelab.blender.metac.CMetaModel;
 import org.cakelab.json.JSONException;
 
 /**
@@ -17,8 +19,10 @@ import org.cakelab.json.JSONException;
  */
 public class DocGenerator implements DocumentationProvider {
 	private Documentation[] docs;
+	private JavaDocPostprocessor postprocessor;
 	
-	public DocGenerator(File[] docfiles, boolean debug) throws IOException, JSONException {
+	public DocGenerator(File[] docfiles, CMetaModel model, boolean debug) throws IOException, JSONException {
+		postprocessor = new JavaDocPostprocessor(model);
 		docs = new Documentation[docfiles.length];
 		int i = 0;
 		for (File f : docfiles) {
@@ -36,7 +40,7 @@ public class DocGenerator implements DocumentationProvider {
 				lines.append(docentry);
 			}
 		}
-		return lines.toString();
+		return postprocessor.repairDanglingLinks(lines.toString(), struct);
 	}
 
 	@Override
@@ -50,7 +54,7 @@ public class DocGenerator implements DocumentationProvider {
 				lines.append(docentry);
 			}
 		}
-		return lines.toString();
+		return postprocessor.repairDanglingLinks(lines.toString(), struct);
 	}
 
 }

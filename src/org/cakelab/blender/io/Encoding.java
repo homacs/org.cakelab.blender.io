@@ -73,7 +73,6 @@ public class Encoding {
 
 	/**
 	 * Determines the encoding used by the current system.
-	 * @return
 	 */
 	public static Encoding nativeEncoding() {
 		// unfortuantely there is no reliable way to detect, whether it is a 

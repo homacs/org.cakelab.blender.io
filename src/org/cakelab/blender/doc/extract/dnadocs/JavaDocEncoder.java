@@ -163,20 +163,6 @@ public class JavaDocEncoder {
 		html(buf, doc.text(), "pre");
 	}
 
-	private void html(StringBuffer buf, String contents, String tag) {
-		if (contents == null || contents.isEmpty()) return;
-		buf.append("<").append(tag).append(">");
-		buf.append(contents);
-		buf.append("</").append(tag).append(">");
-	}
-
-	private void html(StringBuffer buf, ListIterator<? extends IDoc> contents, String tag) {
-		buf.append("<").append(tag).append(">");
-		encode(buf, contents);
-		buf.append("</").append(tag).append(">");
-	}
-
-
 	private void encode(StringBuffer buf, IDocVariableListEntry doc) {
 		ignore(buf, doc);
 	}
@@ -439,6 +425,19 @@ public class JavaDocEncoder {
 
 	private void encode(StringBuffer buf, IDocAnchor doc) {
 		ignore(buf, doc);
+	}
+
+	private void html(StringBuffer buf, String contents, String tag) {
+		if (contents == null || contents.isEmpty()) return;
+		buf.append("<").append(tag).append(">");
+		buf.append(contents);
+		buf.append("</").append(tag).append(">");
+	}
+
+	private void html(StringBuffer buf, ListIterator<? extends IDoc> contents, String tag) {
+		buf.append("<").append(tag).append(">");
+		encode(buf, contents);
+		buf.append("</").append(tag).append(">");
 	}
 
 	private void ignore(StringBuffer buf, IDoc doc) {

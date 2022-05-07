@@ -7,6 +7,7 @@ import org.cakelab.blender.io.util.CBufferReadWrite;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.nio.UnsignedLong;
 
+import org.cakelab.blender.io.BlenderFile;
 /**
  * An instance of this class provides access to data in a block
  * of a {@link BlenderFile}.

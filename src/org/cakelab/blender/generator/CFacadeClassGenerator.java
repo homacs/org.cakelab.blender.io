@@ -7,8 +7,8 @@ import java.io.PrintStream;
 
 import org.cakelab.blender.doc.DocumentationProvider;
 import org.cakelab.blender.generator.utils.ClassGenerator;
-import org.cakelab.blender.generator.utils.GComment;
 import org.cakelab.blender.generator.utils.GField;
+import org.cakelab.blender.generator.utils.GJavaDoc;
 import org.cakelab.blender.generator.utils.GMethod;
 import org.cakelab.blender.generator.utils.GPackage;
 import org.cakelab.blender.io.Encoding;
@@ -55,14 +55,14 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 		addImport(Block.class);
 		addImport(BlockTable.class);
 
-		GComment doc = new GComment(GComment.Type.JavaDoc);
+		GJavaDoc doc = new GJavaDoc(this);
 		doc.appendln();
 		doc.appendln("This is the sdna index of the struct " + struct.getSignature() + ".");
 		doc.appendln("<p>");
 		doc.appendln("It is required when allocating a new block to store data for " + struct.getSignature() + ".");
 		doc.appendln("</p>");
-		doc.appendln("@see {@link " + StructDNA.class.getName() + "}");
-		doc.appendln("@see {@link " + BlockTable.class.getName() + "#allocate}");
+		doc.addSeeTag(StructDNA.class);
+		doc.addSeeTag(BlockTable.class);
 		this.addConstField("public static final", "int", __DNA__SDNA_INDEX, Integer.toString(struct.getSdnaIndex()), doc);
 		
 		long offset32 = 0;
@@ -86,7 +86,7 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 			out.println(imports.toString());
 			out.println();
 			
-			GComment classdoc = new GComment(GComment.Type.JavaDoc);
+			GJavaDoc classdoc = new GJavaDoc(this);
 			String structname = struct.getSignature();
 			classdoc.appendln();
 			classdoc.appendln("Generated facet for DNA struct type '" + structname + "'.");
@@ -140,7 +140,7 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 		addImport(CPointer.class);
 		
 		GMethod method = new GMethod(0);
-		GComment comment = new GComment(GComment.Type.JavaDoc);
+		GJavaDoc comment = new GJavaDoc(this);
 		comment.appendln();
 		comment.appendln("Instantiates a pointer on this instance.");
 		method.setComment(comment);

@@ -7,9 +7,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.cakelab.blender.io.Encoding;
-import org.cakelab.blender.io.block.Block;
-import org.cakelab.blender.io.block.BlockTable;
+import org.cakelab.blender.io.*;
+import org.cakelab.blender.io.block.*;
+import org.cakelab.blender.utils.*;
 
 
 /**
@@ -20,7 +20,7 @@ import org.cakelab.blender.io.block.BlockTable;
  * (see various toArray and fromArray methods).
  * </p>
  * <p>
- * Since arrays in C are interchangable with pointers, the class inherits 
+ * Since arrays in C are interchangeable with pointers, the class inherits 
  * the capabilities of {@link CPointer}. This way, an array can 
  * always be assigned to a pointer variable. To turn a pointer in 
  * an instance of {@link CArrayFacade} use its {@link CPointer#toCArrayFacade(int)}.
@@ -39,7 +39,7 @@ import org.cakelab.blender.io.block.BlockTable;
  * Arrays need runtime information about their component type. 
  * If the component type is an array or a pointer then the array 
  * needs the information about those contained types, too. Thus, arrays are 
- * instanciated with a list of types as type specification, where each element in the type 
+ * instantiated with a list of types as type specification, where each element in the type 
  * list corresponds to a component type of the component type.
  * </p>
  * <h4>Detailed Example:</h4>
@@ -88,8 +88,8 @@ import org.cakelab.blender.io.block.BlockTable;
  * </p>
  * <p>
  * To allocate a block for an entirely new array, refer to the block 
- * allocation methods in either {@link org.cakelab.blender.utils.BlenderFactoryBase}
- * or the derived class {@link BlenderFactory} in the generated code 
+ * allocation methods in either {@link BlenderFactoryBase}
+ * or the derived class BlenderFactory in the generated code 
  * or even directly to {@link BlenderFile} and {@link BlockTable}.
  * </p>
  * 
@@ -132,7 +132,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 * <p>
 	 * To allocate a block for an entirely new array, refer to the block 
 	 * allocation methods in either {@link org.cakelab.blender.utils.BlenderFactoryBase}
-	 * or the derived class {@link BlenderFactory} in the generated code.
+	 * or the derived class BlenderFactory in the generated code.
 	 * </p>
 	 * 
 	 * @param baseAddress virtual start address of the array (file specific).
@@ -223,8 +223,6 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	/**
 	 * Converts the underlying data into a Java array with
 	 * component type T.
-	 * @return
-	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	public T[] toArray() throws IOException {
@@ -237,8 +235,6 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 
 	/**
 	 * Copyies all elements of the given array to this array.
-	 * @param data
-	 * @throws IOException
 	 */
 	public void fromArray(T[] data) throws IOException {
 		for (int i = 0; i < length(); i++) {
@@ -250,8 +246,6 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 * Converts the array into a string.
 	 * <b>Warning:</b> This method assumes, that the string 
 	 * is null terminated.
-	 * @return
-	 * @throws IOException
 	 */
 	public String asString() throws IOException {
 		if ((targetTypeList[0].equals(byte.class) || targetTypeList[0].equals(Byte.class)) && dimensions.length == 1) {
@@ -317,7 +311,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	
 	/**
 	 * Copies all values of the given Java array to this array.
-	 * <h3>Precoditions</h3>
+	 * <h3>Preconditions</h3>
 	 * <li>Source array 'data' and this array must have 
 	 * equivalent component types. 
 	 * </li>
@@ -397,7 +391,6 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	/**
 	 * Calculates the number of elements contained in the array over all dimensions (in case of multi-dimensional arrays).
 	 * @param elementaryType
-	 * @return
 	 */
 	private long calcComponentSize(Class<?> elementaryType) {
 		long size = __io__sizeof(elementaryType);
@@ -418,7 +411,6 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 * @param elementaryType The elementary type, i.e. the scalar type.
 	 * @param dimensions
 	 * @param encoding
-	 * @return
 	 */
 	public static long __io__sizeof(Class<?> elementaryType, int[] dimensions, Encoding encoding) {
 		long size = CFacade.__io__sizeof(elementaryType, encoding.getAddressWidth());

@@ -79,7 +79,7 @@ import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
  * 
  * <h3>Pointer Arithmetics</h3>
  * A pointer supports referencing (see {@link #get()}) and basic algebra
- * (see {@link #add(int)}). For advanced pointer arithmetics see 
+ * (see {@link #plus(int)}). For advanced pointer arithmetics see 
  * {@link CPointerMutable}.
  * <h4>Referencing</h4>
  * Referencing the target <em>object</em> through
@@ -115,7 +115,7 @@ import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
  * link.setNext(anotherLink.__io__addressof());  // assign new address to link.next
  * </pre>
  * <p>
- * See also {@link CPointerMutable} and {@link CFacade#__io__addressof()}.
+ * See also {@link CPointerMutable} and {@link CFacade#__io__addressof(long[])}.
  * </p>
  * 
  * 
@@ -332,7 +332,6 @@ public class CPointer<T> extends CFacade {
 	/**
 	 * This returns the address this pointer points to.
 	 * 
-	 * @return
 	 * @throws IOException address the pointer points to
 	 */
 	public long getAddress() throws IOException {
@@ -341,7 +340,6 @@ public class CPointer<T> extends CFacade {
 	
 	/**
 	 * Checks whether the address of the pointer equals null.
-	 * @return
 	 */
 	public boolean isNull() {
 		return __io__address == 0;
@@ -374,9 +372,6 @@ public class CPointer<T> extends CFacade {
 	 * <h4>Attention!</h4>
 	 * This is a very dangerous and error prone method since you can
 	 * cast to anything. But you will need it several times.
-	 * 
-	 * @param type
-	 * @return
 	 */
 	public <U> CPointer<U> cast(Class<U> type) {
 		return new CPointer<U>(__io__address, new Class<?>[]{type}, __io__block, __io__blockTable);
@@ -396,9 +391,6 @@ public class CPointer<T> extends CFacade {
 	 * <h4>Attention!</h4>
 	 * This is an even more dangerous and error prone method than 
 	 * {@link CPointer#cast(Class)} since you can do even more nasty stuff.
-	 * 
-	 * @param type
-	 * @return
 	 */
 	public <U> CPointer<U> cast(Class<?>[] types) {
 		return new CPointer<U>(__io__address, types, __io__block, __io__blockTable);
@@ -460,10 +452,6 @@ public class CPointer<T> extends CFacade {
 	/**
 	 * Converts the data referenced by the pointer into an array with 
 	 * a CArrayFacade of the given length.
-	 * 
-	 * @param length
-	 * @return
-	 * @throws IOException
 	 */
 	public CArrayFacade<T> toCArrayFacade(int len) {
 		return new CArrayFacade<T>(__io__address, targetTypeList, new int[]{len}, __io__block, __io__blockTable);
@@ -504,7 +492,7 @@ public class CPointer<T> extends CFacade {
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
 	 * 
-	 * @param length of the new Java array instance.
+	 * @param len length of the new Java array instance.
 	 * @return New Java array instance.
 	 * @throws IOException
 	 */
@@ -559,7 +547,7 @@ public class CPointer<T> extends CFacade {
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
 	 * 
-	 * @param length of the new Java array instance.
+	 * @param len length of the new Java array instance.
 	 * @return New Java array instance.
 	 * @throws IOException
 	 */
@@ -600,7 +588,7 @@ public class CPointer<T> extends CFacade {
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
 	 * 
-	 * @param length of the new Java array instance.
+	 * @param len length of the new Java array instance.
 	 * @return New Java array instance.
 	 * @throws IOException
 	 */
@@ -655,7 +643,7 @@ public class CPointer<T> extends CFacade {
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
 	 * 
-	 * @param length of the new Java array instance.
+	 * @param len length of the new Java array instance.
 	 * @return New Java array instance.
 	 * @throws IOException
 	 */
@@ -710,7 +698,7 @@ public class CPointer<T> extends CFacade {
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
 	 * 
-	 * @param length of the new Java array instance.
+	 * @param len length of the new Java array instance.
 	 * @return New Java array instance.
 	 * @throws IOException
 	 */
@@ -766,7 +754,7 @@ public class CPointer<T> extends CFacade {
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
 	 * 
-	 * @param length of the new Java array instance.
+	 * @param len length of the new Java array instance.
 	 * @return New Java array instance.
 	 * @throws IOException
 	 */
@@ -822,7 +810,7 @@ public class CPointer<T> extends CFacade {
 	 * Converts the data referenced by the pointer into a Java array 
 	 * of the given length.
 	 * 
-	 * @param length of the new Java array instance.
+	 * @param len length of the new Java array instance.
 	 * @return New Java array instance.
 	 * @throws IOException
 	 */
@@ -861,7 +849,6 @@ public class CPointer<T> extends CFacade {
 	/**
 	 * Creates a mutable pointer which allows to change its address in-place.
 	 * @see CPointerMutable
-	 * @return
 	 */
 	public CPointerMutable<T> mutable() {
 		return new CPointerMutable<T>(this);
@@ -890,7 +877,7 @@ public class CPointer<T> extends CFacade {
 	 * </pre>
 	 * holds.
 	 * 
-	 * @param value
+	 * @param value increment
 	 * @return new instance of this pointer with an address+=targetSize * value
 	 * @throws IOException
 	 */
@@ -905,8 +892,6 @@ public class CPointer<T> extends CFacade {
 	 * 
 	 * It allows comparison to all objects derived from {@link CFacade}
 	 * including pointers, arrays and iterators of both.
-	 * @param obj
-	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -937,7 +922,6 @@ public class CPointer<T> extends CFacade {
 	 * 
 	 * Note: Works only for types supported by Java Blend.
 	 * 
-	 * @param type
 	 * @return True if its a primitive type.
 	 */
 	protected boolean isPrimitive(Class<?> type) {
@@ -1003,9 +987,6 @@ public class CPointer<T> extends CFacade {
 	 * <li>targetAddress has to be in range of the associated block of this pointer.</li>
 	 * <li>Type of this pointer has to scalar (i.e. int, double, etc.).</li>
 	 * </ul>
-	 * @param address
-	 * @return
-	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	protected T getScalar(long address) throws IOException {

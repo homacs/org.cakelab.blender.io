@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cakelab.blender.io.Encoding;
+import org.cakelab.blender.io.BlenderFile;
 import org.cakelab.blender.io.block.alloc.Allocator;
 import org.cakelab.blender.io.util.CDataReadWriteAccess;
 import org.cakelab.blender.io.util.Identifier;
@@ -16,6 +17,9 @@ import org.cakelab.blender.nio.CArrayFacade;
 import org.cakelab.blender.nio.CFacade;
 import org.cakelab.blender.nio.CPointer;
 import org.cakelab.blender.nio.UnsignedLong;
+import org.cakelab.blender.versions.OffheapAreas;
+
+
 
 /**
  * A block table is like a page table for blocks in a blender file. 
@@ -42,7 +46,7 @@ import org.cakelab.blender.nio.UnsignedLong;
  * </p>
  * <p>
  * A block table may or may not reference so-called offheap areas 
- * (see {@link org.cakelab.blender.versions.OffheapAreas}). Each 
+ * (see {@link OffheapAreas}). Each 
  * offheap area contains a list of blocks of a specific struct type.
  * When retrieving a block for a given address, the block table uses
  * the SDNA index to potentially search the assigned offheap area, for the block
@@ -97,8 +101,6 @@ public class BlockTable {
 	
 	/**
 	 * Instantiates a new block table with the given encoding.
-	 * 
-	 * @param encoding
 	 */
 	public BlockTable(Encoding encoding) {
 		allocator = new Allocator(HEAPBASE, HEAPSIZE);
@@ -193,10 +195,6 @@ public class BlockTable {
 
 	/**
 	 * Returns the block for a given address and type (array, pointer, struct or scalar).
-	 * 
-	 * @param address
-	 * @param type
-	 * @return
 	 */
 	public Block getBlock(long address, Class<?>[] type) {
 		if (type[0].equals(CPointer.class) || type[0].equals(CArrayFacade.class)) {
@@ -208,9 +206,6 @@ public class BlockTable {
 	}
 	
 	/** returns the block which contains the data of the given address and type (struct or scalar).
-	 * @param address
-	 * @param type
-	 * @return
 	 */
 	public Block getBlock(long address, Class<?> type) {
 		int sdnaIndex = -1;
@@ -232,10 +227,6 @@ public class BlockTable {
 	 * The method identifies whether the struct is in an 
 	 * offheap area or not. If the data is know to be on heap, 
 	 * sdnaIndex can be -1 too.
-	 * 
-	 * @param address
-	 * @param sdnaIndex
-	 * @return
 	 */
 	public Block getBlock(long address, int sdnaIndex) {
 		BlockTable table = this;
@@ -250,8 +241,6 @@ public class BlockTable {
 	
 	
 	/** Returns the block which contains the given address.
-	 * @param address
-	 * @return
 	 */
 	protected Block getBlock(long address) {
 		if (address == 0) return null;
@@ -296,10 +285,6 @@ public class BlockTable {
 	
 	/**
 	 * This method allocates memory and assigns it to a block with the given code.
-	 * 
-	 * @param blockCode
-	 * @param size
-	 * @return
 	 */
 	public Block allocate(Identifier blockCode, int size) {
 		checkAllocator();
@@ -316,7 +301,6 @@ public class BlockTable {
 
 	/**
 	 * Method to add a block to the ascending sorted list.
-	 * @param block
 	 */
 	protected void add(Block block) {
 		// insert block in list
@@ -330,10 +314,6 @@ public class BlockTable {
 	/**
 	 * This method allocates memory for 'count' structs of type 'sdnaIndex' 
 	 * and assigns it to a new block with the given blockCode.
-	 * 
-	 * @param blockCode
-	 * @param size
-	 * @return
 	 */
 	public Block allocate(Identifier blockCode, long size,
 			int sdnaIndex, int count) {
@@ -350,10 +330,10 @@ public class BlockTable {
 	 * <p>
 	 * <em>Note: If you have declared offheap areas, and want to allocate a block for a struct 
 	 * which is declared to be offheap, then use the method 
-	 * {@link #allocate(Identifier, long, int, int) instead!</p>
+	 * {@link #allocate(Identifier, long, int, int)} instead!</p>
 	 * @see #allocate(Identifier, long, int, int)
 	 * 
-	 * @param blockCode Block code to be assigned to the block
+	 * @param code Block code to be assigned to the block
 	 * @param size Size of the block body in bytes.
 	 * @return Allocated block.
 	 */
@@ -363,7 +343,6 @@ public class BlockTable {
 
 	/** This method removes the given block from the block list, and releases
 	 * its allocated memory region (to be available for allocation again).
-	 * @param block
 	 */
 	public void free(Block block) {
 		BlockTable offheapArea = offheapAreas.get(block.header.sdnaIndex);
@@ -406,8 +385,6 @@ public class BlockTable {
 	 * <em>Use {@link #exists(long, int)} to check offheap areas too.</em>
 	 * </p>
 	 * @see #exists(long, int)
-	 * @param address
-	 * @return
 	 */
 	public boolean exists(long address) {
 		return getBlock(address) != null;
@@ -440,8 +417,6 @@ public class BlockTable {
 
 	/**
 	 * Returns a list of blocks which have the given block code.
-	 * @param blockCode
-	 * @return
 	 */
 	public List<Block> getBlocks(Identifier blockCode) {
 		List<Block> result = new ArrayList<Block>();
@@ -457,8 +432,6 @@ public class BlockTable {
 	/**
 	 * Retrieve all blocks with the given block code which are on heap.
 	 * <em>This does not include offheap areas!</em>
-	 * @param blockCode
-	 * @param list 
 	 */
 	public void getBlocks(Identifier blockCode, List<Block> list) {
 		for (Block block : sorted) {
@@ -489,7 +462,6 @@ public class BlockTable {
 	 * in their original sequence in the file than refer
 	 * to {@link BlenderFile#getBlocks()}
 	 * </p>
-	 * @return
 	 */
 	public List<Block> getBlocksSorted() {
 		return sorted;

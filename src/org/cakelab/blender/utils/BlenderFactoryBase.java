@@ -123,12 +123,6 @@ public class BlenderFactoryBase {
 	 * BlenderFile blend = BlenderFactory.newBlenderFile(new File("my.blend"));
 	 * Scene scene = BlenderFactory.newDNAStructBlock(BlockCodes.CODE_SCE, Scene.class, blend);
 	 * </pre>
-	 * 
-	 * @param blockCode
-	 * @param facetClass
-	 * @param blend
-	 * @return
-	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends CFacade> T newCStructBlock(Identifier blockCode, Class<T> facetClass, BlenderFile blend) throws IOException {
@@ -165,14 +159,6 @@ public class BlenderFactoryBase {
 	 * BlenderFile blend = BlenderFactory.newBlenderFile(new File("my.blend"));
 	 * CArrayFacade&lt;Scene&gt; scene = BlenderFactory.newDNAStructBlock(BlockCodes.CODE_SCE, Scene.class, 2, blend);
 	 * </pre>
-	 * 
-	 * 
-	 * @param blockCode
-	 * @param facetClass
-	 * @param count
-	 * @param blend
-	 * @return
-	 * @throws IOException
 	 */
 	public static <T extends CFacade> CArrayFacade<T> newCStructBlock(Identifier blockCode, Class<T> facetClass, int count, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
@@ -260,8 +246,6 @@ public class BlenderFactoryBase {
 	 * @param typeList type specification for all referenced types
 	 * @param dimensions length of each array dimension
 	 * @param blend blender file to add block to.
-	 * @return
-	 * @throws IOException
 	 */
 	public static <T> CArrayFacade<T> newCArrayBlock(Identifier blockCode, Class<?>[] typeList, int[] dimensions, BlenderFile blend) throws IOException {
 		BlockTable blockTable = blend.getBlockTable();
@@ -321,7 +305,6 @@ public class BlenderFactoryBase {
 	 * @param typeList type specification of the pointer.
 	 * @param count number of pointers to fit in block.
 	 * @param blend blender file to add block to.
-	 * @return
 	 * @throws IOException
 	 */
 	public static <T> CArrayFacade<CPointer<T>> newCPointerBlock(Identifier blockCode, Class<?>[] typeList, int count, BlenderFile blend) throws IOException {
@@ -352,8 +335,6 @@ public class BlenderFactoryBase {
 	 * model was generated from.
 	 * 
 	 * @param resourcePathTo_sdna_blend "your/package/name/utils/resources/sdna.blend"
-	 * @return 
-	 * @throws IOException
 	 */
 	protected static StructDNA createStructDNA(String resourcePathTo_sdna_blend) throws IOException {
 		InputStream in = BlenderFactoryBase.class.getClassLoader().getResourceAsStream(resourcePathTo_sdna_blend);
