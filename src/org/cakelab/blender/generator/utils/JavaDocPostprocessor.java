@@ -9,10 +9,11 @@ import org.cakelab.blender.typemap.Renaming;
 
 public class JavaDocPostprocessor {
 	private final CMetaModel model;
+	private final boolean debug;
 
-
-	public JavaDocPostprocessor(CMetaModel model) {
+	public JavaDocPostprocessor(CMetaModel model, boolean debug) {
 		this.model = model;
+		this.debug = debug;
 	}
 	
 
@@ -117,8 +118,7 @@ public class JavaDocPostprocessor {
 				return reference;
 			} else {
 				// actually unknown
-				// FIXME: debug output
-				System.err.println("[" + context + "] unkown @link: " + reference);
+				if (debug) System.err.println("JavaDocPostprocessor: [" + context + "] unkown @link: " + reference);
 				return null;
 			}
 		}

@@ -22,7 +22,7 @@ public class DocGenerator implements DocumentationProvider {
 	private JavaDocPostprocessor postprocessor;
 	
 	public DocGenerator(File[] docfiles, CMetaModel model, boolean debug) throws IOException, JSONException {
-		postprocessor = new JavaDocPostprocessor(model);
+		postprocessor = new JavaDocPostprocessor(model, debug);
 		docs = new Documentation[docfiles.length];
 		int i = 0;
 		for (File f : docfiles) {
