@@ -23,7 +23,7 @@ import org.cakelab.blender.nio.CMetaData;
 import org.cakelab.blender.nio.CPointer;
 import org.cakelab.blender.typemap.CFacadeMembers;
 import org.cakelab.blender.typemap.JavaType;
-import org.cakelab.blender.typemap.Renaming;
+import org.cakelab.blender.typemap.NameMapping;
 
 
 public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMembers {
@@ -46,7 +46,7 @@ public class CFacadeClassGenerator extends ClassGenerator implements CFacadeMemb
 	public void visit(CStruct struct) throws IOException {
 		reset();
 
-		classname = Renaming.mapStruct2Class(struct.getSignature());
+		classname = NameMapping.mapStruct2Class(struct.getSignature());
 
 		
 		

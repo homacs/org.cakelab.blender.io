@@ -1,6 +1,8 @@
 package org.cakelab.blender.generator.utils;
 
-public abstract class CodeGenerator {
+import org.cakelab.blender.typemap.NameMapping;
+
+public abstract class CodeGenerator extends NameMapping {
 	protected static final String NL = "\n";
 	protected static final String TAB = "\t";
 
@@ -31,13 +33,5 @@ public abstract class CodeGenerator {
 	
 
 	
-	protected static String toCamelCase(String name) {
-		return "" + Character.toTitleCase(name.charAt(0)) + name.substring(1);
-	}
-
-	protected static String toFirstLowerCase(String name) {
-		return "" + Character.toLowerCase(name.charAt(0)) + name.substring(1);
-	}
-
 	public abstract void reset();
 }

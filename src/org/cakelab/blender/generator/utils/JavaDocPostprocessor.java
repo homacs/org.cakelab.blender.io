@@ -1,11 +1,10 @@
 package org.cakelab.blender.generator.utils;
 
-import org.cakelab.blender.generator.Mangeling;
 import org.cakelab.blender.metac.CField;
 import org.cakelab.blender.metac.CMetaModel;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.metac.CType;
-import org.cakelab.blender.typemap.Renaming;
+import org.cakelab.blender.typemap.NameMapping;
 
 public class JavaDocPostprocessor {
 	private final CMetaModel model;
@@ -18,8 +17,16 @@ public class JavaDocPostprocessor {
 	
 
 	public String postprocess(String text, String context) {
-		return repairDanglingLinks(text, context);
+		text = repairDanglingLinks(text, context);
+		text = fixEndlineIssues(text);
+		return text;
 	}
+
+	private String fixEndlineIssues(String text) {
+		// TODO: find actual fix for @deprecated<h4> issue
+		return text.replaceAll("@deprecated<h4>", "@deprecated <h4>");
+	}
+
 
 	public String repairDanglingLinks(String text, String context) {
 		String phrase = "{@link ";
@@ -59,6 +66,7 @@ public class JavaDocPostprocessor {
 				return b.toString();
 			}
 		}
+
 		return text;
 	}
 
@@ -73,10 +81,11 @@ public class JavaDocPostprocessor {
 			return null;
 		}
 
-		
-		// attempt to resolve the given reference
-		int dot = reference.lastIndexOf('.');
-		if (dot == -1) dot = reference.indexOf('#');
+		//
+		// Split reference into   <struct> '#' <member>
+		// 
+		int dot = reference.indexOf('#');
+		if (dot == -1) dot = reference.lastIndexOf('.');
 		String struct = reference;
 		String member = null;
 		if (dot != -1) {
@@ -90,19 +99,22 @@ public class JavaDocPostprocessor {
 				member = null;
 		}
 
-		
+		//
+		// Attempt to resolve reference
+		//
 		String structName = (struct != null) ? struct : context;
 		CType type = model.getType(structName);
 		if (type == null) {
-			type = model.getType(Renaming.mapClass2Struct(structName));
+			type = model.getType(NameMapping.mapClass2Struct(structName));
 		}
 		if (type == null && struct != null && member == null) {
-			// test if given name is a member and not a struct
+			// test if given name is actually a member, not a struct
 			CType ctype = model.getType(context);
 			if (ctype != null && ctype.getKind() == CType.CKind.TYPE_STRUCT) {
 				CStruct cstruct = (CStruct)ctype;
 				CField field = cstruct.getField(struct);
 				if (field != null) {
+					// given name is a member, not a struct
 					type = cstruct;
 					structName = context;
 					member = struct;
@@ -111,7 +123,9 @@ public class JavaDocPostprocessor {
 			}
 		}
 		
-		// still no result???
+		//
+		// Evaluate result of reference resolution
+		//
 		if (type == null || type.getKind() != CType.CKind.TYPE_STRUCT) {
 			if (isLibraryClass(structName)) {
 				// added by us - supposed to be correct
@@ -123,44 +137,36 @@ public class JavaDocPostprocessor {
 			}
 		}
 		
+		
+		//
+		// Construct the resolved reference
+		//
 		CStruct cstruct = (CStruct) type;
 		if (member != null) {
 			CField field = cstruct.getField(member);
 			if (field != null) {
-				return ((struct != null) ? struct :  "") + '#' + Mangeling.mangle(member);
-			}
-			else 
+				// let reference point on the getter method instead
+				String getter = getMemberName(member) + "()";
+				return ((struct != null) ? struct :  "") + '#' + getter;
+			} else {
+				// member doesn't exist
 				return null;
+			}
 		}
 		
 		return struct;
 	}
 
 
+	private String getMemberName(String member) {
+		return NameMapping.toGetterMethodName(member);
+	}
+
+
 	private boolean isLibraryClass(String structName) {
-		final String[] packages = new String[] {
-				"org.cakelab.blender.io",
-				"org.cakelab.blender.io.block"
-		};
-		if (!isFullyQualifiedName(structName)) {
-			for (String p : packages) {
-				try {
-					Class.forName(p + "." + structName);
-					// class exists
-					return true;
-				} catch (ClassNotFoundException e) {
-				}
-			}
-		}
-		// class not found in class path
+		if (structName.startsWith("org.cakelab"))
+			return true;
 		return false;
 	}
-
-
-	private boolean isFullyQualifiedName(String structName) {
-		return structName.contains(".");
-	}
-
-
 
 }

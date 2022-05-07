@@ -66,7 +66,7 @@ public class JavaType {
 		if (ctype.size32 == 0) {
 			name = Object.class.getSimpleName();
 		} else {
-			name = Renaming.mapStruct2Class(ctype.getSignature());
+			name = NameMapping.mapStruct2Class(ctype.getSignature());
 		}
 	}
 

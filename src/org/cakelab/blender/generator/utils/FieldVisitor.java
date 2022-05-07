@@ -52,10 +52,6 @@ public abstract class FieldVisitor extends CodeGenerator {
 	}
 
 
-	protected String getFieldDescriptorName(String name) {
-		return "__DNA__FIELD__" + name;
-	}
-
 
 	protected abstract void visitArray(long offset32, long offset64, CField field, JavaType jtype) throws IOException;
 

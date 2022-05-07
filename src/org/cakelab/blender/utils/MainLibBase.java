@@ -18,7 +18,7 @@ import org.cakelab.blender.io.util.Identifier;
 import org.cakelab.blender.metac.CField;
 import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.nio.CFacade;
-import org.cakelab.blender.typemap.Renaming;
+import org.cakelab.blender.typemap.NameMapping;
 
 /**
  * Blender organises data in so-called libraries. A main library contains
@@ -55,7 +55,7 @@ public abstract class MainLibBase {
 	private void addLibraryElements(Block block, DNAStruct struct) throws IOException {
 		short size = struct.getType().getSize();
 		try {
-			Class<? extends CFacade> clazz = (Class<? extends CFacade>) MainLibBase.class.getClassLoader().loadClass(packageName + '.' + Renaming.mapStruct2Class(struct.getType().getName()));
+			Class<? extends CFacade> clazz = (Class<? extends CFacade>) MainLibBase.class.getClassLoader().loadClass(packageName + '.' + NameMapping.mapStruct2Class(struct.getType().getName()));
 			int count = 0;
 			for (long address = block.header.getAddress(); count < block.header.getCount();
 					address += size) 

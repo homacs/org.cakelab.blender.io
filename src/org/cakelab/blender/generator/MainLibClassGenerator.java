@@ -21,7 +21,7 @@ import org.cakelab.blender.metac.CStruct;
 import org.cakelab.blender.nio.CFacade;
 import org.cakelab.blender.nio.CPointer;
 import org.cakelab.blender.typemap.CFacadeMembers;
-import org.cakelab.blender.typemap.Renaming;
+import org.cakelab.blender.typemap.NameMapping;
 import org.cakelab.blender.utils.MainLibBase;
 
 public class MainLibClassGenerator extends ClassGenerator {
@@ -62,7 +62,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 				+ "them to the appropriate members of the main lib (represented by this class).\n"
 				+ "</p>\n<p>"
 				+ "This class is also vital to check whether a given blender file is compatible\n"
-				+ "with the data model associated with this Main lib class (see {@link #"+ MEMBER_doVersionCheck + "} and {@link #get" + MEMBER_fileGlobal + ")."
+				+ "with the data model associated with this Main lib class (see {@link #"+ MEMBER_doVersionCheck + "(FileVersionInfo)} and {@link #" + toGetterMethodName(MEMBER_fileGlobal) + "()})."
 						+ "</p>"
 				+ "@author homac");
 
@@ -143,8 +143,8 @@ public class MainLibClassGenerator extends ClassGenerator {
 		comment.appendln("are not implemeted in Java .Blend.");
 		comment.appendln();
 		comment.appendln("You can get file version info from {@link BlenderFile#readFileGlobal}.");
-		comment.addSeeTag("#readFileGlobal");
-		comment.addSeeTag("#doVersionCheck");
+		comment.addSeeTag("#getFileGlobal()");
+		comment.addSeeTag("#doVersionCheck(FileVersionInfo)");
 		
 		GMethod method = new GMethod(0);
 		method.setComment(comment);
@@ -222,7 +222,7 @@ public class MainLibClassGenerator extends ClassGenerator {
 
 	public void visit(CStruct struct) throws FileNotFoundException {
 		if (MainLibBase.isLibraryElement(struct)) {
-			String classname = Renaming.mapStruct2Class(struct.getSignature());
+			String classname = NameMapping.mapStruct2Class(struct.getSignature());
 			GComment comment = new GComment(Type.JavaDoc);
 			comment.appendln();
 			comment.appendln("See {@link " + classname + "} for documentation.");

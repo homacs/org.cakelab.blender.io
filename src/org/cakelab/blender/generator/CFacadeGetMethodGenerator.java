@@ -196,9 +196,9 @@ public class CFacadeGetMethodGenerator extends MethodGenerator implements CFacad
 		appendFieldDoc(javadoc);
 		javadoc.addSeeTag("#" + getFieldDescriptorName(field.getName()));
 		
-		
 		appendln(javadoc.toString(0));
-		appendln("public " + returnType + " get" + toCamelCase(field.getName()) + "() throws " + IOException.class.getSimpleName());
+		String methodName = toGetterMethodName(field.getName());
+		appendln("public " + returnType + " " + methodName + "() throws " + IOException.class.getSimpleName());
 	}
 
 

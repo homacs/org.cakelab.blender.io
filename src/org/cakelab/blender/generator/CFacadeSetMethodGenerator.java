@@ -1,6 +1,5 @@
 package org.cakelab.blender.generator;
 
-import static org.cakelab.blender.generator.Mangeling.mangle;
 
 import java.io.IOException;
 
@@ -14,6 +13,7 @@ import org.cakelab.blender.nio.CArrayFacade;
 import org.cakelab.blender.nio.CPointer;
 import org.cakelab.blender.typemap.CFacadeMembers;
 import org.cakelab.blender.typemap.JavaType;
+import org.cakelab.blender.typemap.NameMapping;
 
 
 
@@ -125,7 +125,7 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 		content.indent(-1);
 		appendln("} else {");
 		content.indent(+1);
-		appendln(__io__generic__copy + "( get" + toCamelCase(field.getName()) + "(), " + other + ");");
+		appendln(__io__generic__copy + "( " + toGetterMethodName(field.getName()) + "(), " + other + ");");
 		content.indent(-1);
 		appendln("}");
 		content.indent(-1);
@@ -158,7 +158,8 @@ public class CFacadeSetMethodGenerator extends MethodGenerator implements CFacad
 		
 		String paramName = mangle(field.getName());
 		appendln(javadoc.toString(0));
-		appendln("public void set" + toCamelCase(field.getName()) + "(" + paramType + " " + paramName + ") throws " + IOException.class.getSimpleName());
+		String methodName = NameMapping.toSetterMethodName(field.getName());
+		appendln("public void " + methodName + "(" + paramType + " " + paramName + ") throws " + IOException.class.getSimpleName());
 	}
 
 }

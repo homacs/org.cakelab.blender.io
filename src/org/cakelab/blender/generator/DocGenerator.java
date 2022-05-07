@@ -40,7 +40,7 @@ public class DocGenerator implements DocumentationProvider {
 				lines.append(docentry);
 			}
 		}
-		return postprocessor.repairDanglingLinks(lines.toString(), struct);
+		return postprocessor.postprocess(lines.toString(), struct);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class DocGenerator implements DocumentationProvider {
 				lines.append(docentry);
 			}
 		}
-		return postprocessor.repairDanglingLinks(lines.toString(), struct);
+		return postprocessor.postprocess(lines.toString(), struct);
 	}
 
 }
