@@ -18,15 +18,8 @@ public class JavaDocPostprocessor {
 
 	public String postprocess(String text, String context) {
 		text = repairDanglingLinks(text, context);
-		text = fixEndlineIssues(text);
 		return text;
 	}
-
-	private String fixEndlineIssues(String text) {
-		// TODO: find actual fix for @deprecated<h4> issue
-		return text.replaceAll("@deprecated<h4>", "@deprecated <h4>");
-	}
-
 
 	public String repairDanglingLinks(String text, String context) {
 		String phrase = "{@link ";
@@ -132,7 +125,7 @@ public class JavaDocPostprocessor {
 				return reference;
 			} else {
 				// actually unknown
-				if (debug) System.err.println("JavaDocPostprocessor: [" + context + "] unkown @link: " + reference);
+				debug(context, "unkown @link: " + reference);
 				return null;
 			}
 		}
@@ -155,6 +148,11 @@ public class JavaDocPostprocessor {
 		}
 		
 		return struct;
+	}
+
+
+	private void debug(String context, String message) {
+		if (debug) System.err.println("docgen [debug]: [" + context + "]" + message);
 	}
 
 

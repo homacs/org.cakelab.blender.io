@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.cakelab.blender.doc.Documentation;
+import org.cakelab.blender.doc.StructDoc;
 import org.cakelab.json.JSONArray;
 import org.cakelab.json.JSONObject;
 
@@ -33,7 +35,7 @@ public class ExtractPyAPIDoc extends Documentation {
 		source = "Blender Python API";
 		this.version = version;
 
-		this.structdocs = new JSONObject();
+		this.structdocs = new HashMap<>();
 		
 		String line;
 		while (null != (line = in.readLine())) {
@@ -92,9 +94,9 @@ public class ExtractPyAPIDoc extends Documentation {
 
 	public void addFieldDoc(String[] baseStructNames, String structName, String memberName,
 			String documentation) {
-		JSONObject struct = (JSONObject) structdocs.get(structName);
+		StructDoc struct = structdocs.get(structName);
 		if (struct == null) {
-			struct = new JSONObject();
+			struct = new StructDoc();
 			structdocs.put(structName, struct);
 		}
 		

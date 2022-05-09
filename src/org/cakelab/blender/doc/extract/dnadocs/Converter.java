@@ -2,9 +2,11 @@ package org.cakelab.blender.doc.extract.dnadocs;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.ListIterator;
 
 import org.cakelab.blender.doc.Documentation;
+import org.cakelab.blender.doc.StructDoc;
 import org.cakelab.jdoxml.Factory;
 import org.cakelab.jdoxml.api.ICompound;
 import org.cakelab.jdoxml.api.IDocRoot;
@@ -42,7 +44,7 @@ public class Converter extends Documentation {
 		this.source = "Blender Source Code";
 		this.version = version;
 
-		this.structdocs = new JSONObject();
+		this.structdocs = new HashMap<>();
 
 		dox = Factory.createObjectModel();
 
@@ -78,9 +80,9 @@ public class Converter extends Documentation {
 		
 		System.out.println("processing struct " + compound.name());
 		
-		JSONObject struct = (JSONObject) structdocs.get(compound.name());
+		StructDoc struct = structdocs.get(compound.name());
 		if (struct == null) {
-			struct = new JSONObject();
+			struct = new StructDoc();
 			addStructDocs = true;
 		}
 		String doc = getDoc(compound);
