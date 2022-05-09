@@ -246,6 +246,26 @@ public abstract class CFacade {
 		return (CFacade) constructor.newInstance(address, block, blockTable);
 	}
 
+	
+	
+	@Override
+	public int hashCode() {
+		return Long.hashCode(__io__address);
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CFacade other = (CFacade) obj;
+		return __io__equals(other, other.__io__address);
+	}
+
 	/**
 	 * Tests whether the facade, this method was called on, references the given address in the same file as the given facade.
 	 * @param facade
