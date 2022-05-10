@@ -167,7 +167,7 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	/**
 	 * Returns the address of the element at the given index in this array.
 	 * 
-	 * @param index of the element in this array wich address is calculated.
+	 * @param index of the element in this array which address is calculated.
 	 * @return the address of the element at the given index in this array.
 	 */
 	long getAddress(int index) {
@@ -453,18 +453,20 @@ public class CArrayFacade<T> extends CPointer<T> implements Iterable<T>{
 	 *   // ..
 	 * }
 	 * </pre>
-	 * Does not support deletion.
+	 * Does not support {@link Iterator#remove()}.
 	 */
 	@Override
 	public Iterator<T> iterator() {
-		return new CArrayFacadeIterator<T>(this);
+		return new IteratorImpl<T>(this);
 	}
 
-	static class CArrayFacadeIterator<T> extends CArrayFacade<T> implements Iterator<T> {
-
+	
+	/** Iterator for arrays. 
+	 * */
+	static class IteratorImpl<T> extends CArrayFacade<T> implements Iterator<T> {
 		private int current;
 
-		public CArrayFacadeIterator(CArrayFacade<T> dnaArray) {
+		public IteratorImpl(CArrayFacade<T> dnaArray) {
 			super(dnaArray);
 			current = 0;
 		}

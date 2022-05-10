@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.cakelab.blender.io.block.Block;
 import org.cakelab.blender.io.block.BlockTable;
-import org.cakelab.blender.nio.CArrayFacade.CArrayFacadeIterator;
+import org.cakelab.blender.nio.CArrayFacade.IteratorImpl;
 
 /**
  * Objects of this class represent a C pointer in Java. It provides
@@ -886,36 +886,29 @@ public class CPointer<T> extends CFacade {
 	}
 
 	/**
-	 * XXX: test whether the pointer references the same file?
-	 * 
-	 * This method provides pointer comparison functionality.
-	 * 
-	 * It allows comparison to all objects derived from {@link CFacade}
-	 * including pointers, arrays and iterators of both.
+	 * Compares addresses (not the memory). In this regard, 
+	 * a pointer is equal to another pointer, object facade or facade iterator etc., 
+	 * if it references the same address in the same blender file.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
-		if (obj instanceof CArrayFacadeIterator) {
-			return __io__address == ((CArrayFacadeIterator)obj).getCurrentAddress();
+
+		long theirAddress = -1;
+		BlockTable theirBlockTable = null; // to test on same blender file
+		if (obj instanceof CArrayFacade.IteratorImpl) {
+			IteratorImpl it = (CArrayFacade.IteratorImpl)obj;
+			theirAddress = it.getCurrentAddress();
+			theirBlockTable = it.__io__blockTable;
 		}
 		if (obj instanceof CFacade) {
-			return ((CFacade) obj).__io__address == __io__address;
+			CFacade facade = ((CFacade) obj);
+			theirAddress = facade.__io__address;
+			theirBlockTable = facade.__io__blockTable;
 		}
-		return false;
+		return __io__address == theirAddress && __io__blockTable == theirBlockTable;
 	}
-
-
-	/** 
-	 * XXX: consider file, which contains the data?
-	 */
-	@Override
-	public int hashCode() {
-		return (int)((__io__address>>32) ^ (__io__address));
-	}
-
-	
 
 	/**
 	 * Determines if the given type is a primitive type (scalar).

@@ -26,7 +26,7 @@ import org.cakelab.blender.nio.CPointer;
  * <p>
  * Factory classes are part of the utils package and optional. This base class 
  * contains the public factory methods to create blocks for facades, arrays and 
- * pointers. It also contains utilities to create a new blender files in a
+ * pointers. It also contains utilities to create new blender files in a
  * derived factory class.
  * </p>
  * 
@@ -34,6 +34,8 @@ import org.cakelab.blender.nio.CPointer;
  *
  */
 public class BlenderFactoryBase {
+	
+	/** base class to be used by a derived factory class to create new blender files. */
 	protected static class BlenderFileImplBase extends BlenderFile {
 
 		protected BlenderFileImplBase(File file, StructDNA sdna, int blenderVersion) throws IOException {

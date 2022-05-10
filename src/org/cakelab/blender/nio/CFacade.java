@@ -250,6 +250,10 @@ public abstract class CFacade {
 	
 	@Override
 	public int hashCode() {
+		// considers the address only.
+		// Rare case of having objects of different blender files in 
+		// the same hash-organised data structure,
+		// is still supported this way.
 		return Long.hashCode(__io__address);
 	}
 
@@ -267,7 +271,7 @@ public abstract class CFacade {
 	}
 
 	/**
-	 * Tests whether the facade, this method was called on, references the given address in the same file as the given facade.
+	 * Tests whether the facade references the given address in the same file as the given facade.
 	 * @param facade
 	 * @param address 
 	 * @return address (virtual) of the object, wrapped by the given facade.
