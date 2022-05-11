@@ -14,55 +14,61 @@ public class StructDoc extends JSONObject {
 		this(origin);
 		putAll(doc);
 	}
+	
 	public StructDoc(File origin) {
-		this.origins.add(origin);
+		origins.add(origin);
 	}
 	
-	@Deprecated
 	public StructDoc() {
 	}
-
-	
 	
 	public boolean containsOrigin(File origin) {
 		return origins.contains(origin);
 	}
-	
-	public boolean sameOrigins(StructDoc base) {
-		for (File origin : base.origins) {
+
+	/** 
+	 * Determines whether given StructDoc provides more documentation
+	 * than already captured in this StructDoc.
+	 */
+	public boolean containsNewInformation(StructDoc structDoc) {
+		for (File origin : structDoc.origins) {
 			if (!containsOrigin(origin))
 				return false;
 		}
 		return true;
 	}
 
-	/** only inherit values which are not yet set */
+	/** only inherit documentation of member variables, which are yet without documentation. */
 	public boolean inherit(StructDoc base) {
-		if (sameOrigins(base)) 
+		if (containsNewInformation(base)) 
 			return false;
+		
 		boolean modified = addFields(base.getObject("fields"));
 		String doc = getString("doc");
 		if (doc == null) {
 			put("doc", doc);
 			modified = true;
 		}
-		if (modified) origins.addAll(base.origins);
+		
+		origins.addAll(base.origins);
 		return modified;
 	}
 	
-	/** override all values from existing values of overrides */
+	/** override/replace all documentation entries from existing values 
+	 * of given structDoc overrides, but keep those documentation entries
+	 * where no documentation was given with overrides. */
 	public boolean override(StructDoc overrides) {
-		if (sameOrigins(overrides)) 
+		if (containsNewInformation(overrides)) 
 			return false;
-		boolean modified = false;
+		
+		boolean modified = overrideFields(overrides.getObject("fields"));
 		String doc = overrides.getString("doc");
 		if (doc != null) {
 			put("doc", doc);
 			modified = true;
 		}
-		modified = addFields(overrides.getObject("fields")) || modified;
 		
-		if (modified) origins.addAll(overrides.origins);
+		origins.addAll(overrides.origins);
 		return modified;
 	}
 

@@ -25,8 +25,6 @@ import org.xml.sax.SAXException;
  *
  */
 public class Converter extends Documentation {
-
-	// XXX: losing notes during conversion!
 	private File input;
 	private File out;
 	private IDoxygen dox;
@@ -35,8 +33,6 @@ public class Converter extends Documentation {
 	public Converter(File input, String version, File output) {
 		this.input = input;
 		this.out = output;
-		
-		
 		
 		this.includePath = null;
 		this.system = "Blender";
@@ -47,8 +43,6 @@ public class Converter extends Documentation {
 		this.structdocs = new HashMap<>();
 
 		dox = Factory.createObjectModel();
-
-
 	}
 
 	public void run() throws SAXException, IOException {
@@ -65,11 +59,10 @@ public class Converter extends Documentation {
 				break;
 			default:
 				break;
-			
 			}
 		}
 		
-		super.write(out);
+		write(out);
 
 		System.out.println("finished.");
 	}
@@ -85,6 +78,7 @@ public class Converter extends Documentation {
 			struct = new StructDoc();
 			addStructDocs = true;
 		}
+		
 		String doc = getDoc(compound);
 		if (!doc.isEmpty()) {
 			doc = stripEmbeddedComments(doc);
@@ -104,7 +98,7 @@ public class Converter extends Documentation {
 				case Signal:
 				case Slot:
 				case DCOP:
-					// addMethodDoc(struct, member);
+					// ignore everything which is not a member variable
 					break;
 				case Variable:
 				case Property:
@@ -112,7 +106,6 @@ public class Converter extends Documentation {
 					break;
 				default:
 					break;
-				
 				}
 			}
 		}
