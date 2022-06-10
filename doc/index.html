@@ -49,8 +49,10 @@ will help to get started.
 <h2 id="download">Download</h2>
 <h3>Java .Blend Library</h3>
 <p>
-Java .Blend APIs for given Blender program LTS releases and the two recent minor releases in their most recent patch version (e.g. 2.93.6 for 2.93 release).
-LTS releases will be supported for two years, development stages of a running release only until the next minor release comes out.
+Java .Blend APIs for given Blender program <a href="https://code.blender.org/2020/02/release-planning-2020-2025/">LTS releases</a> 
+and the two recent minor releases in their most recent patch version (e.g. 2.93.6 for 2.93 release).
+LTS releases will be supported for two years, development stages of a running release only until the 
+next minor release comes out.
 </p>
 <p>
 Downloads have a suffix like DNA-2.90.8, indicating the corresponding Blender <b>file version</b>. 
@@ -70,6 +72,7 @@ in the <a href="spec.html">documentation</a> or contact me.
 
 <table border="1">
 <tr><th>Blender Release</th><th></th><th></th><th></th></tr>
+<tr><th>3.02</th><td><a href="downloads/JavaBlend-${project.version}-DNA-3.02.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-3.02.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-3.02.zip">javadoc</a></td></tr>
 <tr><th>3.01</th><td><a href="downloads/JavaBlend-${project.version}-DNA-3.01.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-3.01.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-3.01.zip">javadoc</a></td></tr>
 <tr><th>3.00</th><td><a href="downloads/JavaBlend-${project.version}-DNA-3.00.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-3.00.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-3.00.zip">javadoc</a></td></tr>
 <tr><th>2.93</th><td><a href="downloads/JavaBlend-${project.version}-DNA-2.93.jar">binary</a></td><td><a href="downloads/JavaBlend-src-${project.version}-DNA-2.93.zip">src</a></td><td><a href="downloads/JavaBlend-javadoc-${project.version}-DNA-2.93.zip">javadoc</a></td></tr>
@@ -115,6 +118,13 @@ of each version with minor additions by me. Contributions are welcome (see githu
 
 <h2 id="changelog">Change Log</h2>
 <ul>
+<li>[1.3.1ß][10/06/2022]: Blender 3.02.0
+	<ul>
+	<li>Improved import of documentation.</li>
+	<li>Fixed issues with javadoc documentation.</li>
+	<li>Added identity hashCode method to CFacade.</li>
+	<li>Added equals method to CPointer.</li>
+	</ul>
 <li>[1.3.9][26/04/2022]: 
 	<ul>
 	<li>Dropped support for non-LTS releases prior to last LTS release.</li>

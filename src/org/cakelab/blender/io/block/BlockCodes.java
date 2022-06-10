@@ -26,7 +26,8 @@ public interface BlockCodes {
 	Identifier ID_OB = MAKE_ID2('O', 'B');
 	/** Mesh */
 	Identifier ID_ME = MAKE_ID2('M', 'E');
-	/** Curve */
+	/** Curve 
+	 * @deprecated ID_CV should be used in the future (see T95355). */
 	Identifier ID_CU = MAKE_ID2('C', 'U');
 	/** MetaBall */
 	Identifier ID_MB = MAKE_ID2('M', 'B');
@@ -94,15 +95,21 @@ public interface BlockCodes {
 	Identifier ID_LP = MAKE_ID2('L', 'P'); 
 	
 	/* SINCE v2.83 */
-	/** Hair */
+	/** Hair 
+	 * @deprecated Removed since Blender v3.2*/
 	Identifier ID_HA = MAKE_ID2('H', 'A');
+	
+	/** Curves 
+	 * @since Blender v3.2 */
+	Identifier ID_CV = MAKE_ID2('C', 'V');
+	
 	/** PointCloud */
 	Identifier ID_PT = MAKE_ID2('P', 'T');
 	/** Volume */
 	Identifier ID_VO = MAKE_ID2('V', 'O');  
 	
-	/* SINCE v2.90 */
-	/** Simulation */
+	/** Simulation 
+	 * @since Blender v2.90 */
 	Identifier ID_SIM = MAKE_ID2('S', 'I');
 	
 	
