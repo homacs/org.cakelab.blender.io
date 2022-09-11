@@ -142,14 +142,15 @@
 			<include name="**/*"/>
 		</jar>
 	</target>
-	<target name="package" depends="package.bin,package.src,package.javadoc">
+	
+	<target name="package" depends="package.bin, package.src, package.javadoc">
 		<echo message="done."/>
 	</target>
 
 	<target name="package.all">
 		<antcall target="package">
 			<param name="blender.version" value="3.03"/>
-			<param name="blender.file.version.cur" value="3.03.06"/>
+			<param name="blender.file.version.cur" value="3.03.6"/>
 			<param name="blender.file.version.min" value="3.00.43"/>
 		</antcall>
 		<antcall target="package">
