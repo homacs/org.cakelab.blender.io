@@ -1,4 +1,4 @@
-# Java .Blend - Generator and Utilities
+# Java .Blend - IO Core Library
 
 
 Further information can be found on [cakelab.org](http://homac.cakelab.org/projects/JavaBlend/index.html)
